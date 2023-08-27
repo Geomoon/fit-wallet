@@ -1,0 +1,75 @@
+import 'dart:developer';
+
+import 'package:dio/dio.dart';
+import 'package:fit_wallet/config/env/env.dart';
+import 'package:fit_wallet/features/shared/infrastructure/infrastructure.dart';
+import 'package:fit_wallet/features/shared/presentation/presentation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final apiProvider = Provider((ref) {
+  final storageService = ref.watch(localStorageProvider);
+  return ApiProvider(storageService);
+});
+
+class ApiProvider {
+  late final Dio _dio;
+  late final LocalStorageService _storageService;
+
+  ApiProvider(this._storageService) {
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: Env.apiUrl,
+        contentType: 'application/json',
+        connectTimeout: const Duration(seconds: 5),
+      ),
+    );
+
+    _dio.interceptors.add(
+      LogInterceptor(
+        logPrint: (object) => log(object.toString()),
+      ),
+    );
+
+    _dio.interceptors.add(
+      _AuthInterceptor(_storageService),
+    );
+  }
+
+  Dio get dio => _dio;
+}
+
+class _AuthInterceptor implements Interceptor {
+  _AuthInterceptor(this._storageService);
+
+  final LocalStorageService _storageService;
+
+  @override
+  void onError(DioException err, ErrorInterceptorHandler handler) {
+    switch (err.response?.statusCode ?? 400) {
+      case 401:
+        throw UnauthorizedException('Unauthorized');
+      case >= 400 && < 500:
+        throw BadRequestException('Bad request');
+      case >= 500:
+        throw ServerException('Network Error');
+    }
+    handler.next(err);
+  }
+
+  @override
+  void onRequest(
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
+    final accessToken = await _storageService.getValue('accessToken');
+    if (accessToken != null) {
+      options.headers.addAll({'Authorization': 'Bearer $accessToken'});
+    }
+    handler.next(options);
+  }
+
+  @override
+  void onResponse(Response response, ResponseInterceptorHandler handler) {
+    handler.next(response);
+  }
+}

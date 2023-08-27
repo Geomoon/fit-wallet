@@ -1,3 +1,4 @@
+import 'package:fit_wallet/features/auth/presentation/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -111,6 +112,7 @@ class LoginFormView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final textTheme = Theme.of(context).textTheme;
+    final service = ref.watch(authSignInProvider);
 
     return Padding(
       padding: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
@@ -123,9 +125,11 @@ class LoginFormView extends ConsumerWidget {
           const SizedBox(height: 20),
           TextFormField(
             keyboardType: TextInputType.emailAddress,
+            onChanged: ref.read(authSignInProvider.notifier).onChangeEmail,
             decoration: InputDecoration(
               labelText: 'Email',
               prefixIcon: const Icon(Icons.alternate_email_rounded),
+              errorText: service.isPosted ? service.email.errorMessage : null,
             ),
             textInputAction: TextInputAction.next,
           ),
@@ -133,21 +137,32 @@ class LoginFormView extends ConsumerWidget {
           TextFormField(
             obscureText: true,
             textInputAction: TextInputAction.go,
+            onChanged: ref.read(authSignInProvider.notifier).onChangePassword,
             decoration: InputDecoration(
               labelText: 'Password',
               prefixIcon: const Icon(Icons.password_rounded),
+              errorText:
+                  service.isPosted ? service.password.errorMessage : null,
             ),
           ),
           const SizedBox(height: 20),
           FilledButton(
-            onPressed: () {},
+            onPressed: !service.isPosting
+                ? () {
+                    ref.read(authSignInProvider.notifier).onSubmit();
+                  }
+                : null,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
-                  'Login',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                )
+                service.isPosting
+                    ? const SizedBox(
+                        height: 22,
+                        width: 22,
+                        child: CircularProgressIndicator())
+                    : const Text('Login',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16))
               ],
             ),
           ),
