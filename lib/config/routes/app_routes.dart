@@ -8,7 +8,8 @@ final routerProvider = Provider(
     initialLocation: '/welcome',
     routes: [
       GoRoute(path: '/welcome', builder: (_, __) => const WelcomeScreen()),
-      GoRoute(path: '/login', builder: (_, __) => const AuthScreen())
+      GoRoute(path: '/login', builder: (_, __) => const AuthScreen()),
+      GoRoute(path: '/signup', builder: (_, __) => const SignupScreen())
     ],
     // redirect: (context, state) {
     //   // if (state.path?.contains('login') ?? true) return '/login';

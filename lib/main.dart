@@ -16,9 +16,10 @@ class MyApp extends StatelessWidget {
       builder: (context, ref, _) => MaterialApp.router(
         title: 'FitWallet',
         theme: ref.watch(lightTheme),
-        darkTheme: ref.watch(darkTheme),
+        darkTheme: DarkTheme.theme,
         themeMode: ref.watch(themeMode),
         routerConfig: ref.watch(routerProvider),
+        debugShowCheckedModeBanner: false,
       ),
     );
   }
