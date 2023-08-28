@@ -1,16 +1,17 @@
+import 'package:fit_wallet/features/auth/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/welcome/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/welcome/presentation/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 class WelcomeScreen extends ConsumerWidget {
   const WelcomeScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final textTheme = Theme.of(context).primaryTextTheme;
     final page = ref.watch(pageProvider);
+
+    final textTheme = Theme.of(context).primaryTextTheme;
     final pageController = PageController();
 
     return Scaffold(
@@ -35,7 +36,7 @@ class WelcomeScreen extends ConsumerWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: FloatingActionButton.extended(
-                    onPressed: () {
+                    onPressed: () async {
                       if (page == 0) {
                         ref.read(pageProvider.notifier).update((state) => 1);
                         pageController.animateToPage(
@@ -44,7 +45,9 @@ class WelcomeScreen extends ConsumerWidget {
                           curve: Curves.linear,
                         );
                       } else {
-                        context.pushReplacement('/login');
+                        await ref
+                            .read(authStatusProvider.notifier)
+                            .toPassedWelcome();
                       }
                     },
                     label: Row(

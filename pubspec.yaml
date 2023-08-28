@@ -20,6 +20,7 @@ dependencies:
   uuid: ^3.0.7
   localstorage: ^4.0.1+4
   formz: ^0.6.0
+  intl: ^0.18.1
 
 dev_dependencies:
   flutter_test:

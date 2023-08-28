@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:localstorage/localstorage.dart';
 
@@ -11,11 +13,19 @@ class LocalStorageService {
 
   Future<void> init() async {
     _storage = LocalStorage('fit_wallet_storage');
-    await _storage.ready;
+    await _storage.ready.then((value) => log('storage ready'));
   }
 
-  Future<void> setValue(String key, dynamic value) async =>
-      await _storage.setItem(key, value);
+  Future<void> setValue(String key, dynamic value) async {
+    await _storage.ready;
 
-  Future<dynamic> getValue(String key) async => await _storage.getItem(key);
+    await _storage
+        .setItem(key, value)
+        .then((_) => log('SAVED VALUE $key:$value'));
+  }
+
+  Future<dynamic> getValue(String key) async {
+    await _storage.ready;
+    return await _storage.getItem(key);
+  }
 }

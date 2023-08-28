@@ -70,7 +70,5 @@ class DarkTheme {
                 MaterialStateColor.resolveWith((states) => _secondaryFg),
           ),
         ),
-        progressIndicatorTheme:
-            const ProgressIndicatorThemeData(circularTrackColor: _primaryFg),
       );
 }

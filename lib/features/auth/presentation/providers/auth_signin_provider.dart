@@ -1,5 +1,6 @@
 import 'package:fit_wallet/features/auth/domain/domain.dart';
 import 'package:fit_wallet/features/auth/presentation/providers/auth_repository_provider.dart';
+import 'package:fit_wallet/features/auth/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/shared/infrastructure/infrastructure.dart';
 import 'package:fit_wallet/features/shared/presentation/presentation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,15 +9,17 @@ final authSignInProvider =
     StateNotifierProvider<AuthSignInNotifier, AuthSignInState>((ref) {
   final authRepo = ref.watch(authRepositoryProvider);
   final storage = ref.watch(localStorageProvider);
-  return AuthSignInNotifier(authRepo, storage);
+
+  return AuthSignInNotifier(authRepo, storage, ref);
 });
 
 class AuthSignInNotifier extends StateNotifier<AuthSignInState> {
-  AuthSignInNotifier(this._authRepository, this._storage)
+  AuthSignInNotifier(this._authRepository, this._storage, this.ref)
       : super(AuthSignInState());
 
   final AuthRepository _authRepository;
   final LocalStorageService _storage;
+  final dynamic ref;
 
   void onChangeEmail(String email) {
     state = state.copyWith(email: EmailInput.dirty(value: email));
@@ -45,6 +48,7 @@ class AuthSignInNotifier extends StateNotifier<AuthSignInState> {
       await _storage.setValue('accessToken', response.accessToken);
       await _storage.setValue('refreshToken', response.refreshToken);
       state = state.copyWith(error: '', isPosting: false);
+      await ref.read(authStatusProvider.notifier).checkStatus();
     } on ServerException {
       state = state.copyWith(error: 'Network Error', isPosting: false);
     } catch (e) {
