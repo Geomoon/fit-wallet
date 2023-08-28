@@ -6,20 +6,23 @@ final darkTheme = Provider((ref) => DarkTheme.theme);
 class DarkTheme {
   // primary => 436DFF
   static const Color _primary = Color(0xFF436DFF);
+  static const Color _primaryDark = Color(0xFFb7c4ff);
   static const Color _primaryFg = Color(0xFFF1F1F1);
+  static const Color _onPrimaryFg = Color(0xFF002583);
   static const Color _secondaryFg = Color(0xFF7F7F7F);
-  static const Color _primaryBg = Color(0xFF111111);
-  static const Color _secondaryBg = Color(0xFF1C1C1C);
+  static const Color primaryBg = Color(0xFF111111);
+  static const Color secondaryBg = Color(0xFF1C1C1C);
   static const Color _outline = Color(0xFF313131);
 
   static ThemeData get theme => ThemeData.dark(useMaterial3: true).copyWith(
         colorScheme: ColorScheme.fromSeed(
           seedColor: _primary,
           brightness: Brightness.dark,
+          // surface: _secondaryBg,
         ),
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          backgroundColor: _primary,
-          foregroundColor: _primaryFg,
+          backgroundColor: _primaryDark,
+          foregroundColor: _onPrimaryFg,
         ),
         textButtonTheme: TextButtonThemeData(
           style: ButtonStyle(
@@ -27,12 +30,28 @@ class DarkTheme {
                 MaterialStateColor.resolveWith((states) => _primaryFg),
           ),
         ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: primaryBg,
+          foregroundColor: _primaryFg,
+          actionsIconTheme: IconThemeData(size: 20, color: _primaryFg),
+          toolbarHeight: 64,
+        ),
         textTheme: const TextTheme(
           bodySmall: TextStyle(
             color: _secondaryFg,
             fontSize: 12,
           ),
+          bodyLarge: TextStyle(
+            color: _secondaryFg,
+            fontSize: 14,
+          ),
           headlineLarge: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        iconButtonTheme: IconButtonThemeData(
+          style: ButtonStyle(
+            backgroundColor:
+                MaterialStateColor.resolveWith((states) => secondaryBg),
+          ),
         ),
         inputDecorationTheme: const InputDecorationTheme(
           border: OutlineInputBorder(borderSide: BorderSide(color: _outline)),
@@ -40,19 +59,19 @@ class DarkTheme {
           iconColor: _primaryFg,
           prefixIconColor: _primaryFg,
         ),
-        scaffoldBackgroundColor: _primaryBg,
+        scaffoldBackgroundColor: primaryBg,
         dividerTheme: const DividerThemeData(color: _outline, thickness: 1),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
             backgroundColor:
-                MaterialStateColor.resolveWith((states) => _secondaryBg),
+                MaterialStateColor.resolveWith((states) => secondaryBg),
             foregroundColor:
                 MaterialStateColor.resolveWith((states) => _primaryFg),
           ),
         ),
         datePickerTheme: DatePickerThemeData(
-          backgroundColor: _secondaryBg,
-          surfaceTintColor: _secondaryBg,
+          backgroundColor: secondaryBg,
+          surfaceTintColor: secondaryBg,
           dayForegroundColor:
               MaterialStateColor.resolveWith((states) => _secondaryFg),
           headerForegroundColor:

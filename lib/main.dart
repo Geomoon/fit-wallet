@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         title: 'FitWallet',
         theme: ref.watch(lightTheme),
         darkTheme: DarkTheme.theme,
-        themeMode: ref.watch(themeMode),
+        themeMode: ref.watch(themeModeProvider),
         routerConfig: ref.watch(routerProvider),
         debugShowCheckedModeBanner: false,
       ),
