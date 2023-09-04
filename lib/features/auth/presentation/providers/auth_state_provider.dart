@@ -10,15 +10,23 @@ enum AuthStatus { authenticated, notAuthenticated, empty, checking }
 class AuthState {
   final AuthStatus status;
   final JwtEntity? entity;
+  final String route;
 
   AuthState({
     this.status = AuthStatus.checking,
     this.entity,
+    this.route = '/',
   });
 
-  AuthState copyWith({AuthStatus? status, JwtEntity? entity}) => AuthState(
+  AuthState copyWith({
+    AuthStatus? status,
+    JwtEntity? entity,
+    String? route,
+  }) =>
+      AuthState(
         status: status ?? this.status,
         entity: entity,
+        route: route ?? this.route,
       );
 }
 
@@ -32,7 +40,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
   Future<void> checkStatus() async {
     final hasPassedWelcome = await _storageService.getValue('passedWelcome');
     if (hasPassedWelcome == null) {
-      state = state.copyWith(status: AuthStatus.empty);
+      state = state.copyWith(status: AuthStatus.empty, route: '/welcome');
       return;
     }
 
@@ -47,9 +55,13 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       state = state.copyWith(
         status: AuthStatus.authenticated,
         entity: jwToken,
+        route: '/',
       );
     } else {
-      state = state.copyWith(status: AuthStatus.notAuthenticated);
+      state = state.copyWith(
+        status: AuthStatus.notAuthenticated,
+        route: '/login',
+      );
     }
   }
 

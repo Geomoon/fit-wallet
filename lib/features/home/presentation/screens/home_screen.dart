@@ -1,8 +1,10 @@
-import 'package:fit_wallet/config/themes/dark_theme.dart';
 import 'package:fit_wallet/config/themes/theme_provider.dart';
+import 'package:fit_wallet/features/money_accounts/presentation/providers/providers.dart';
+import 'package:fit_wallet/features/money_accounts/presentation/widgets/widgets.dart';
 import 'package:fit_wallet/features/shared/presentation/presentation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -72,18 +74,18 @@ class _HomeScreenView extends StatelessWidget {
               child: Row(
                 children: [
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () => context.push('/money-accounts'),
                     child: const Icon(Icons.account_balance_rounded),
                   ),
                   const SizedBox(width: 20),
                   ElevatedButton(
                     onPressed: () {},
-                    child: const Icon(Icons.account_balance_rounded),
+                    child: const Icon(Icons.dashboard_rounded),
                   ),
                   const SizedBox(width: 20),
                   ElevatedButton(
                     onPressed: () {},
-                    child: const Icon(Icons.account_balance_rounded),
+                    child: const Icon(Icons.pie_chart_rounded),
                   ),
                 ],
               ),
@@ -122,71 +124,99 @@ class LastTransactionsCard extends ConsumerWidget {
     print(theme.secondary);
 
     return Card(
-      surfaceTintColor: themeMode == ThemeMode.dark
-          ? DarkTheme.primaryBg
-          : Colors.white, // TODO: light mode
-      color: themeMode == ThemeMode.dark ? DarkTheme.secondaryBg : Colors.white,
+      // surfaceTintColor: themeMode == ThemeMode.dark
+      //     ? DarkTheme.primaryBg
+      //     : Colors.white, // TODO: light mode
+      // color: themeMode == ThemeMode.dark ? DarkTheme.secondaryBg : Colors.white,
       margin: const EdgeInsets.symmetric(
-        horizontal: 10.0,
+        horizontal: 0.0,
         vertical: 4.0,
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10.0),
         child: ListView.separated(
+          itemCount: 8,
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           itemBuilder: (context, index) {
-            return ListTile(
-              visualDensity: VisualDensity.comfortable,
-              onTap: () {},
-              leading: Container(
-                height: 44,
-                width: 44,
-                decoration: BoxDecoration(
-                  color: theme.background,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Center(
-                  child: Icon(Icons.local_gas_station_rounded),
-                ),
-              ),
-              title: const Text('Car gasoline'),
-              subtitle: Text('Yesterday', style: textTheme.bodyLarge),
-              trailing: const Text(
-                '- \$45.00',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
-              ),
-            );
+            return TransactionListTile(theme: theme, textTheme: textTheme);
           },
           separatorBuilder: (context, index) {
             return const Divider(indent: 68, height: 1);
           },
-          itemCount: 4,
         ),
       ),
     );
   }
 }
 
-class AccountCardsViewer extends StatelessWidget {
-  const AccountCardsViewer({super.key});
+class TransactionListTile extends StatelessWidget {
+  const TransactionListTile({
+    super.key,
+    required this.theme,
+    required this.textTheme,
+  });
+
+  final ColorScheme theme;
+  final TextTheme textTheme;
 
   @override
   Widget build(BuildContext context) {
-    final controller = PageController(viewportFraction: .9);
-
-    return SizedBox(
-      height: 180,
-      child: PageView.builder(
-        controller: controller,
-        itemCount: 2,
-        itemBuilder: (context, index) {
-          return const AccountCard();
-        },
+    return ListTile(
+      // visualDensity: VisualDensity.comfortable,
+      onTap: () {},
+      leading: Container(
+        height: 44,
+        width: 44,
+        decoration: BoxDecoration(
+          color: theme.background,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: const Center(
+          child: Icon(Icons.local_gas_station_rounded),
+        ),
       ),
+      title: const Text('Car gasoline'),
+      subtitle: Text('Yesterday', style: textTheme.bodyLarge),
+      trailing: const Text(
+        '- \$45.00',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 14,
+        ),
+      ),
+    );
+  }
+}
+
+class AccountCardsViewer extends ConsumerWidget {
+  const AccountCardsViewer({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final controller = PageController(viewportFraction: .9);
+    final moneyAccounts = ref.watch(moneyAccountsProvider);
+
+    return moneyAccounts.when(
+      data: (accounts) {
+        return SizedBox(
+          height: 180,
+          child: PageView.builder(
+            controller: controller,
+            itemCount: accounts.length,
+            itemBuilder: (context, index) {
+              return MoneyAccountCard(
+                account: accounts[index],
+                onTap: () {
+                  // TODO: goto page with transactions detail
+                },
+              );
+            },
+          ),
+        );
+      },
+      error: (_, __) => Container(),
+      loading: () => Container(),
     );
   }
 }
@@ -199,10 +229,8 @@ class AccountCard extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     final theme = Theme.of(context).colorScheme;
 
-    print(theme.primary);
-    print(theme.onPrimary);
     return Card(
-      margin: const EdgeInsets.only(right: 20),
+      margin: const EdgeInsets.only(right: 16),
       child: InkWell(
         onTap: () {},
         borderRadius: BorderRadius.circular(12.0),

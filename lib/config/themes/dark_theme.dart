@@ -47,12 +47,21 @@ class DarkTheme {
           ),
           headlineLarge: TextStyle(fontWeight: FontWeight.bold),
         ),
-        iconButtonTheme: IconButtonThemeData(
-          style: ButtonStyle(
-            backgroundColor:
-                MaterialStateColor.resolveWith((states) => secondaryBg),
+        snackBarTheme: const SnackBarThemeData(
+          insetPadding: EdgeInsets.all(20),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(10.0),
+            ),
           ),
         ),
+        // iconButtonTheme: IconButtonThemeData(
+        //   style: ButtonStyle(
+        //     backgroundColor:
+        //         MaterialStateColor.resolveWith((states) => secondaryBg),
+        //   ),
+        // ),
         inputDecorationTheme: const InputDecorationTheme(
           border: OutlineInputBorder(borderSide: BorderSide(color: _outline)),
           hintStyle: TextStyle(color: _secondaryFg),
