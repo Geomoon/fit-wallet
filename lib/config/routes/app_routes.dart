@@ -27,6 +27,14 @@ final routerProvider = Provider((ref) {
         path: '/money-accounts',
         builder: (_, __) => const MoneyAccountsScreen(),
       ),
+      GoRoute(
+        path: '/money-accounts/:id',
+        builder: (_, state) {
+          final maccId = state.pathParameters['id'];
+
+          return MoneyAccountsDetailScreen(maccId: maccId!);
+        },
+      )
     ],
   );
 });

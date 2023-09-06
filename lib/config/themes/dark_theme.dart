@@ -99,4 +99,11 @@ class DarkTheme {
           ),
         ),
       );
+
+  static ButtonStyle primaryFilterStyle = ButtonStyle(
+    backgroundColor: MaterialStateColor.resolveWith((states) => _primaryFg),
+    foregroundColor: MaterialStateColor.resolveWith((states) => primaryBg),
+    iconColor: MaterialStateColor.resolveWith((states) => primaryBg),
+    surfaceTintColor: MaterialStateColor.resolveWith((states) => _primaryFg),
+  );
 }

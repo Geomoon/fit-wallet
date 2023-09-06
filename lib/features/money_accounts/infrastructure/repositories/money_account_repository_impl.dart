@@ -1,6 +1,5 @@
 import 'package:fit_wallet/features/money_accounts/domain/datasources/datasources.dart';
 import 'package:fit_wallet/features/money_accounts/domain/entities/create_money_account_entity.dart';
-import 'package:fit_wallet/features/money_accounts/domain/entities/money_account_entity.dart';
 import 'package:fit_wallet/features/money_accounts/domain/entities/money_account_last_transaction_entity.dart';
 import 'package:fit_wallet/features/money_accounts/domain/repositories/repositories.dart';
 
@@ -25,7 +24,7 @@ class MoneyAccountRepositoryImpl implements MoneyAccountRepository {
   }
 
   @override
-  Future<List<MoneyAccountEntity>> getById(String id) {
+  Future<MoneyAccountLastTransactionEntity> getById(String id) {
     return _datasource.getById(id);
   }
 

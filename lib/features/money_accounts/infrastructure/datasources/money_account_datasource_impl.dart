@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:fit_wallet/features/money_accounts/domain/datasources/datasources.dart';
 import 'package:fit_wallet/features/money_accounts/domain/entities/create_money_account_entity.dart';
-import 'package:fit_wallet/features/money_accounts/domain/entities/money_account_entity.dart';
 import 'package:fit_wallet/features/money_accounts/domain/entities/money_account_last_transaction_entity.dart';
 
 class MoneyAccountDatasourceImpl implements MoneyAccountDatasource {
@@ -51,9 +50,16 @@ class MoneyAccountDatasourceImpl implements MoneyAccountDatasource {
   }
 
   @override
-  Future<List<MoneyAccountEntity>> getById(String id) {
-    // TODO: implement getById
-    throw UnimplementedError();
+  Future<MoneyAccountLastTransactionEntity> getById(String id) async {
+    final Response response;
+    try {
+      response = await _dio.get('/money-accounts/$id');
+
+      return MoneyAccountLastTransactionEntity.fromJson(response.data);
+    } catch (e) {
+      log('error api', error: e);
+      rethrow;
+    }
   }
 
   @override

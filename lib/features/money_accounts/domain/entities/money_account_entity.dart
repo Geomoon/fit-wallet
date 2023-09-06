@@ -2,7 +2,6 @@ class MoneyAccountEntity {
   String id;
   String name;
   double amount;
-  String userId;
   DateTime createdAt;
   DateTime? updatedAt;
 
@@ -10,8 +9,18 @@ class MoneyAccountEntity {
     required this.id,
     required this.name,
     required this.amount,
-    required this.userId,
     required this.createdAt,
     this.updatedAt,
   });
+
+  factory MoneyAccountEntity.fromJson(Map<String, dynamic> json) =>
+      MoneyAccountEntity(
+        id: json['id'],
+        name: json['name'],
+        amount: json['amount']?.toDouble(),
+        createdAt: DateTime.parse(json['createdAt']),
+        updatedAt: json['updatedAt'] == null
+            ? null
+            : DateTime.parse(json['updatedAt']),
+      );
 }

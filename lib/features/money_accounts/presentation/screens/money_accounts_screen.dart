@@ -46,6 +46,7 @@ class _MoneyAccountsScreenView extends ConsumerWidget {
     final textTheme = Theme.of(context).textTheme;
 
     final moneyAccounts = ref.watch(moneyAccountsProvider);
+    final total = ref.watch(moneyAccountsTotalProvider);
     final isEditMode = ref.watch(isEditModeProvider);
 
     return SingleChildScrollView(
@@ -71,7 +72,7 @@ class _MoneyAccountsScreenView extends ConsumerWidget {
               const SizedBox(height: 10),
               Padding(
                 padding: padding,
-                child: Text('\$450.67', style: textTheme.headlineLarge),
+                child: Text(total, style: textTheme.headlineLarge),
               ),
               const SizedBox(height: 20),
               MoneyAccountsList(

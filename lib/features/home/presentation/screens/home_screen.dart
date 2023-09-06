@@ -1,4 +1,3 @@
-import 'package:fit_wallet/config/themes/theme_provider.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/widgets/widgets.dart';
 import 'package:fit_wallet/features/shared/presentation/presentation.dart';
@@ -62,10 +61,14 @@ class _HomeScreenView extends StatelessWidget {
               child: Text('Total', style: textTheme.bodyLarge),
             ),
             const SizedBox(height: 10),
-            Padding(
-              padding: padding,
-              child: Text('\$450.67', style: textTheme.headlineLarge),
-            ),
+            Consumer(builder: (_, ref, ___) {
+              final total = ref.watch(moneyAccountsTotalProvider);
+
+              return Padding(
+                padding: padding,
+                child: Text(total, style: textTheme.headlineLarge),
+              );
+            }),
             const SizedBox(height: 20),
             const AccountCardsViewer(),
             const SizedBox(height: 14),
@@ -119,9 +122,6 @@ class LastTransactionsCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final textTheme = Theme.of(context).textTheme;
     final theme = Theme.of(context).colorScheme;
-    final themeMode = ref.watch(themeModeProvider);
-
-    print(theme.secondary);
 
     return Card(
       // surfaceTintColor: themeMode == ThemeMode.dark
@@ -200,16 +200,22 @@ class AccountCardsViewer extends ConsumerWidget {
     return moneyAccounts.when(
       data: (accounts) {
         return SizedBox(
-          height: 180,
+          height: 190,
           child: PageView.builder(
             controller: controller,
             itemCount: accounts.length,
             itemBuilder: (context, index) {
-              return MoneyAccountCard(
-                account: accounts[index],
-                onTap: () {
-                  // TODO: goto page with transactions detail
+              final account = accounts[index];
+              return Hero(
+                tag: account.id,
+                flightShuttleBuilder: (_, __, ___, ____, toHeroContext) {
+                  // this fix overflow
+                  return SingleChildScrollView(child: toHeroContext.widget);
                 },
+                child: MoneyAccountCard(
+                  account: account,
+                  onTap: () => context.push('/money-accounts/${account.id}'),
+                ),
               );
             },
           ),
