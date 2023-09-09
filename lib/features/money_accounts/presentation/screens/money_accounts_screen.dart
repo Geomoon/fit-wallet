@@ -2,9 +2,11 @@ import 'package:fit_wallet/features/money_accounts/domain/entities/entities.dart
 import 'package:fit_wallet/features/money_accounts/presentation/providers/money_accounts_repository_provider.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/widgets/widgets.dart';
+import 'package:fit_wallet/features/shared/infrastructure/infrastructure.dart';
 import 'package:fit_wallet/features/shared/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/shared/presentation/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class MoneyAccountsScreen extends StatelessWidget {
@@ -32,6 +34,122 @@ class MoneyAccountsScreen extends StatelessWidget {
         ],
       ),
       body: const _MoneyAccountsScreenView(),
+      floatingActionButton: const FABMoneyAccount(),
+    );
+  }
+}
+
+class FABMoneyAccount extends StatelessWidget {
+  const FABMoneyAccount({super.key});
+
+  void _showFormDialog(BuildContext context) async {
+    await showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (context) {
+          return BottomSheet(
+            onClosing: () {},
+            showDragHandle: false,
+            enableDrag: false,
+            builder: (context) {
+              return MoneyAccountForm();
+            },
+          );
+        });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton.extended(
+      onPressed: () => _showFormDialog(context),
+      label: const Text('Add'),
+      icon: const Icon(Icons.account_balance_rounded),
+    );
+  }
+}
+
+class MoneyAccountForm extends StatelessWidget {
+  const MoneyAccountForm({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).primaryTextTheme;
+    final size = MediaQuery.of(context).viewInsets.bottom;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(
+            top: 10,
+            bottom: 10,
+            left: 10,
+            right: 20,
+          ),
+          child: Row(
+            children: [
+              CloseButton(),
+              const SizedBox(width: 10),
+              Text(
+                'New Account',
+                style: textTheme.headlineSmall
+                    ?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              Spacer(),
+              FilledButton(onPressed: () {}, child: const Text('Save')),
+            ],
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(
+            top: 10,
+            bottom: 40 + size,
+            left: 20,
+            right: 20,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFormField(
+                decoration: const InputDecoration(
+                  labelText: 'Account Name',
+                  icon: Icon(Icons.account_balance_rounded),
+                ),
+                textInputAction: TextInputAction.next,
+              ),
+              const SizedBox(height: 20),
+              const Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 30),
+                  Text('Ammount'),
+                ],
+              ),
+              TextFormField(
+                keyboardType: TextInputType.number,
+                textAlign: TextAlign.end,
+                inputFormatters: [
+                  FilteringTextInputFormatter.deny('-'),
+                  FilteringTextInputFormatter.deny(' '),
+                  FilteringTextInputFormatter.deny('..',
+                      replacementString: '.'),
+                  CurrencyNumberFormatter(),
+                ],
+                style:
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                decoration: const InputDecoration(
+                  border: UnderlineInputBorder(),
+                  hintText: '0.00',
+                  prefixIcon: Icon(Icons.attach_money_rounded),
+                  // errorText: service.value.errorMessage,
+                ),
+                textInputAction: TextInputAction.done,
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

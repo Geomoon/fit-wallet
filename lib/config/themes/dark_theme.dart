@@ -98,6 +98,13 @@ class DarkTheme {
                 MaterialStateColor.resolveWith((states) => _secondaryFg),
           ),
         ),
+        filledButtonTheme: FilledButtonThemeData(
+          style: ButtonStyle(
+            textStyle: MaterialStateProperty.resolveWith(
+              (states) => const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
       );
 
   static ButtonStyle primaryFilterStyle = ButtonStyle(

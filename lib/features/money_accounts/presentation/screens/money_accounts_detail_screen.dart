@@ -2,6 +2,7 @@ import 'package:fit_wallet/config/themes/dark_theme.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/widgets/widgets.dart';
 import 'package:fit_wallet/features/shared/domain/domain.dart';
+import 'package:fit_wallet/features/shared/presentation/providers/date_filter_provider.dart';
 import 'package:fit_wallet/features/shared/presentation/providers/transaction_type_filter_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -56,24 +57,16 @@ class _DetailView extends StatelessWidget {
             },
           ),
         ),
-        SliverToBoxAdapter(
+        const SliverToBoxAdapter(
           child: Row(
             children: [
-              const SizedBox(width: 20),
-              const FilterButton(
-                text: 'By date',
-                icon: Icons.arrow_downward_rounded,
-                isPrimary: true,
-              ),
-              const SizedBox(width: 10),
-              // const FilterButton(
-              //     text: 'By type', icon: Icons.merge_type_rounded),
-              const TransactionTypeFilterButton(),
-              const Spacer(),
-              IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.filter_alt_off_rounded)),
-              const SizedBox(width: 20),
+              SizedBox(width: 20),
+              FilterButton(),
+              SizedBox(width: 10),
+              TransactionTypeFilterButton(),
+              Spacer(),
+              ClearFiltersButton(),
+              SizedBox(width: 20),
             ],
           ),
         )
@@ -82,31 +75,223 @@ class _DetailView extends StatelessWidget {
   }
 }
 
-class FilterButton extends StatelessWidget {
-  const FilterButton({
-    super.key,
-    required this.text,
-    required this.icon,
-    this.isPrimary = false,
-  });
-
-  final String text;
-  final IconData icon;
-  final bool isPrimary;
+class ClearFiltersButton extends ConsumerWidget {
+  const ClearFiltersButton({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final style = (isPrimary) ? DarkTheme.primaryFilterStyle : null;
+  Widget build(BuildContext context, WidgetRef ref) {
+    return IconButton(
+      onPressed: () {
+        ref
+            .read(transactionTypeFilterProvider.notifier)
+            .update((state) => TransactionTypeFilter.all);
+        ref
+            .read(dateFilterProvider.notifier)
+            .update((state) => DateFilter.empty);
+      },
+      icon: const Icon(Icons.filter_alt_off_rounded),
+    );
+  }
+}
+
+class FilterButton extends ConsumerWidget {
+  const FilterButton({
+    super.key,
+  });
+
+  void _showDialogFilter(BuildContext context) async {
+    await showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return BottomSheet(
+          onClosing: () {},
+          showDragHandle: false,
+          enableDrag: false,
+          builder: (context) {
+            return DatePickerBottomDialog(onPickDate: () {
+              context.pop();
+              _showDatePickerDialog(context);
+            });
+          },
+        );
+      },
+    );
+  }
+
+  void _showDatePickerDialog(BuildContext context) async {
+    await showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return const CalendarPickerBottomDialog();
+      },
+    );
+  }
+
+  String title(DateFilter type) {
+    switch (type) {
+      case DateFilter.empty:
+        return 'By date';
+      case DateFilter.today:
+        return 'Today';
+      case DateFilter.week:
+        return 'This week';
+      case DateFilter.month:
+        return 'This month';
+      case DateFilter.date:
+        return 'Select a date';
+      default:
+        return 'By date';
+    }
+  }
+
+  IconData icon(DateFilter type) {
+    switch (type) {
+      case DateFilter.empty:
+        return Icons.calendar_view_day_rounded;
+      case DateFilter.today:
+        return Icons.calendar_today_rounded;
+      case DateFilter.week:
+        return Icons.calendar_view_week_rounded;
+      case DateFilter.month:
+        return Icons.calendar_month_rounded;
+      default:
+        return Icons.calendar_view_day_rounded;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final style = DarkTheme.primaryFilterStyle;
+
+    final filter = ref.watch(dateFilterProvider);
 
     return ElevatedButton(
       style: style,
-      onPressed: () {},
+      onPressed: () => _showDialogFilter(context),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(text),
-          const SizedBox(width: 10),
-          Icon(icon, size: 18),
+          Text(title(filter)),
+          if (filter != DateFilter.date) const SizedBox(width: 10),
+          if (filter != DateFilter.date) Icon(icon(filter), size: 18),
+        ],
+      ),
+    );
+  }
+}
+
+class DatePickerBottomDialog extends ConsumerWidget {
+  const DatePickerBottomDialog({
+    super.key,
+    required this.onPickDate,
+  });
+
+  final void Function() onPickDate;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final textTheme = Theme.of(context).primaryTextTheme;
+
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 20.0,
+        bottom: 20,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              children: [
+                Text(
+                  'By date',
+                  style: textTheme.titleLarge,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          ListTile(
+            leading: const Icon(Icons.calendar_today_rounded),
+            title: const Text('Today'),
+            onTap: () {
+              ref
+                  .read(dateFilterProvider.notifier)
+                  .update((state) => DateFilter.today);
+              context.pop();
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.calendar_view_week_rounded),
+            title: const Text('This week'),
+            onTap: () {
+              ref
+                  .read(dateFilterProvider.notifier)
+                  .update((state) => DateFilter.week);
+              context.pop();
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.calendar_month_rounded),
+            title: const Text('This month'),
+            onTap: () {
+              ref
+                  .read(dateFilterProvider.notifier)
+                  .update((state) => DateFilter.month);
+              context.pop();
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.calendar_view_day_rounded),
+            title: const Text('Pick date'),
+            onTap: () {
+              ref
+                  .read(dateFilterProvider.notifier)
+                  .update((state) => DateFilter.date);
+              onPickDate();
+            },
+            trailing: const Icon(Icons.arrow_forward_rounded),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class CalendarPickerBottomDialog extends StatelessWidget {
+  const CalendarPickerBottomDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).primaryTextTheme;
+
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 20.0,
+        bottom: 20,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              children: [
+                Text(
+                  'By date',
+                  style: textTheme.titleLarge,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          CalendarDatePicker(
+            onDateChanged: (d) {},
+            initialDate: DateTime.now(),
+            firstDate: DateTime(2000),
+            lastDate: DateTime.now(),
+          ),
         ],
       ),
     );
@@ -197,7 +382,7 @@ class TransactionTypeDialog extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 30.0),
             child: Row(
               children: [
                 Text(
@@ -207,6 +392,7 @@ class TransactionTypeDialog extends ConsumerWidget {
               ],
             ),
           ),
+          const SizedBox(height: 10),
           ListTile(
             leading: const Icon(Icons.merge_rounded),
             title: const Text('All'),
