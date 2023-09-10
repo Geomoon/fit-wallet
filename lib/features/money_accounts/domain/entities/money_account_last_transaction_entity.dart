@@ -37,7 +37,7 @@ class MoneyAccountLastTransactionEntity {
   String get amountTxt => Utils.currencyFormat(amount);
 
   String get shortNameTxt =>
-      name.split(' ').map((e) => e[0].toUpperCase()).join();
+      name.trim().split(' ').map((e) => e[0].toUpperCase()).join();
 
   String get lastTransactionTxt {
     if (lastTransaction == null) return 'No transactions';

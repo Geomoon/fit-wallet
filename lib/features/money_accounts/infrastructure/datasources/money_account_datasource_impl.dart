@@ -12,14 +12,12 @@ class MoneyAccountDatasourceImpl implements MoneyAccountDatasource {
 
   @override
   Future<bool> create(CreateMoneyAccountEntity entity) async {
-    Response response;
-
-    // try {
-    //   response = await _dio.post('/money-accounts');
-    //   return
-    // } catch (e) {
-
-    // }
+    try {
+      await _dio.post('/money-accounts', data: entity);
+    } catch (e) {
+      log('error api', error: e);
+      return false;
+    }
     return true;
   }
 
@@ -63,8 +61,13 @@ class MoneyAccountDatasourceImpl implements MoneyAccountDatasource {
   }
 
   @override
-  Future<bool> update(String id, CreateMoneyAccountEntity entity) {
-    // TODO: implement update
-    throw UnimplementedError();
+  Future<bool> update(String id, CreateMoneyAccountEntity entity) async {
+    try {
+      await _dio.patch('/money-accounts/$id', data: entity);
+      return true;
+    } catch (e) {
+      log('error api', error: e);
+      return false;
+    }
   }
 }

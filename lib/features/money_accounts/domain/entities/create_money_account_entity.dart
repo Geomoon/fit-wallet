@@ -9,6 +9,6 @@ class CreateMoneyAccountEntity {
 
   Map<String, dynamic> toJson() => {
         'name': name,
-        'value': value,
+        'amount': value,
       };
 }

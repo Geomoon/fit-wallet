@@ -2,11 +2,9 @@ import 'package:fit_wallet/features/money_accounts/domain/entities/entities.dart
 import 'package:fit_wallet/features/money_accounts/presentation/providers/money_accounts_repository_provider.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/widgets/widgets.dart';
-import 'package:fit_wallet/features/shared/infrastructure/infrastructure.dart';
 import 'package:fit_wallet/features/shared/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/shared/presentation/widgets/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class MoneyAccountsScreen extends StatelessWidget {
@@ -44,18 +42,19 @@ class FABMoneyAccount extends StatelessWidget {
 
   void _showFormDialog(BuildContext context) async {
     await showModalBottomSheet(
-        isScrollControlled: true,
-        context: context,
-        builder: (context) {
-          return BottomSheet(
-            onClosing: () {},
-            showDragHandle: false,
-            enableDrag: false,
-            builder: (context) {
-              return MoneyAccountForm();
-            },
-          );
-        });
+      isScrollControlled: true,
+      context: context,
+      builder: (context) {
+        return BottomSheet(
+          onClosing: () {},
+          showDragHandle: false,
+          enableDrag: false,
+          builder: (context) {
+            return const MoneyAccountForm();
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -64,92 +63,6 @@ class FABMoneyAccount extends StatelessWidget {
       onPressed: () => _showFormDialog(context),
       label: const Text('Add'),
       icon: const Icon(Icons.account_balance_rounded),
-    );
-  }
-}
-
-class MoneyAccountForm extends StatelessWidget {
-  const MoneyAccountForm({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).primaryTextTheme;
-    final size = MediaQuery.of(context).viewInsets.bottom;
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(
-            top: 10,
-            bottom: 10,
-            left: 10,
-            right: 20,
-          ),
-          child: Row(
-            children: [
-              CloseButton(),
-              const SizedBox(width: 10),
-              Text(
-                'New Account',
-                style: textTheme.headlineSmall
-                    ?.copyWith(fontWeight: FontWeight.bold),
-              ),
-              Spacer(),
-              FilledButton(onPressed: () {}, child: const Text('Save')),
-            ],
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(
-            top: 10,
-            bottom: 40 + size,
-            left: 20,
-            right: 20,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Account Name',
-                  icon: Icon(Icons.account_balance_rounded),
-                ),
-                textInputAction: TextInputAction.next,
-              ),
-              const SizedBox(height: 20),
-              const Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 30),
-                  Text('Ammount'),
-                ],
-              ),
-              TextFormField(
-                keyboardType: TextInputType.number,
-                textAlign: TextAlign.end,
-                inputFormatters: [
-                  FilteringTextInputFormatter.deny('-'),
-                  FilteringTextInputFormatter.deny(' '),
-                  FilteringTextInputFormatter.deny('..',
-                      replacementString: '.'),
-                  CurrencyNumberFormatter(),
-                ],
-                style:
-                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                decoration: const InputDecoration(
-                  border: UnderlineInputBorder(),
-                  hintText: '0.00',
-                  prefixIcon: Icon(Icons.attach_money_rounded),
-                  // errorText: service.value.errorMessage,
-                ),
-                textInputAction: TextInputAction.done,
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 }
@@ -168,6 +81,7 @@ class _MoneyAccountsScreenView extends ConsumerWidget {
     final isEditMode = ref.watch(isEditModeProvider);
 
     return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
       child: Padding(
         padding: const EdgeInsets.only(
           top: 10.0,
@@ -182,6 +96,7 @@ class _MoneyAccountsScreenView extends ConsumerWidget {
           ),
           data: (data) => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Padding(
                 padding: padding,
@@ -197,6 +112,7 @@ class _MoneyAccountsScreenView extends ConsumerWidget {
                 accounts: data,
                 isEditMode: isEditMode,
               ),
+              const SizedBox(height: 60),
             ],
           ),
         ),
@@ -229,10 +145,21 @@ class MoneyAccountsList extends StatelessWidget {
           ),
         ),
         if (isEditMode)
-          Consumer(
-            builder: (context, ref, child) => DeletedCardBackground(
-              onDelete: () => _onDeleteAccount(context, ref, account.id),
-            ),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Consumer(
+                builder: (context, ref, child) => EditCardBackground(
+                  onDelete: () => _showFormDialog(context, account.id),
+                ),
+              ),
+              Consumer(
+                builder: (context, ref, child) => DeletedCardBackground(
+                  onDelete: () => _onDeleteAccount(context, ref, account.id),
+                ),
+              ),
+            ],
           ),
       ],
     );
@@ -263,11 +190,29 @@ class MoneyAccountsList extends StatelessWidget {
     return false;
   }
 
+  void _showFormDialog(BuildContext context, String id) async {
+    await showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (context) {
+        return BottomSheet(
+          onClosing: () {},
+          showDragHandle: false,
+          enableDrag: false,
+          builder: (context) {
+            return MoneyAccountForm(id: id);
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       shrinkWrap: true,
       itemCount: accounts.length,
+      physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) => _buildCard(context, accounts[index]),
     );
   }
@@ -288,11 +233,38 @@ class DeletedCardBackground extends StatelessWidget {
         borderRadius: BorderRadius.circular(10.0),
         onTap: onDelete,
         child: SizedBox(
-          height: 140,
+          height: 40,
           width: 40,
           child: Icon(
             Icons.backspace_rounded,
             color: theme.onError,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class EditCardBackground extends StatelessWidget {
+  const EditCardBackground({super.key, required this.onDelete});
+
+  final Function() onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context).colorScheme;
+    return Card(
+      color: theme.surface,
+      margin: const EdgeInsets.only(top: 8, bottom: 8, right: 8),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(10.0),
+        onTap: onDelete,
+        child: SizedBox(
+          height: 120,
+          width: 40,
+          child: Icon(
+            Icons.drive_file_rename_outline_rounded,
+            color: theme.onSurface,
           ),
         ),
       ),
