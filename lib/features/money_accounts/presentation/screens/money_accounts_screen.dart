@@ -7,35 +7,35 @@ import 'package:fit_wallet/features/shared/presentation/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class MoneyAccountsScreen extends StatelessWidget {
-  const MoneyAccountsScreen({super.key});
+// class MoneyAccountsScreen extends StatelessWidget {
+//   const MoneyAccountsScreen({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Money Accounts',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        actions: [
-          Consumer(
-            builder: (context, ref, child) {
-              return IconButton(
-                onPressed: () => ref
-                    .read(isEditModeProvider.notifier)
-                    .update((state) => !state),
-                icon: const Icon(Icons.edit_rounded),
-              );
-            },
-          ),
-        ],
-      ),
-      body: const _MoneyAccountsScreenView(),
-      floatingActionButton: const FABMoneyAccount(),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text(
+//           'Money Accounts',
+//           style: TextStyle(fontWeight: FontWeight.bold),
+//         ),
+//         actions: [
+//           Consumer(
+//             builder: (context, ref, child) {
+//               return IconButton(
+//                 onPressed: () => ref
+//                     .read(isEditModeProvider.notifier)
+//                     .update((state) => !state),
+//                 icon: const Icon(Icons.edit_rounded),
+//               );
+//             },
+//           ),
+//         ],
+//       ),
+//       body: const _MoneyAccountsScreenView(),
+//       floatingActionButton: const FABMoneyAccount(),
+//     );
+//   }
+// }
 
 class FABMoneyAccount extends StatelessWidget {
   const FABMoneyAccount({super.key});
@@ -67,14 +67,14 @@ class FABMoneyAccount extends StatelessWidget {
   }
 }
 
-class _MoneyAccountsScreenView extends ConsumerWidget {
-  const _MoneyAccountsScreenView();
+class MoneyAccountsScreen extends ConsumerWidget {
+  const MoneyAccountsScreen({Key? key}) : super(key: key);
 
   final padding = const EdgeInsets.symmetric(horizontal: 20.0);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final textTheme = Theme.of(context).textTheme;
+    final textTheme = Theme.of(context).primaryTextTheme;
 
     final moneyAccounts = ref.watch(moneyAccountsProvider);
     final total = ref.watch(moneyAccountsTotalProvider);
@@ -100,7 +100,7 @@ class _MoneyAccountsScreenView extends ConsumerWidget {
             children: [
               Padding(
                 padding: padding,
-                child: Text('Total', style: textTheme.bodyLarge),
+                child: Text('TOTAL', style: textTheme.bodyLarge),
               ),
               const SizedBox(height: 10),
               Padding(

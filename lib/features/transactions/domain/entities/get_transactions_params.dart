@@ -18,13 +18,18 @@ class GetTransactionsParams extends PaginationParams {
   final TransactionTypeFilter type;
 
   @override
-  Map<String, dynamic> toJson() => {
-        'date': date,
-        'startDate': startDate,
-        'endDate': endDate,
-        'maccId': maccId,
-        'type': type,
-        'page': page,
-        'limit': limit,
-      };
+  Map<String, dynamic> toJson() {
+    final map = {
+      'date': date,
+      'startDate': startDate,
+      'endDate': endDate,
+      'maccId': maccId,
+      'type': type.name.toUpperCase(),
+      'page': page,
+      'limit': limit,
+    };
+    final list = map.entries.where((element) => element.value != null);
+
+    return Map.fromEntries(list);
+  }
 }

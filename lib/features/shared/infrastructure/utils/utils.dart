@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:fit_wallet/features/categories/infrastructure/infrastructure.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class Utils {
@@ -60,4 +62,23 @@ class Utils {
   }
 
   static String formatDateHHMM(DateTime date) => dateFormatHHMM.format(date);
+
+  static IconData iconFromCategory(String name) {
+    return categoryIcons[name.toLowerCase()] ?? Icons.attach_money_rounded;
+  }
+
+  static String capitalText(String text) {
+    List<String> words = text.split(' ');
+    List<String> capitalizedWords = [];
+
+    for (String word in words) {
+      if (word.isNotEmpty) {
+        String capitalizedWord =
+            word[0].toUpperCase() + word.substring(1).toLowerCase();
+        capitalizedWords.add(capitalizedWord);
+      }
+    }
+
+    return capitalizedWords.join(' ');
+  }
 }

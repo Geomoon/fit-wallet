@@ -1,39 +1,182 @@
+import 'package:fit_wallet/config/themes/colorschemes/color_schemes.g.dart';
+import 'package:fit_wallet/config/themes/dark_theme.dart';
+import 'package:fit_wallet/features/home/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/providers/providers.dart';
+import 'package:fit_wallet/features/money_accounts/presentation/screens/money_accounts_screen.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/widgets/widgets.dart';
+import 'package:fit_wallet/features/shared/infrastructure/infrastructure.dart';
 import 'package:fit_wallet/features/shared/presentation/presentation.dart';
+import 'package:fit_wallet/features/transactions/domain/domain.dart';
+import 'package:fit_wallet/features/transactions/presentation/providers/providers.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+class ScreenTitle extends ConsumerWidget {
+  const ScreenTitle({super.key});
+
+  final TextStyle _textStyle = const TextStyle(fontWeight: FontWeight.bold);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final title = ref.watch(screenTitleProvider);
+    return Text(title, style: _textStyle);
+  }
+}
+
+class MonayAccountsAppBarActions extends StatelessWidget {
+  const MonayAccountsAppBarActions({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer(
+      builder: (context, ref, child) {
+        return IconButton(
+          onPressed: () =>
+              ref.read(isEditModeProvider.notifier).update((state) => !state),
+          icon: const Icon(Icons.edit_rounded),
+        );
+      },
+    );
+  }
+}
+
+class HomeScreenAppBarActions extends StatelessWidget {
+  const HomeScreenAppBarActions({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        SizedBox(
+          height: 36,
+          width: 36,
+          child: IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.settings_rounded),
+          ),
+        ),
+        const SizedBox(width: 10),
+      ],
+    );
+  }
+}
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
+
+  final List<Widget> _screens = const [
+    _HomeScreenView(),
+    MoneyAccountsScreen(),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Wallet',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+        title: const ScreenTitle(),
         actions: [
-          SizedBox(
-            height: 36,
-            width: 36,
-            child: IconButton.filledTonal(
-              onPressed: () {},
-              icon: const Icon(Icons.settings_rounded),
-            ),
-          ),
-          const SizedBox(width: 10),
+          HomeScreenAppBarActions(),
         ],
       ),
-      body: const _HomeScreenView(),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
-        label: const Text('Add'),
-        icon: const Icon(Icons.add_rounded),
+      body: _HomeView(screens: _screens),
+      bottomNavigationBar: const BottomAppBar(
+        child: Row(
+          children: [
+            SizedBox(width: 20),
+            NavigationButton(
+              index: 0,
+              icon: Icons.vertical_split_outlined,
+              activeIcon: Icons.vertical_split_rounded,
+            ),
+            SizedBox(width: 20),
+            NavigationButton(
+              index: 1,
+              icon: Icons.account_balance_outlined,
+              activeIcon: Icons.account_balance_rounded,
+            ),
+          ],
+        ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          context.push('/transactions/form');
+        },
+        child: const Icon(Icons.add_rounded),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
+    );
+  }
+}
+
+class AccountsAppBar extends StatelessWidget {
+  const AccountsAppBar({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      title: const Text(
+        'Money Accounts',
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      actions: [
+        Consumer(
+          builder: (context, ref, child) {
+            return IconButton(
+              onPressed: () => ref
+                  .read(isEditModeProvider.notifier)
+                  .update((state) => !state),
+              icon: const Icon(Icons.edit_rounded),
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class _HomeView extends ConsumerWidget {
+  const _HomeView({required this.screens});
+
+  final List<Widget> screens;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final actualIndex = ref.watch(homeNavigationProvider);
+    return IndexedStack(
+      index: actualIndex,
+      children: screens,
+    );
+  }
+}
+
+class NavigationButton extends ConsumerWidget {
+  const NavigationButton({
+    super.key,
+    required this.icon,
+    required this.activeIcon,
+    required this.index,
+  });
+
+  final IconData icon;
+  final IconData activeIcon;
+  final int index;
+
+  void _onTap(WidgetRef ref) {
+    ref.read(homeNavigationProvider.notifier).update((state) => index);
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final actualIndex = ref.watch(homeNavigationProvider);
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 500),
+      child: (index == actualIndex)
+          ? IconButton.filled(
+              onPressed: () => _onTap(ref), icon: Icon(activeIcon))
+          : IconButton(onPressed: () => _onTap(ref), icon: Icon(icon)),
     );
   }
 }
@@ -45,7 +188,7 @@ class _HomeScreenView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+    final textTheme = Theme.of(context).primaryTextTheme;
 
     return SingleChildScrollView(
       child: Padding(
@@ -58,7 +201,7 @@ class _HomeScreenView extends StatelessWidget {
           children: [
             Padding(
               padding: padding,
-              child: Text('Total', style: textTheme.bodyLarge),
+              child: Text('TOTAL', style: textTheme.bodyLarge),
             ),
             const SizedBox(height: 10),
             Consumer(builder: (_, ref, ___) {
@@ -72,33 +215,39 @@ class _HomeScreenView extends StatelessWidget {
             const SizedBox(height: 20),
             const AccountCardsViewer(),
             const SizedBox(height: 14),
+            // Padding(
+            //   padding: padding,
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.center,
+            //     children: [
+            //       ElevatedButton(
+            //         onPressed: () => context.push('/money-accounts'),
+            //         child: const Icon(Icons.account_balance_rounded),
+            //       ),
+            //       const SizedBox(width: 20),
+            //       ElevatedButton(
+            //         onPressed: () {},
+            //         child: const Icon(Icons.dashboard_rounded),
+            //       ),
+            //       const SizedBox(width: 20),
+            //       ElevatedButton(
+            //         onPressed: () {},
+            //         child: const Icon(Icons.pie_chart_rounded),
+            //       ),
+            //       const SizedBox(width: 20),
+            //       ElevatedButton(
+            //         onPressed: () {},
+            //         child: const Icon(Icons.settings_rounded),
+            //       ),
+            //     ],
+            //   ),
+            // ),
             Padding(
-              padding: padding,
-              child: Row(
-                children: [
-                  ElevatedButton(
-                    onPressed: () => context.push('/money-accounts'),
-                    child: const Icon(Icons.account_balance_rounded),
-                  ),
-                  const SizedBox(width: 20),
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: const Icon(Icons.dashboard_rounded),
-                  ),
-                  const SizedBox(width: 20),
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: const Icon(Icons.pie_chart_rounded),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: padding,
+              padding: const EdgeInsets.only(left: 20, right: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('Last transactions'),
+                  Text('LAST TRANSACTIONS', style: textTheme.bodyLarge),
                   IconButton(
                     onPressed: () {},
                     icon: const Icon(Icons.arrow_forward_rounded),
@@ -120,32 +269,27 @@ class LastTransactionsCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final textTheme = Theme.of(context).textTheme;
-    final theme = Theme.of(context).colorScheme;
+    final list = ref.watch(getTransactionsProvider);
 
-    return Card(
-      // surfaceTintColor: themeMode == ThemeMode.dark
-      //     ? DarkTheme.primaryBg
-      //     : Colors.white, // TODO: light mode
-      // color: themeMode == ThemeMode.dark ? DarkTheme.secondaryBg : Colors.white,
-      margin: const EdgeInsets.symmetric(
-        horizontal: 0.0,
-        vertical: 4.0,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10.0),
-        child: ListView.separated(
-          itemCount: 8,
+    return list.when(
+      data: (data) {
+        return ListView.separated(
+          itemCount: data.total,
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           itemBuilder: (context, index) {
-            return TransactionListTile(theme: theme, textTheme: textTheme);
+            return TransactionListTile(transaction: data.items[index]);
           },
           separatorBuilder: (context, index) {
-            return const Divider(indent: 68, height: 1);
+            // return const Divider(indent: 68, height: 1);
+            return Container();
           },
-        ),
-      ),
+        );
+      },
+      error: (_, __) => Container(),
+      loading: () {
+        return const Center(child: CircularProgressIndicator());
+      },
     );
   }
 }
@@ -153,15 +297,82 @@ class LastTransactionsCard extends ConsumerWidget {
 class TransactionListTile extends StatelessWidget {
   const TransactionListTile({
     super.key,
-    required this.theme,
-    required this.textTheme,
+    required this.transaction,
   });
 
-  final ColorScheme theme;
-  final TextTheme textTheme;
+  final TransactionEntity transaction;
+
+  Color get color {
+    switch (transaction.type) {
+      case 'TRANSFER':
+        return darkColorScheme.primary;
+      case 'EXPENSE':
+        return DarkTheme.expense;
+      case 'INCOME':
+        return DarkTheme.income;
+
+      default:
+        return DarkTheme.expense;
+    }
+  }
+
+  Color get iconColor {
+    switch (transaction.type) {
+      case 'TRANSFER':
+        return DarkTheme.primaryFg;
+      case 'EXPENSE':
+        return DarkTheme.red;
+      case 'INCOME':
+        return DarkTheme.green;
+
+      default:
+        return DarkTheme.primaryFg;
+    }
+  }
+
+  Color get iconColorCategory {
+    switch (transaction.type) {
+      case 'TRANSFER':
+        return darkColorScheme.onPrimary;
+
+      default:
+        return DarkTheme.primaryFg;
+    }
+  }
+
+  Icon get icon {
+    switch (transaction.type) {
+      case 'TRANSFER':
+        return Icon(
+          CupertinoIcons.arrow_right_arrow_left,
+          size: 18,
+          color: iconColor,
+        );
+      case 'EXPENSE':
+        return Icon(
+          Icons.arrow_downward_rounded,
+          size: 18,
+          color: iconColor,
+        );
+      case 'INCOME':
+        return Icon(
+          Icons.arrow_upward_rounded,
+          size: 18,
+          color: iconColor,
+        );
+      default:
+        return Icon(
+          Icons.arrow_upward_rounded,
+          size: 18,
+          color: iconColor,
+        );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).primaryTextTheme;
+
     return ListTile(
       // visualDensity: VisualDensity.comfortable,
       onTap: () {},
@@ -169,18 +380,27 @@ class TransactionListTile extends StatelessWidget {
         height: 44,
         width: 44,
         decoration: BoxDecoration(
-          color: theme.background,
+          color: color,
           borderRadius: BorderRadius.circular(8),
         ),
-        child: const Center(
-          child: Icon(Icons.local_gas_station_rounded),
+        child: Center(
+          child: Icon(
+            Utils.iconFromCategory(transaction.category.name),
+            color: iconColorCategory,
+          ),
         ),
       ),
-      title: const Text('Car gasoline'),
-      subtitle: Text('Yesterday', style: textTheme.bodyLarge),
-      trailing: const Text(
-        '- \$45.00',
-        style: TextStyle(
+      title: Row(
+        children: [
+          Text(transaction.category.nameTxt),
+          const SizedBox(width: 10),
+          icon,
+        ],
+      ),
+      subtitle: Text(transaction.dateTxt, style: textTheme.bodyLarge),
+      trailing: Text(
+        transaction.amountTxt,
+        style: const TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 14,
         ),
@@ -189,20 +409,57 @@ class TransactionListTile extends StatelessWidget {
   }
 }
 
+// class AccountCardsViewer extends ConsumerWidget {
+//   const AccountCardsViewer({super.key});
+
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref) {
+//     final controller = PageController(viewportFraction: .9);
+//     final moneyAccounts = ref.watch(moneyAccountsProvider);
+
+//     return moneyAccounts.when(
+//       data: (accounts) {
+//         return SizedBox(
+//           height: 192,
+//           child: PageView.builder(
+//             controller: controller,
+//             itemCount: accounts.length,
+//             itemBuilder: (context, index) {
+//               final account = accounts[index];
+//               return Hero(
+//                 tag: account.id,
+//                 flightShuttleBuilder: (_, __, ___, ____, toHeroContext) {
+//                   // this fix overflow
+//                   return SingleChildScrollView(child: toHeroContext.widget);
+//                 },
+//                 child: MoneyAccountCard(
+//                   account: account,
+//                   onTap: () => context.push('/money-accounts/${account.id}'),
+//                 ),
+//               );
+//             },
+//           ),
+//         );
+//       },
+//       error: (_, __) => Container(),
+//       loading: () => Container(),
+//     );
+//   }
+// }
+
 class AccountCardsViewer extends ConsumerWidget {
   const AccountCardsViewer({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final controller = PageController(viewportFraction: .9);
     final moneyAccounts = ref.watch(moneyAccountsProvider);
 
     return moneyAccounts.when(
       data: (accounts) {
         return SizedBox(
-          height: 190,
-          child: PageView.builder(
-            controller: controller,
+          height: 240,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
             itemCount: accounts.length,
             itemBuilder: (context, index) {
               final account = accounts[index];
@@ -212,9 +469,12 @@ class AccountCardsViewer extends ConsumerWidget {
                   // this fix overflow
                   return SingleChildScrollView(child: toHeroContext.widget);
                 },
-                child: MoneyAccountCard(
-                  account: account,
-                  onTap: () => context.push('/money-accounts/${account.id}'),
+                child: SizedBox(
+                  width: 260,
+                  child: MoneyAccountCard(
+                    account: account,
+                    onTap: () => context.push('/money-accounts/${account.id}'),
+                  ),
                 ),
               );
             },

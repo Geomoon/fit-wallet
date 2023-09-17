@@ -6,6 +6,7 @@ class MoneyAccountLastTransactionEntity {
   String name;
   double amount;
   String userId;
+  int order;
   DateTime createdAt;
   DateTime? updatedAt;
   LastTransaction? lastTransaction;
@@ -16,6 +17,7 @@ class MoneyAccountLastTransactionEntity {
     required this.amount,
     required this.userId,
     required this.createdAt,
+    required this.order,
     this.updatedAt,
     this.lastTransaction,
   });
@@ -29,6 +31,7 @@ class MoneyAccountLastTransactionEntity {
         amount: json['amount']?.toDouble(),
         userId: json['userId'],
         createdAt: DateTime.parse(json['createdAt']),
+        order: json['order'],
         lastTransaction: json['lastTransaction'] == null
             ? null
             : LastTransaction.fromJson(json['lastTransaction']),

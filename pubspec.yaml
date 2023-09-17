@@ -21,6 +21,7 @@ dependencies:
   localstorage: ^4.0.1+4
   formz: ^0.6.0
   intl: ^0.18.1
+  font_awesome_flutter: ^10.5.0
 
 dev_dependencies:
   flutter_test:

@@ -4,6 +4,7 @@ import 'package:fit_wallet/features/auth/presentation/presentation.dart';
 import 'package:fit_wallet/features/auth/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/home/presentation/presentation.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/presentation.dart';
+import 'package:fit_wallet/features/transactions/presentation/presentation.dart';
 import 'package:fit_wallet/features/welcome/presentation/presentation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -34,7 +35,11 @@ final routerProvider = Provider((ref) {
 
           return MoneyAccountsDetailScreen(maccId: maccId!);
         },
-      )
+      ),
+      GoRoute(
+        path: '/transactions/form',
+        builder: (context, state) => const TransactionFormScreen(),
+      ),
     ],
   );
 });

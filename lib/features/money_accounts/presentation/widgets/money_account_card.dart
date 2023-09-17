@@ -7,7 +7,7 @@ class MoneyAccountCard extends StatelessWidget {
     super.key,
     required this.account,
     this.onTap,
-    this.margin = const EdgeInsets.only(right: 16),
+    this.margin = const EdgeInsets.only(right: 8, left: 8),
   });
 
   final EdgeInsets margin;
@@ -17,11 +17,12 @@ class MoneyAccountCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+    final textTheme = Theme.of(context).primaryTextTheme;
     final theme = Theme.of(context).colorScheme;
 
     return Card(
       margin: margin,
+      color: (account.order == 1) ? theme.primary : null,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12.0),
@@ -39,14 +40,18 @@ class MoneyAccountCard extends StatelessWidget {
                     height: 36,
                     width: 36,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: (account.order == 1)
+                          ? theme.onPrimary
+                          : theme.primary,
                       borderRadius: BorderRadius.circular(6.0),
                     ),
                     child: Center(
                         child: Text(
                       account.shortNameTxt,
                       style: TextStyle(
-                        color: theme.onPrimary,
+                        color: (account.order == 1)
+                            ? theme.background
+                            : theme.onPrimary,
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
@@ -55,7 +60,13 @@ class MoneyAccountCard extends StatelessWidget {
                 ],
               ),
             ),
-            DashedLine(color: theme.onPrimaryContainer),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: DashedLine(
+                color: (account.order == 1) ? theme.onPrimary : theme.outline,
+                height: 2,
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.all(20.0),
               child: Column(
@@ -63,11 +74,16 @@ class MoneyAccountCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(account.name),
+                  Text(
+                    account.name,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 20.0),
                   Text(
                     'Last transaction - ${account.lastTransactionTxt}',
-                    style: textTheme.bodyLarge,
+                    style: (account.order == 1)
+                        ? TextStyle(color: theme.onPrimary)
+                        : textTheme.bodyLarge,
                   ),
                 ],
               ),

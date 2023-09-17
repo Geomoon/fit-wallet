@@ -1,10 +1,12 @@
+import 'package:fit_wallet/features/shared/infrastructure/infrastructure.dart';
+
 class TransactionEntity {
   String id;
   String description;
-  int amount;
+  double amount;
   String type;
   String userId;
-  dynamic debtId; // TODO:
+  String? debtId; // TODO:
   DateTime createdAt;
   MoneyAccount moneyAccount;
   Category category;
@@ -25,7 +27,7 @@ class TransactionEntity {
       TransactionEntity(
         id: json["id"],
         description: json["description"],
-        amount: json["amount"],
+        amount: json["amount"]?.toDouble(),
         type: json["type"],
         userId: json["userId"],
         debtId: json["debtId"],
@@ -45,6 +47,17 @@ class TransactionEntity {
         "moneyAccount": moneyAccount.toJson(),
         "category": category.toJson(),
       };
+
+  String get amountTxt {
+    String sign = '+';
+
+    if (type == 'EXPENSE') sign = '-';
+    if (type == 'TRANSFER') sign = '';
+
+    return '$sign ${Utils.currencyFormat(amount)}';
+  }
+
+  String get dateTxt => Utils.formatYYYDDMM(createdAt);
 }
 
 class Category {
@@ -73,6 +86,8 @@ class Category {
         "hexColor": hexColor,
         "icon": icon,
       };
+
+  String get nameTxt => Utils.capitalText(name);
 }
 
 class MoneyAccount {
