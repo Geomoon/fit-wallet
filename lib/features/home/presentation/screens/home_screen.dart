@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:fit_wallet/config/themes/colorschemes/color_schemes.g.dart';
 import 'package:fit_wallet/config/themes/dark_theme.dart';
 import 'package:fit_wallet/features/home/presentation/providers/providers.dart';
@@ -25,8 +27,26 @@ class ScreenTitle extends ConsumerWidget {
   }
 }
 
-class MonayAccountsAppBarActions extends StatelessWidget {
-  const MonayAccountsAppBarActions({super.key});
+class AppBarActions extends ConsumerWidget {
+  const AppBarActions({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final actualPage = ref.watch(homeNavigationProvider);
+
+    switch (actualPage) {
+      case 0:
+        return const HomeScreenAppBarActions();
+      case 1:
+        return const MoneyAccountsAppBarActions();
+      default:
+        return Container();
+    }
+  }
+}
+
+class MoneyAccountsAppBarActions extends StatelessWidget {
+  const MoneyAccountsAppBarActions({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -74,23 +94,21 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       appBar: AppBar(
         title: const ScreenTitle(),
-        actions: [
-          HomeScreenAppBarActions(),
-        ],
+        actions: const [AppBarActions()],
       ),
       body: _HomeView(screens: _screens),
       bottomNavigationBar: const BottomAppBar(
         child: Row(
           children: [
-            SizedBox(width: 20),
             NavigationButton(
               index: 0,
               icon: Icons.vertical_split_outlined,
               activeIcon: Icons.vertical_split_rounded,
             ),
-            SizedBox(width: 20),
+            SizedBox(width: 10),
             NavigationButton(
               index: 1,
               icon: Icons.account_balance_outlined,
@@ -99,14 +117,32 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          context.push('/transactions/form');
-        },
-        child: const Icon(Icons.add_rounded),
-      ),
+      floatingActionButton: const FAButtons(),
       floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
     );
+  }
+}
+
+class FAButtons extends ConsumerWidget {
+  const FAButtons({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final actualPage = ref.watch(homeNavigationProvider);
+
+    switch (actualPage) {
+      case 0:
+        return FloatingActionButton(
+          onPressed: () {
+            context.push('/transactions/form');
+          },
+          child: const Icon(Icons.add_rounded),
+        );
+      case 1:
+        return const FABMoneyAccount();
+      default:
+        return Container();
+    }
   }
 }
 
@@ -163,6 +199,8 @@ class NavigationButton extends ConsumerWidget {
   final IconData activeIcon;
   final int index;
 
+  final BoxConstraints _boxConstraints = const BoxConstraints(minWidth: 76);
+
   void _onTap(WidgetRef ref) {
     ref.read(homeNavigationProvider.notifier).update((state) => index);
   }
@@ -174,9 +212,15 @@ class NavigationButton extends ConsumerWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 500),
       child: (index == actualIndex)
-          ? IconButton.filled(
-              onPressed: () => _onTap(ref), icon: Icon(activeIcon))
-          : IconButton(onPressed: () => _onTap(ref), icon: Icon(icon)),
+          ? IconButton.filledTonal(
+              constraints: _boxConstraints,
+              onPressed: () => _onTap(ref),
+              icon: Icon(activeIcon),
+            )
+          : IconButton(
+              constraints: _boxConstraints,
+              onPressed: () => _onTap(ref),
+              icon: Icon(icon)),
     );
   }
 }
@@ -215,33 +259,6 @@ class _HomeScreenView extends StatelessWidget {
             const SizedBox(height: 20),
             const AccountCardsViewer(),
             const SizedBox(height: 14),
-            // Padding(
-            //   padding: padding,
-            //   child: Row(
-            //     mainAxisAlignment: MainAxisAlignment.center,
-            //     children: [
-            //       ElevatedButton(
-            //         onPressed: () => context.push('/money-accounts'),
-            //         child: const Icon(Icons.account_balance_rounded),
-            //       ),
-            //       const SizedBox(width: 20),
-            //       ElevatedButton(
-            //         onPressed: () {},
-            //         child: const Icon(Icons.dashboard_rounded),
-            //       ),
-            //       const SizedBox(width: 20),
-            //       ElevatedButton(
-            //         onPressed: () {},
-            //         child: const Icon(Icons.pie_chart_rounded),
-            //       ),
-            //       const SizedBox(width: 20),
-            //       ElevatedButton(
-            //         onPressed: () {},
-            //         child: const Icon(Icons.settings_rounded),
-            //       ),
-            //     ],
-            //   ),
-            // ),
             Padding(
               padding: const EdgeInsets.only(left: 20, right: 10),
               child: Row(
@@ -273,16 +290,12 @@ class LastTransactionsCard extends ConsumerWidget {
 
     return list.when(
       data: (data) {
-        return ListView.separated(
+        return ListView.builder(
           itemCount: data.total,
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           itemBuilder: (context, index) {
             return TransactionListTile(transaction: data.items[index]);
-          },
-          separatorBuilder: (context, index) {
-            // return const Divider(indent: 68, height: 1);
-            return Container();
           },
         );
       },
@@ -397,13 +410,26 @@ class TransactionListTile extends StatelessWidget {
           icon,
         ],
       ),
-      subtitle: Text(transaction.dateTxt, style: textTheme.bodyLarge),
-      trailing: Text(
-        transaction.amountTxt,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 14,
-        ),
+      subtitle: Text(
+        transaction.dateTxt,
+        style: textTheme.bodyLarge,
+      ),
+      trailing: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            transaction.amountTxt,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
+          ),
+          Text(
+            transaction.moneyAccount.shortNameTxt,
+            style: textTheme.bodyLarge,
+          ),
+        ],
       ),
     );
   }

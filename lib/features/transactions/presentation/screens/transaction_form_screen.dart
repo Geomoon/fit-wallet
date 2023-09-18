@@ -1,22 +1,30 @@
 import 'package:fit_wallet/features/money_accounts/domain/entities/money_account_last_transaction_entity.dart';
-import 'package:fit_wallet/features/money_accounts/presentation/providers/money_accounts_selector_provider.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/shared/domain/entities/transaction_type_entity.dart';
 import 'package:fit_wallet/features/shared/presentation/widgets/widgets.dart';
 import 'package:fit_wallet/features/transactions/presentation/providers/transaction_type_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 class TransactionFormScreen extends StatelessWidget {
   const TransactionFormScreen({super.key});
 
+  final TextStyle _textStyle = const TextStyle(fontWeight: FontWeight.bold);
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context).colorScheme;
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle.dark.copyWith(
+        systemNavigationBarColor: theme.background,
+      ),
+    );
     return Scaffold(
       appBar: AppBar(
-        title: const Text('New Transaction'),
+        title: Text('New Transaction', style: _textStyle),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -37,20 +45,20 @@ class TransactionFormScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            Row(
+            const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Expanded(
                   flex: 1,
-                  child: Selector(),
+                  child: MoneyAccountSelector(),
                 ),
-                const SizedBox(width: 10),
+                SizedBox(width: 10),
                 Expanded(
                   flex: 1,
                   child: Row(
                     children: [
                       CircleAvatar(),
-                      const SizedBox(width: 10),
+                      SizedBox(width: 10),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -63,11 +71,10 @@ class TransactionFormScreen extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 40),
+            const SizedBox(height: 10),
             const TransactionTypeSelector(),
             const SizedBox(height: 10),
             const Center(child: Keyboard()),
-            const Divider(),
             Row(
               children: [
                 const SizedBox(width: 10),
@@ -87,8 +94,8 @@ class TransactionFormScreen extends StatelessWidget {
   }
 }
 
-class Selector extends ConsumerWidget {
-  const Selector({super.key});
+class MoneyAccountSelector extends ConsumerWidget {
+  const MoneyAccountSelector({super.key});
 
   void _showAccountsSelector(BuildContext context) {
     showDialog(
@@ -104,37 +111,50 @@ class Selector extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final accountSelected = ref.watch(moneyAccountSelectorProvider);
+    final theme = Theme.of(context).primaryTextTheme;
+    final colors = Theme.of(context).colorScheme;
 
     return InkWell(
       onTap: () => _showAccountsSelector(context),
-      borderRadius: BorderRadius.circular(90),
-      child: Row(
-        children: [
-          CircleAvatar(
-            child: accountSelected == null
-                ? const Icon(Icons.balance_rounded)
-                : Text(accountSelected.shortNameTxt),
-          ),
-          const SizedBox(width: 10),
-          Flexible(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (accountSelected != null)
-                  Flexible(
-                    child: Text(
-                      accountSelected.name,
-                      softWrap: true,
-                    ),
-                  )
-                else
-                  const Text('Select Account'),
-                const Text('Account'),
-              ],
+      borderRadius: BorderRadius.circular(8),
+      child: SizedBox(
+        height: 60,
+        child: Row(
+          children: [
+            Container(
+              height: 40,
+              width: 40,
+              decoration: BoxDecoration(
+                color: colors.primary,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Center(
+                child: accountSelected == null
+                    ? const Icon(Icons.balance_rounded)
+                    : Text(accountSelected.shortNameTxt),
+              ),
             ),
-          )
-        ],
+            const SizedBox(width: 10),
+            Flexible(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (accountSelected != null)
+                    Flexible(
+                      child: Text(
+                        accountSelected.name,
+                        softWrap: true,
+                      ),
+                    )
+                  else
+                    const Text('Select Account'),
+                  Text('ACCOUNT', style: theme.bodyLarge),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -283,18 +303,27 @@ class Keyboard extends StatelessWidget {
         KeyboardButton(title: '.'),
         KeyboardButton(title: '0'),
         KeyboardButton(
-          child: const Icon(Icons.backspace_rounded),
+          type: KeyboardButtonType.error,
+          child: Icons.backspace_rounded,
         ),
       ],
     );
   }
 }
 
+enum KeyboardButtonType { error, normal }
+
 class KeyboardButton extends StatelessWidget {
-  const KeyboardButton({super.key, this.title, this.child});
+  const KeyboardButton({
+    super.key,
+    this.title,
+    this.child,
+    this.type = KeyboardButtonType.normal,
+  });
 
   final String? title;
-  final Widget? child;
+  final IconData? child;
+  final KeyboardButtonType type;
 
   final TextStyle _textStyle = const TextStyle(
     fontSize: 24,
@@ -304,20 +333,29 @@ class KeyboardButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
-
     return Center(
-      child: Container(
+      child: SizedBox(
         height: 70,
         width: 110,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(90),
-          color: theme.secondaryContainer,
-        ),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(90),
-          onTap: () {},
+        child: ElevatedButton(
+          // style: (type == KeyboardButtonType.error)
+          //     ? ButtonStyle(
+          //         backgroundColor: MaterialStateColor.resolveWith(
+          //           (states) => theme.error,
+          //         ),
+          //         surfaceTintColor: MaterialStateColor.resolveWith(
+          //           (states) => theme.background,
+          //         ),
+          //       )
+          //     : null,
+          onPressed: () {},
           child: Center(
-            child: (title != null) ? Text(title!, style: _textStyle) : child,
+            child: (title != null)
+                ? Text(title!, style: _textStyle)
+                : Icon(
+                    child,
+                    color: theme.error,
+                  ),
           ),
         ),
       ),

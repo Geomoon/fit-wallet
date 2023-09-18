@@ -1,62 +1,94 @@
 import 'package:fit_wallet/config/themes/colorschemes/color_schemes.g.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final darkTheme = Provider((ref) => DarkTheme.theme);
 
 class DarkTheme {
-  // primary => 436DFF
-  // static const Color _primary = Color(0xFF436DFF);
   static const Color primary = Color(0xFF2a85ff);
-  static const Color _primaryDark = Color(0xFF111315);
-  // static const Color primaryFg = Color(0xFFF1F1F1);
   static const Color primaryFg = Color(0xFFeaebed);
-  static const Color _onPrimaryFg = Color(0xFF002583);
   static const Color _secondaryFg = Color(0xFF868b90);
-  // static const Color primaryBg = Color(0xFF111111);
   static const Color primaryBg = Color(0xFF111315);
-  // static const Color primaryBg = Color(0xFF1b1b1d);
-  // static const Color secondaryBg = Color(0xFF1C1C1C);
   static const Color secondaryBg = Color(0xFF1f2022);
-  static const Color _outline = Color(0xFF383d44);
-
-  // bg: 1b1b1d
-  // bg2: 28282a
-  // green: 72b67a
-
-  // dark: 17181a
-  // dark2: 1f2022
-  // primary: 4e7ffc
-  // fg: eaebed
 
   static const Color green = Color(0xFFb5e4ca);
-  static const Color red = Color(0xFFffd1b0);
+  static const Color red = Color(0xFFf59062);
 
-  static const Color transfer = Color(0xFF2a85ff);
-  static const Color expense = Color(0xFF313131);
-  static const Color income = Color(0xFF1C1C1C);
+  // static const Color transfer = Color(0xFF2a85ff);
+  // static const Color expense = Color(0xFF313131);
+  // static const Color income = Color(0xFF1C1C1C);
 
-  static ThemeData get theme => ThemeData.dark(useMaterial3: true).copyWith(
-        colorScheme: darkColorScheme,
-        scaffoldBackgroundColor: Color(0xff161616),
-        primaryTextTheme: const TextTheme(
-          bodySmall: TextStyle(
-            color: _secondaryFg,
-            fontSize: 12,
-          ),
-          bodyLarge: TextStyle(
-            color: _secondaryFg,
-            fontSize: 14,
-          ),
-          headlineLarge: TextStyle(fontWeight: FontWeight.bold),
+  static Color get transfer => darkColorScheme.primaryContainer;
+  static Color get expense => const Color(0xff1e1e21);
+  static Color get income => darkColorScheme.secondaryContainer;
+
+  static ThemeData get theme {
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle.dark.copyWith(
+        systemNavigationBarColor: const Color(0xff1e1e21),
+      ),
+    );
+    return ThemeData.dark(useMaterial3: true).copyWith(
+      colorScheme: darkColorScheme,
+      scaffoldBackgroundColor: const Color(0xff161616),
+      primaryTextTheme: const TextTheme(
+        bodySmall: TextStyle(
+          color: _secondaryFg,
+          fontSize: 12,
         ),
-        dividerColor: darkColorScheme.outline,
-        appBarTheme: AppBarTheme(surfaceTintColor: darkColorScheme.background),
-        bottomAppBarTheme: BottomAppBarTheme(
-          color: darkColorScheme.background,
-          surfaceTintColor: darkColorScheme.background,
+        bodyLarge: TextStyle(
+          color: _secondaryFg,
+          fontSize: 14,
         ),
-      );
+        headlineLarge: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      segmentedButtonTheme: SegmentedButtonThemeData(
+        style: ButtonStyle(
+          backgroundColor: MaterialStateColor.resolveWith((states) {
+            if (states.contains(MaterialState.selected)) {
+              return darkColorScheme.onPrimary;
+            }
+            return Colors.transparent;
+          }),
+          foregroundColor: MaterialStateProperty.resolveWith((states) {
+            if (states.contains(MaterialState.selected)) {
+              return darkColorScheme.background;
+            }
+            return darkColorScheme.onPrimary;
+          }),
+        ),
+      ),
+      dividerColor: darkColorScheme.outline,
+      appBarTheme: AppBarTheme(
+        surfaceTintColor: darkColorScheme.background,
+      ),
+      inputDecorationTheme: const InputDecorationTheme(
+        border: OutlineInputBorder(),
+        // hintStyle: TextStyle(color: _secondaryFg),
+        iconColor: primaryFg,
+        prefixIconColor: primaryFg,
+      ),
+      bottomAppBarTheme: const BottomAppBarTheme(
+        color: Color(0xff1e1e21),
+        surfaceTintColor: Color(0xff1e1e21),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: ButtonStyle(
+          foregroundColor: MaterialStateColor.resolveWith(
+              (states) => darkColorScheme.onPrimary),
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ButtonStyle(
+          textStyle: MaterialStateProperty.resolveWith(
+              (states) => const TextStyle(fontWeight: FontWeight.bold)),
+          foregroundColor: MaterialStateColor.resolveWith(
+              (states) => darkColorScheme.onPrimary),
+        ),
+      ),
+    );
+  }
 /*
   static ThemeData get theme => ThemeData.dark(useMaterial3: true).copyWith(
         colorScheme: ColorScheme.fromSeed(

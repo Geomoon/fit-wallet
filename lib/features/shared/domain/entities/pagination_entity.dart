@@ -1,7 +1,7 @@
 class PaginationEntity<T> {
   List<T> items;
   int page;
-  int nextPage;
+  int? nextPage;
   int totalPages;
   int totalItems;
   int total;
@@ -9,7 +9,7 @@ class PaginationEntity<T> {
   PaginationEntity({
     required this.items,
     required this.page,
-    required this.nextPage,
+    this.nextPage,
     required this.totalPages,
     required this.totalItems,
     required this.total,

@@ -108,4 +108,7 @@ class MoneyAccount {
         "id": id,
         "name": name,
       };
+
+  String get shortNameTxt =>
+      name.trim().split(' ').map((e) => e[0].toUpperCase()).join();
 }
