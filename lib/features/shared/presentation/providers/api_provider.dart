@@ -31,7 +31,7 @@ class ApiProvider {
     );
 
     _dio.interceptors.add(
-      _AuthInterceptor(_storageService),
+      _AuthInterceptor(_storageService, dio),
     );
   }
 
@@ -39,15 +39,31 @@ class ApiProvider {
 }
 
 class _AuthInterceptor implements Interceptor {
-  _AuthInterceptor(this._storageService);
+  _AuthInterceptor(this._storageService, this._dio);
 
   final LocalStorageService _storageService;
+  final Dio _dio;
 
   @override
-  void onError(DioException err, ErrorInterceptorHandler handler) {
+  void onError(DioException err, ErrorInterceptorHandler handler) async {
     switch (err.response?.statusCode ?? 400) {
       case 401:
-        throw UnauthorizedException('Unauthorized');
+        final refreshToken = await _storageService.getValue('refreshToken');
+
+        final Dio dio = Dio(BaseOptions(baseUrl: Env.apiUrl));
+
+        final refreshResponse = await dio.post('/auth/refresh',
+            options:
+                Options(headers: {'Authorization': 'Bearer $refreshToken'}));
+
+        final token = refreshResponse.data['accessToken'];
+        final refresh = refreshResponse.data['refreshToken'];
+
+        await _storageService.setValue('accessToken', token);
+        await _storageService.setValue('refreshToken', refresh);
+
+        handler.resolve(await _dio.fetch(err.requestOptions));
+
       case >= 400 && < 500:
         throw BadRequestException('Bad request');
       case >= 500:

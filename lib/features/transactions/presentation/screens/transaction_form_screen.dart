@@ -5,7 +5,6 @@ import 'package:fit_wallet/features/shared/presentation/widgets/widgets.dart';
 import 'package:fit_wallet/features/transactions/presentation/providers/transaction_type_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -16,12 +15,6 @@ class TransactionFormScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context).colorScheme;
-    SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle.dark.copyWith(
-        systemNavigationBarColor: theme.background,
-      ),
-    );
     return Scaffold(
       appBar: AppBar(
         title: Text('New Transaction', style: _textStyle),
@@ -31,20 +24,29 @@ class TransactionFormScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            TextFormField(
-              initialValue: '0.00',
-              keyboardType: TextInputType.none,
-              textAlign: TextAlign.end,
-              style: const TextStyle(
-                fontSize: 42,
-                fontWeight: FontWeight.bold,
-              ),
-              decoration: const InputDecoration(
-                border: InputBorder.none,
-                hintText: '0.00',
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextFormField(
+                    initialValue: '0.00',
+                    keyboardType: TextInputType.none,
+                    readOnly: true,
+                    textAlign: TextAlign.end,
+                    style: const TextStyle(
+                      fontSize: 54,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      hintText: '0.00',
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 20),
             const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -55,26 +57,19 @@ class TransactionFormScreen extends StatelessWidget {
                 SizedBox(width: 10),
                 Expanded(
                   flex: 1,
-                  child: Row(
-                    children: [
-                      CircleAvatar(),
-                      SizedBox(width: 10),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Select Category'),
-                          Text('Category'),
-                        ],
-                      )
-                    ],
-                  ),
+                  child: CategorySelector(),
                 ),
               ],
             ),
-            const SizedBox(height: 10),
-            const TransactionTypeSelector(),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
+            const Row(
+              children: [
+                Expanded(child: TransactionTypeSelector()),
+              ],
+            ),
+            const SizedBox(height: 20),
             const Center(child: Keyboard()),
+            const SizedBox(height: 20),
             Row(
               children: [
                 const SizedBox(width: 10),
@@ -88,6 +83,61 @@ class TransactionFormScreen extends StatelessWidget {
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class CategorySelector extends ConsumerWidget {
+  const CategorySelector({super.key});
+
+  void _showAccountsSelector(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (_) {
+        return const Dialog.fullscreen(
+          child: MoneyAccountsListSelector(),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // final categorySelected = ref.watch(categorySel);
+    final theme = Theme.of(context).primaryTextTheme;
+
+    return InkWell(
+      onTap: () => _showAccountsSelector(context),
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: SizedBox(
+          height: 60,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Flexible(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // if (accountSelected != null)
+                    //   Flexible(
+                    //     child: Text(
+                    //       accountSelected.name,
+                    //       softWrap: true,
+                    //     ),
+                    //   )
+                    // else
+                    const Text('Select Category'),
+                    Text('CATEGORY', style: theme.bodyLarge),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -112,48 +162,51 @@ class MoneyAccountSelector extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final accountSelected = ref.watch(moneyAccountSelectorProvider);
     final theme = Theme.of(context).primaryTextTheme;
-    final colors = Theme.of(context).colorScheme;
 
     return InkWell(
       onTap: () => _showAccountsSelector(context),
       borderRadius: BorderRadius.circular(8),
-      child: SizedBox(
-        height: 60,
-        child: Row(
-          children: [
-            Container(
-              height: 40,
-              width: 40,
-              decoration: BoxDecoration(
-                color: colors.primary,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Center(
-                child: accountSelected == null
-                    ? const Icon(Icons.balance_rounded)
-                    : Text(accountSelected.shortNameTxt),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Flexible(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (accountSelected != null)
-                    Flexible(
-                      child: Text(
-                        accountSelected.name,
-                        softWrap: true,
-                      ),
-                    )
-                  else
-                    const Text('Select Account'),
-                  Text('ACCOUNT', style: theme.bodyLarge),
-                ],
-              ),
-            )
-          ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: SizedBox(
+          height: 60,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Container(
+              //   height: 40,
+              //   width: 40,
+              //   decoration: BoxDecoration(
+              //     color: colors.primary,
+              //     borderRadius: BorderRadius.circular(8),
+              //   ),
+              //   child: Center(
+              //     child: accountSelected == null
+              //         ? const Icon(Icons.balance_rounded)
+              //         : Text(accountSelected.shortNameTxt),
+              //   ),
+              // ),
+              // const SizedBox(width: 10),
+              Flexible(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    if (accountSelected != null)
+                      Flexible(
+                        child: Text(
+                          accountSelected.name,
+                          softWrap: true,
+                        ),
+                      )
+                    else
+                      const Text('Select Account'),
+                    Text('ACCOUNT', style: theme.bodyLarge),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -260,6 +313,7 @@ class TransactionTypeSelector extends ConsumerWidget {
     final transactionTypeSelected = ref.watch(transactionTypeProvider);
     return SegmentedButton(
       selectedIcon: icon(transactionTypeSelected),
+      showSelectedIcon: false,
       segments: const [
         ButtonSegment(value: TransactionType.income, label: Text('INCOME')),
         ButtonSegment(value: TransactionType.expense, label: Text('EXPENSE')),

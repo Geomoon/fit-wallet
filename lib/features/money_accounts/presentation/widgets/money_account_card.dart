@@ -7,7 +7,7 @@ class MoneyAccountCard extends StatelessWidget {
     super.key,
     required this.account,
     this.onTap,
-    this.margin = const EdgeInsets.only(right: 8, left: 8),
+    this.margin = const EdgeInsets.only(right: 8, left: 12),
   });
 
   final EdgeInsets margin;

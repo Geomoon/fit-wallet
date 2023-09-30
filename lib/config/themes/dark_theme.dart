@@ -23,6 +23,8 @@ class DarkTheme {
   static Color get expense => const Color(0xff1e1e21);
   static Color get income => darkColorScheme.secondaryContainer;
 
+  static Color get barColor => const Color(0xff1e1e21);
+
   static ThemeData get theme {
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle.dark.copyWith(
