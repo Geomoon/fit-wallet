@@ -122,7 +122,10 @@ class FilterButton extends ConsumerWidget {
     await showModalBottomSheet(
       context: context,
       builder: (context) {
-        return const CalendarPickerBottomDialog();
+        return CalendarPickerBottomDialog(
+          title: 'By date',
+          onDateChanged: (d) {},
+        );
       },
     );
   }
@@ -260,7 +263,22 @@ class DatePickerBottomDialog extends ConsumerWidget {
 }
 
 class CalendarPickerBottomDialog extends StatelessWidget {
-  const CalendarPickerBottomDialog({super.key});
+  const CalendarPickerBottomDialog({
+    super.key,
+    required this.title,
+    required this.onDateChanged,
+    this.initialDate,
+    this.firstDate,
+    this.lastDate,
+  });
+
+  final String title;
+
+  final void Function(DateTime) onDateChanged;
+
+  final DateTime? initialDate;
+  final DateTime? firstDate;
+  final DateTime? lastDate;
 
   @override
   Widget build(BuildContext context) {
@@ -279,7 +297,7 @@ class CalendarPickerBottomDialog extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  'By date',
+                  title,
                   style: textTheme.titleLarge,
                 ),
               ],
@@ -287,10 +305,10 @@ class CalendarPickerBottomDialog extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           CalendarDatePicker(
-            onDateChanged: (d) {},
-            initialDate: DateTime.now(),
-            firstDate: DateTime(2000),
-            lastDate: DateTime.now(),
+            onDateChanged: onDateChanged,
+            initialDate: initialDate ?? DateTime.now(),
+            firstDate: firstDate ?? DateTime(2000),
+            lastDate: lastDate ?? DateTime.now(),
           ),
         ],
       ),

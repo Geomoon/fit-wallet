@@ -1,4 +1,9 @@
+import 'package:fit_wallet/features/auth/presentation/providers/providers.dart';
+import 'package:fit_wallet/features/money_accounts/presentation/presentation.dart';
+import 'package:fit_wallet/features/shared/presentation/presentation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class SignupScreen extends StatelessWidget {
   const SignupScreen({super.key});
@@ -11,21 +16,36 @@ class SignupScreen extends StatelessWidget {
   }
 }
 
-class _SignupScreenView extends StatelessWidget {
+class _SignupScreenView extends ConsumerWidget {
   const _SignupScreenView();
 
-  void _showBirthdateDialog(BuildContext context) {
-    showDatePicker(
+  void _showDatePickerDialog(
+      BuildContext context, TextEditingController controller) async {
+    await showModalBottomSheet(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1920),
-      lastDate: DateTime.now(),
+      builder: (context) {
+        return Consumer(builder: (_, ref, __) {
+          return CalendarPickerBottomDialog(
+            title: 'Birthdate',
+            initialDate: DateTime.now(),
+            firstDate: DateTime(1900),
+            lastDate: DateTime.now(),
+            onDateChanged: (d) {
+              ref.read(signupProvider.notifier).onChangeBirthdate(d);
+              context.pop();
+            },
+          );
+        });
+      },
     );
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final textTheme = Theme.of(context).textTheme;
+
+    final provider = ref.watch(signupProvider);
+    final controller = TextEditingController(text: provider.birthdateTxt);
 
     return SingleChildScrollView(
       child: Padding(
@@ -41,8 +61,10 @@ class _SignupScreenView extends StatelessWidget {
               decoration: InputDecoration(
                 labelText: 'Username',
                 prefixIcon: const Icon(Icons.person_rounded),
+                errorText: ref.read(signupProvider).username.errorMessage,
               ),
               textInputAction: TextInputAction.next,
+              onChanged: ref.read(signupProvider.notifier).onChangeUsername,
             ),
             const SizedBox(height: 20),
             TextFormField(
@@ -50,40 +72,44 @@ class _SignupScreenView extends StatelessWidget {
               decoration: InputDecoration(
                 labelText: 'Email',
                 prefixIcon: const Icon(Icons.alternate_email_rounded),
+                errorText: ref.read(signupProvider).email.errorMessage,
               ),
               textInputAction: TextInputAction.next,
+              onChanged: ref.read(signupProvider.notifier).onChangeEmail,
             ),
             const SizedBox(height: 20),
             TextFormField(
               keyboardType: TextInputType.emailAddress,
+              obscureText: true,
               decoration: InputDecoration(
-                labelText: 'Password',
-                prefixIcon: const Icon(Icons.password_rounded),
-              ),
+                  labelText: 'Password',
+                  prefixIcon: const Icon(Icons.password_rounded),
+                  errorText: ref.read(signupProvider).password.errorMessage),
               textInputAction: TextInputAction.next,
+              onChanged: ref.read(signupProvider.notifier).onChangePassword,
             ),
             const SizedBox(height: 20),
             TextFormField(
               readOnly: true,
-              onTap: () => _showBirthdateDialog(context),
+              controller: controller,
+              onTap: () => _showDatePickerDialog(context, controller),
               decoration: InputDecoration(
-                labelText: 'Birthdate',
-                prefixIcon: const Icon(Icons.date_range_rounded),
-              ),
+                  labelText: 'Birthdate',
+                  prefixIcon: const Icon(Icons.date_range_rounded),
+                  errorText: ref.read(signupProvider).birthdate.errorMessage),
               textInputAction: TextInputAction.next,
             ),
             const SizedBox(height: 20),
-            FilledButton(
-              onPressed: () {},
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Create account',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  )
-                ],
-              ),
+            Row(
+              children: [
+                Expanded(
+                  child: AsyncButton(
+                    callback: ref.read(signupProvider.notifier).onSubmit,
+                    title: 'Create account',
+                    isLoading: provider.isPosting,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 20),
             Row(

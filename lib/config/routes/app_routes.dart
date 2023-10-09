@@ -41,5 +41,11 @@ final routerProvider = Provider((ref) {
         builder: (context, state) => const TransactionFormScreen(),
       ),
     ],
+    redirect: (context, state) {
+      if (authStatus.status == AuthStatus.notAuthenticated) {
+        return authStatus.route;
+      }
+      return null;
+    },
   );
 });

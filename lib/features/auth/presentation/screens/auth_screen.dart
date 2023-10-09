@@ -1,7 +1,6 @@
 import 'package:fit_wallet/features/auth/presentation/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 class AuthScreen extends StatelessWidget {
   const AuthScreen({super.key});
@@ -50,15 +49,19 @@ class _Signup extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          TextButton(
-            onPressed: () => context.push('/signup'),
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Sign up'),
-              ],
-            ),
-          ),
+          Consumer(builder: (_, ref, __) {
+            return TextButton(
+              onPressed: () {
+                ref.read(authStatusProvider.notifier).setRoute('/signup');
+              },
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Sign up'),
+                ],
+              ),
+            );
+          }),
           Row(
             children: [
               const Expanded(child: Divider()),
@@ -160,9 +163,11 @@ class LoginFormView extends ConsumerWidget {
                         height: 22,
                         width: 22,
                         child: CircularProgressIndicator())
-                    : const Text('Login',
+                    : const Text(
+                        'Login',
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16))
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                      )
               ],
             ),
           ),

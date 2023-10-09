@@ -67,7 +67,12 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
 
   Future<void> toPassedWelcome() async {
     await _storageService.setValue('passedWelcome', 'PASSED');
-    state = state.copyWith(status: AuthStatus.notAuthenticated);
+    state =
+        state.copyWith(status: AuthStatus.notAuthenticated, route: '/login');
+  }
+
+  Future<void> setRoute(String route) async {
+    state = state.copyWith(route: route);
   }
 }
 

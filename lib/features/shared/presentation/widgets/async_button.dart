@@ -24,7 +24,10 @@ class AsyncButton extends StatelessWidget {
                 color: Colors.white,
                 strokeWidth: 3,
               ))
-          : Text(title),
+          : Text(
+              title,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
     );
   }
 }
