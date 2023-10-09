@@ -4,5 +4,5 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 final moneyAccountSelectorProvider = StateProvider((ref) {
   final accounts = ref.watch(moneyAccountsProvider).value;
 
-  return accounts?.where((account) => account.order == 1).first;
+  return accounts?.where((account) => account.order == 0).first;
 });

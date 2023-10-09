@@ -48,6 +48,12 @@ class _AuthInterceptor implements Interceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     switch (err.response?.statusCode ?? 400) {
       case 401:
+        if (err.requestOptions.path.contains('auth/signin') ||
+            err.requestOptions.path.contains('auth/signup')) {
+          handler.next(err);
+          return;
+        }
+
         final refreshToken = await _storageService.getValue('refreshToken');
 
         final Dio dio = Dio(BaseOptions(baseUrl: Env.apiUrl));
@@ -65,9 +71,12 @@ class _AuthInterceptor implements Interceptor {
         handler.resolve(await _dio.fetch(err.requestOptions));
 
       case >= 400 && < 500:
-        throw BadRequestException('Bad request');
+        handler.next(err);
+        return;
       case >= 500:
-        throw ServerException('Network Error');
+        log(err.message ?? '');
+        handler.next(err);
+        return;
     }
     handler.next(err);
   }

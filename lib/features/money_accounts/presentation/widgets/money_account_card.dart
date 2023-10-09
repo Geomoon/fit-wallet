@@ -22,7 +22,7 @@ class MoneyAccountCard extends StatelessWidget {
 
     return Card(
       margin: margin,
-      color: (account.order == 1) ? theme.primary : null,
+      color: (account.order == 0) ? theme.primary : null,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12.0),
@@ -40,7 +40,7 @@ class MoneyAccountCard extends StatelessWidget {
                     height: 36,
                     width: 36,
                     decoration: BoxDecoration(
-                      color: (account.order == 1)
+                      color: (account.order == 0)
                           ? theme.onPrimary
                           : theme.primary,
                       borderRadius: BorderRadius.circular(6.0),
@@ -49,7 +49,7 @@ class MoneyAccountCard extends StatelessWidget {
                         child: Text(
                       account.shortNameTxt,
                       style: TextStyle(
-                        color: (account.order == 1)
+                        color: (account.order == 0)
                             ? theme.background
                             : theme.onPrimary,
                         fontWeight: FontWeight.bold,
@@ -63,7 +63,7 @@ class MoneyAccountCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: DashedLine(
-                color: (account.order == 1) ? theme.onPrimary : theme.outline,
+                color: (account.order == 0) ? theme.onPrimary : theme.outline,
                 height: 2,
               ),
             ),
@@ -81,7 +81,7 @@ class MoneyAccountCard extends StatelessWidget {
                   const SizedBox(height: 20.0),
                   Text(
                     'Last transaction - ${account.lastTransactionTxt}',
-                    style: (account.order == 1)
+                    style: (account.order == 0)
                         ? TextStyle(color: theme.onPrimary)
                         : textTheme.bodyLarge,
                   ),

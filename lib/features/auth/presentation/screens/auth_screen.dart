@@ -1,4 +1,5 @@
 import 'package:fit_wallet/features/auth/presentation/providers/providers.dart';
+import 'package:fit_wallet/features/shared/presentation/widgets/snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -117,6 +118,25 @@ class LoginFormView extends ConsumerWidget {
     final textTheme = Theme.of(context).textTheme;
     final service = ref.watch(authSignInProvider);
 
+    ref.listen<String>(
+      authSignInProvider.select((state) => state.error),
+      (previous, next) {
+        if (next == '') return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: SnackBarContent(title: next, type: SnackBarType.error),
+            dismissDirection: DismissDirection.up,
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.only(
+              bottom: MediaQuery.of(context).size.height - 120,
+              left: 10,
+              right: 10,
+            ),
+          ),
+        );
+      },
+    );
+
     return Padding(
       padding: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
       child: Column(
@@ -129,10 +149,9 @@ class LoginFormView extends ConsumerWidget {
           TextFormField(
             keyboardType: TextInputType.emailAddress,
             onChanged: ref.read(authSignInProvider.notifier).onChangeEmail,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Email',
-              prefixIcon: const Icon(Icons.alternate_email_rounded),
-              errorText: service.isPosted ? service.email.errorMessage : null,
+              prefixIcon: Icon(Icons.alternate_email_rounded),
             ),
             textInputAction: TextInputAction.next,
           ),
@@ -141,11 +160,9 @@ class LoginFormView extends ConsumerWidget {
             obscureText: true,
             textInputAction: TextInputAction.go,
             onChanged: ref.read(authSignInProvider.notifier).onChangePassword,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Password',
-              prefixIcon: const Icon(Icons.password_rounded),
-              errorText:
-                  service.isPosted ? service.password.errorMessage : null,
+              prefixIcon: Icon(Icons.password_rounded),
             ),
           ),
           const SizedBox(height: 20),

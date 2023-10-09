@@ -31,13 +31,18 @@ class AuthSignInNotifier extends StateNotifier<AuthSignInState> {
 
   Future<void> onSubmit() async {
     try {
-      final isValid = state.email.isValid && state.password.isValid;
-      if (!isValid) {
-        state = state.copyWith(isValid: isValid, isPosted: true);
+      // final isValid = state.email.isValid && state.password.isValid;
+      // if (!isValid) {
+      //   state = state.copyWith(isValid: isValid, isPosted: true);
+      //   return;
+      // }
+
+      if (state.email.value == '' || state.password.value == '') {
         return;
       }
 
-      state = state.copyWith(isPosting: true, isPosted: true, isValid: isValid);
+      state = state.copyWith(
+          isPosting: true, isPosted: true, isValid: true, error: '');
 
       final request = SignInEntity(
         email: state.email.value,
@@ -49,8 +54,8 @@ class AuthSignInNotifier extends StateNotifier<AuthSignInState> {
       await _storage.setValue('refreshToken', response.refreshToken);
       state = state.copyWith(error: '', isPosting: false);
       await ref.read(authStatusProvider.notifier).checkStatus();
-    } on ServerException {
-      state = state.copyWith(error: 'Network Error', isPosting: false);
+    } on AppException catch (e) {
+      state = state.copyWith(error: e.message, isPosting: false);
     } catch (e) {
       state = state.copyWith(error: 'Error', isPosting: false);
     }

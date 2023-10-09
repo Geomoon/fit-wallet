@@ -89,6 +89,13 @@ class DarkTheme {
               (states) => darkColorScheme.onPrimary),
         ),
       ),
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: darkColorScheme.background,
+        contentTextStyle: TextStyle(color: darkColorScheme.onBackground),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(60),
+        ),
+      ),
     );
   }
 /*

@@ -1,7 +1,6 @@
-import 'dart:ui';
-
 import 'package:fit_wallet/config/themes/colorschemes/color_schemes.g.dart';
 import 'package:fit_wallet/config/themes/dark_theme.dart';
+import 'package:fit_wallet/features/auth/presentation/providers/auth_state_provider.dart';
 import 'package:fit_wallet/features/home/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/screens/money_accounts_screen.dart';
@@ -12,8 +11,8 @@ import 'package:fit_wallet/features/transactions/domain/domain.dart';
 import 'package:fit_wallet/features/transactions/presentation/providers/providers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 class ScreenTitle extends ConsumerWidget {
@@ -73,10 +72,14 @@ class HomeScreenAppBarActions extends StatelessWidget {
         SizedBox(
           height: 36,
           width: 36,
-          child: IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.settings_rounded),
-          ),
+          child: Consumer(builder: (_, ref, __) {
+            return IconButton(
+              onPressed: () {
+                ref.read(authStatusProvider.notifier).logout();
+              },
+              icon: const Icon(Icons.settings_rounded),
+            );
+          }),
         ),
         const SizedBox(width: 10),
       ],
@@ -119,7 +122,7 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: const FAButtons(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
     );
   }
 }
@@ -291,6 +294,24 @@ class LastTransactionsCard extends ConsumerWidget {
 
     return list.when(
       data: (data) {
+        if (data.totalItems == 0) {
+          return SizedBox(
+            height: 300,
+            width: double.infinity,
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SvgPicture.asset(
+                  'assets/images/empty_list.svg',
+                ),
+                const Text('No transactions'),
+              ],
+            ),
+          );
+        }
+
         return ListView.builder(
           itemCount: data.total,
           physics: const NeverScrollableScrollPhysics(),

@@ -28,4 +28,9 @@ class LocalStorageService {
     await _storage.ready;
     return await _storage.getItem(key);
   }
+
+  Future<void> delete(String key) async {
+    await _storage.ready;
+    await _storage.deleteItem(key);
+  }
 }

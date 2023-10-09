@@ -15,7 +15,7 @@ class AuthState {
   AuthState({
     this.status = AuthStatus.checking,
     this.entity,
-    this.route = '/',
+    this.route = '/loading',
   });
 
   AuthState copyWith({
@@ -73,6 +73,15 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
 
   Future<void> setRoute(String route) async {
     state = state.copyWith(route: route);
+  }
+
+  Future<void> logout() async {
+    await _storageService.delete('accessToken');
+    await _storageService.delete('refreshToken');
+    state = state.copyWith(
+      status: AuthStatus.notAuthenticated,
+      route: '/login',
+    );
   }
 }
 
