@@ -31,12 +31,6 @@ class AuthSignInNotifier extends StateNotifier<AuthSignInState> {
 
   Future<void> onSubmit() async {
     try {
-      // final isValid = state.email.isValid && state.password.isValid;
-      // if (!isValid) {
-      //   state = state.copyWith(isValid: isValid, isPosted: true);
-      //   return;
-      // }
-
       if (state.email.value == '' || state.password.value == '') {
         return;
       }

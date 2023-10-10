@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:fit_wallet/config/env/env.dart';
-import 'package:fit_wallet/features/shared/infrastructure/infrastructure.dart';
 import 'package:fit_wallet/features/shared/presentation/presentation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

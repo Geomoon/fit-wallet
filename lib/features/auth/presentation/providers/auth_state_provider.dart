@@ -31,15 +31,20 @@ class AuthState {
 }
 
 class AuthStateNotifier extends StateNotifier<AuthState> {
-  AuthStateNotifier(this._storageService) : super(AuthState()) {
+  AuthStateNotifier(this._storageService, this._ref) : super(AuthState()) {
     checkStatus();
   }
 
   final LocalStorageService _storageService;
 
+  final StateNotifierProviderRef<AuthStateNotifier, AuthState> _ref;
+
   Future<void> checkStatus() async {
     final hasPassedWelcome = await _storageService.getValue('passedWelcome');
     if (hasPassedWelcome == null) {
+      _ref.invalidate(apiProvider);
+      print('INVALIDATED API');
+
       state = state.copyWith(status: AuthStatus.empty, route: '/welcome');
       return;
     }
@@ -63,6 +68,8 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         route: '/login',
       );
     }
+    _ref.invalidate(apiProvider);
+    print('INVALIDATED API');
   }
 
   Future<void> toPassedWelcome() async {
@@ -88,6 +95,6 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
 final authStatusProvider = StateNotifierProvider<AuthStateNotifier, AuthState>(
   (ref) {
     final storage = ref.watch(localStorageProvider);
-    return AuthStateNotifier(storage);
+    return AuthStateNotifier(storage, ref);
   },
 );

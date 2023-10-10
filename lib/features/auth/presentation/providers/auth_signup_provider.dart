@@ -5,7 +5,6 @@ import 'package:fit_wallet/features/shared/infrastructure/exceptions/server_exce
 import 'package:fit_wallet/features/shared/infrastructure/inputs/inputs.dart';
 import 'package:fit_wallet/features/shared/infrastructure/utils/utils.dart';
 import 'package:fit_wallet/features/shared/presentation/presentation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:formz/formz.dart';
 

@@ -1,10 +1,14 @@
+import 'package:fit_wallet/features/categories/presentation/providers/providers.dart';
+import 'package:fit_wallet/features/categories/presentation/widgets/widgets.dart';
 import 'package:fit_wallet/features/money_accounts/domain/entities/money_account_last_transaction_entity.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/shared/domain/entities/transaction_type_entity.dart';
 import 'package:fit_wallet/features/shared/presentation/widgets/widgets.dart';
+import 'package:fit_wallet/features/transactions/presentation/providers/keyboard_value_provider.dart';
 import 'package:fit_wallet/features/transactions/presentation/providers/transaction_type_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -15,76 +19,132 @@ class TransactionFormScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('New Transaction', style: _textStyle),
+    final theme = Theme.of(context).colorScheme;
+
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle.dark.copyWith(
+        systemNavigationBarColor: theme.background,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.end,
+    );
+
+    return WillPopScope(
+      onWillPop: () async {
+        SystemChrome.setSystemUIOverlayStyle(
+          SystemUiOverlayStyle.dark.copyWith(
+            systemNavigationBarColor: const Color(0xff1e1e21),
+          ),
+        );
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('New Transaction', style: _textStyle),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              const Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextKeyboardValue(),
+                  ],
+                ),
+              ),
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TextFormField(
-                    initialValue: '0.00',
-                    keyboardType: TextInputType.none,
-                    readOnly: true,
-                    textAlign: TextAlign.end,
-                    style: const TextStyle(
-                      fontSize: 54,
-                      fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: CategorySelector(),
+                  ),
+                  SizedBox(width: 4),
+                  SizedBox(
+                    width: 10,
+                    height: 48,
+                    child: VerticalDivider(
+                      thickness: 1,
                     ),
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      hintText: '0.00',
-                    ),
+                  ),
+                  Expanded(
+                    child: MoneyAccountSelector(),
                   ),
                 ],
               ),
-            ),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: MoneyAccountSelector(),
-                ),
-                SizedBox(width: 10),
-                Expanded(
-                  flex: 1,
-                  child: CategorySelector(),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            const Row(
-              children: [
-                Expanded(child: TransactionTypeSelector()),
-              ],
-            ),
-            const SizedBox(height: 20),
-            const Center(child: Keyboard()),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                const SizedBox(width: 10),
-                Expanded(
-                  child: SizedBox(
-                    height: 40,
-                    child: AsyncButton(callback: () {}, title: 'Save'),
+              const SizedBox(height: 20),
+              const Row(
+                children: [
+                  Expanded(child: TransactionTypeSelector()),
+                ],
+              ),
+              const SizedBox(height: 20),
+              const Center(child: Keyboard()),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: SizedBox(
+                      height: 40,
+                      child: AsyncButton(callback: () {}, title: 'Save'),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 10),
-              ],
-            ),
-          ],
+                  const SizedBox(width: 10),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
+    );
+  }
+}
+
+class TextKeyboardValue extends ConsumerWidget {
+  const TextKeyboardValue({
+    super.key,
+  });
+
+  final TextStyle _textStyle = const TextStyle(
+    fontSize: 54,
+    fontWeight: FontWeight.bold,
+  );
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final keyboarValue = ref.watch(keyboarValueProvider);
+    final textTheme = Theme.of(context).primaryTextTheme;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Flexible(
+          child: RichText(
+            softWrap: true,
+            textAlign: TextAlign.end,
+            text: TextSpan(
+              children: [
+                const TextSpan(
+                  text: '\$ ',
+                  style: TextStyle(fontSize: 42),
+                ),
+                TextSpan(
+                  text: keyboarValue.intTxt,
+                ),
+                TextSpan(
+                  text: keyboarValue.decimalTxt,
+                  style: TextStyle(
+                      fontSize: 54, color: textTheme.bodySmall!.color),
+                ),
+              ],
+              style: _textStyle,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -92,12 +152,12 @@ class TransactionFormScreen extends StatelessWidget {
 class CategorySelector extends ConsumerWidget {
   const CategorySelector({super.key});
 
-  void _showAccountsSelector(BuildContext context) {
+  void _showCategoriesSelector(BuildContext context) {
     showDialog(
       context: context,
       builder: (_) {
         return const Dialog.fullscreen(
-          child: MoneyAccountsListSelector(),
+          child: CategorySelectorDialog(),
         );
       },
     );
@@ -105,33 +165,40 @@ class CategorySelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final categorySelected = ref.watch(categorySel);
+    final categorySelected = ref.watch(categoriesSelectorProvider);
     final theme = Theme.of(context).primaryTextTheme;
 
     return InkWell(
-      onTap: () => _showAccountsSelector(context),
+      onTap: () => _showCategoriesSelector(context),
       borderRadius: BorderRadius.circular(8),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: SizedBox(
           height: 60,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: (categorySelected == null)
+                ? MainAxisAlignment.center
+                : MainAxisAlignment.start,
             children: [
+              if (categorySelected != null) Icon(categorySelected.iconData),
+              const SizedBox(width: 20),
               Flexible(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: (categorySelected == null)
+                      ? CrossAxisAlignment.center
+                      : CrossAxisAlignment.start,
                   children: [
-                    // if (accountSelected != null)
-                    //   Flexible(
-                    //     child: Text(
-                    //       accountSelected.name,
-                    //       softWrap: true,
-                    //     ),
-                    //   )
-                    // else
-                    const Text('Select Category'),
+                    if (categorySelected != null)
+                      Flexible(
+                        child: Text(
+                          categorySelected.name,
+                          softWrap: true,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      )
+                    else
+                      const Text('Select Category'),
                     Text('CATEGORY', style: theme.bodyLarge),
                   ],
                 ),
@@ -173,20 +240,6 @@ class MoneyAccountSelector extends ConsumerWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Container(
-              //   height: 40,
-              //   width: 40,
-              //   decoration: BoxDecoration(
-              //     color: colors.primary,
-              //     borderRadius: BorderRadius.circular(8),
-              //   ),
-              //   child: Center(
-              //     child: accountSelected == null
-              //         ? const Icon(Icons.balance_rounded)
-              //         : Text(accountSelected.shortNameTxt),
-              //   ),
-              // ),
-              // const SizedBox(width: 10),
               Flexible(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -197,6 +250,7 @@ class MoneyAccountSelector extends ConsumerWidget {
                         child: Text(
                           accountSelected.name,
                           softWrap: true,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       )
                     else
@@ -221,13 +275,14 @@ class MoneyAccountsListSelector extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final accounts = ref.watch(moneyAccountsProvider);
+    final textTheme = Theme.of(context).primaryTextTheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.all(20),
-          child: Text('Select an account'),
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: Text('SELECT AN ACCOUNT', style: textTheme.bodyLarge),
         ),
         Expanded(
           child: accounts.when(
@@ -260,12 +315,18 @@ class MoneyAccountListTile extends ConsumerWidget {
 
   final MoneyAccountLastTransactionEntity account;
 
+  final _textStyle = const TextStyle(fontWeight: FontWeight.bold);
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context).colorScheme;
 
+    final isSelected =
+        ref.watch(moneyAccountSelectorProvider)?.id == account.id;
+
     return ListTile(
       visualDensity: VisualDensity.standard,
+      dense: false,
       onTap: () {
         ref
             .read(moneyAccountSelectorProvider.notifier)
@@ -273,23 +334,29 @@ class MoneyAccountListTile extends ConsumerWidget {
         context.pop();
       },
       leading: Container(
-        height: 42,
-        width: 42,
+        height: 44,
+        width: 44,
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(6.0),
+          color: isSelected ? theme.primary : theme.secondaryContainer,
+          borderRadius: BorderRadius.circular(isSelected ? 50 : 6.0),
         ),
-        child: Center(
-            child: Text(
-          account.shortNameTxt,
-          style: TextStyle(
-            color: theme.onPrimary,
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        )),
+        child: isSelected
+            ? const Center(child: Icon(Icons.check_rounded))
+            : Center(
+                child: Text(
+                  account.shortNameTxt,
+                  style: TextStyle(
+                    color: theme.onPrimary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
       ),
-      title: Text(account.name),
+      title: Text(
+        account.name,
+        style: isSelected ? _textStyle : null,
+      ),
     );
   }
 }
@@ -327,38 +394,70 @@ class TransactionTypeSelector extends ConsumerWidget {
   }
 }
 
-class Keyboard extends StatelessWidget {
+class Keyboard extends ConsumerWidget {
   const Keyboard({super.key});
 
   final SliverGridDelegate _sliver =
       const SliverGridDelegateWithFixedCrossAxisCount(
     crossAxisCount: 3,
-    // crossAxisSpacing: 4,
-    // mainAxisSpacing: 4,
     mainAxisExtent: 80,
   );
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return GridView(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: _sliver,
-      children: const [
-        KeyboardButton(title: '7'),
-        KeyboardButton(title: '8'),
-        KeyboardButton(title: '9'),
-        KeyboardButton(title: '4'),
-        KeyboardButton(title: '5'),
-        KeyboardButton(title: '6'),
-        KeyboardButton(title: '1'),
-        KeyboardButton(title: '2'),
-        KeyboardButton(title: '3'),
-        KeyboardButton(title: '.'),
-        KeyboardButton(title: '0'),
+      children: [
+        KeyboardButton(
+          title: '7',
+          onTap: () => ref.read(keyboarValueProvider.notifier).addValue(7),
+        ),
+        KeyboardButton(
+          title: '8',
+          onTap: () => ref.read(keyboarValueProvider.notifier).addValue(8),
+        ),
+        KeyboardButton(
+          title: '9',
+          onTap: () => ref.read(keyboarValueProvider.notifier).addValue(9),
+        ),
+        KeyboardButton(
+          title: '4',
+          onTap: () => ref.read(keyboarValueProvider.notifier).addValue(4),
+        ),
+        KeyboardButton(
+          title: '5',
+          onTap: () => ref.read(keyboarValueProvider.notifier).addValue(5),
+        ),
+        KeyboardButton(
+          title: '6',
+          onTap: () => ref.read(keyboarValueProvider.notifier).addValue(6),
+        ),
+        KeyboardButton(
+          title: '1',
+          onTap: () => ref.read(keyboarValueProvider.notifier).addValue(1),
+        ),
+        KeyboardButton(
+          title: '2',
+          onTap: () => ref.read(keyboarValueProvider.notifier).addValue(2),
+        ),
+        KeyboardButton(
+          title: '3',
+          onTap: () => ref.read(keyboarValueProvider.notifier).addValue(3),
+        ),
+        KeyboardButton(
+          title: '.',
+          onTap: ref.read(keyboarValueProvider.notifier).addPoint,
+        ),
+        KeyboardButton(
+          title: '0',
+          onTap: () => ref.read(keyboarValueProvider.notifier).addValue(0),
+        ),
         KeyboardButton(
           type: KeyboardButtonType.error,
           child: Icons.backspace_rounded,
+          onTap: ref.read(keyboarValueProvider.notifier).removeDigit,
         ),
       ],
     );
@@ -373,11 +472,14 @@ class KeyboardButton extends StatelessWidget {
     this.title,
     this.child,
     this.type = KeyboardButtonType.normal,
+    required this.onTap,
   });
 
   final String? title;
   final IconData? child;
   final KeyboardButtonType type;
+
+  final void Function() onTap;
 
   final TextStyle _textStyle = const TextStyle(
     fontSize: 24,
@@ -392,17 +494,7 @@ class KeyboardButton extends StatelessWidget {
         height: 70,
         width: 110,
         child: ElevatedButton(
-          // style: (type == KeyboardButtonType.error)
-          //     ? ButtonStyle(
-          //         backgroundColor: MaterialStateColor.resolveWith(
-          //           (states) => theme.error,
-          //         ),
-          //         surfaceTintColor: MaterialStateColor.resolveWith(
-          //           (states) => theme.background,
-          //         ),
-          //       )
-          //     : null,
-          onPressed: () {},
+          onPressed: onTap,
           child: Center(
             child: (title != null)
                 ? Text(title!, style: _textStyle)
