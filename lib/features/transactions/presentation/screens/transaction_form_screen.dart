@@ -1,3 +1,5 @@
+import 'package:fit_wallet/config/themes/colorschemes/color_schemes.g.dart';
+import 'package:fit_wallet/config/themes/dark_theme.dart';
 import 'package:fit_wallet/features/categories/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/categories/presentation/widgets/widgets.dart';
 import 'package:fit_wallet/features/money_accounts/domain/entities/money_account_last_transaction_entity.dart';
@@ -28,7 +30,6 @@ class _TransactionFormScreen extends ConsumerWidget {
 
   void submit(BuildContext context, WidgetRef ref) {
     final cateId = ref.read(categoriesSelectorProvider);
-    final maccId = ref.read(moneyAccountSelectorProvider);
     final type = ref.read(transactionTypeProvider);
 
     final value = ref.watch(keyboarValueProvider).value;
@@ -37,13 +38,15 @@ class _TransactionFormScreen extends ConsumerWidget {
 
     form.changeAmount(value);
     form.changeCateId(cateId!.id);
-    form.changeMaccId(maccId!.id);
     form.changeType(type);
+
+    final account = ref.read(transactionFormProvider).account;
 
     ref.read(transactionFormProvider.notifier).onSubmit().then((value) {
       if (value) {
         ref.invalidate(moneyAccountsProvider);
         ref.invalidate(getTransactionsProvider);
+        ref.invalidate(moneyAccountByIdProvider(account!.id));
         SystemChrome.setSystemUIOverlayStyle(
           SystemUiOverlayStyle.dark.copyWith(
             systemNavigationBarColor: const Color(0xff1e1e21),
@@ -109,6 +112,8 @@ class _TransactionFormScreen extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     TextKeyboardValue(),
+                    SizedBox(height: 10),
+                    BalanceChecker(),
                   ],
                 ),
               ),
@@ -179,10 +184,19 @@ class TextKeyboardValue extends ConsumerWidget {
     fontWeight: FontWeight.bold,
   );
 
+  void _changeValueForm(WidgetRef ref, double value) {
+    ref.read(transactionFormProvider.notifier).changeAmount(value);
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final keyboarValue = ref.watch(keyboarValueProvider);
     final textTheme = Theme.of(context).primaryTextTheme;
+
+    ref.listen(
+      keyboarValueProvider.select((value) => value.value),
+      (previous, next) => _changeValueForm(ref, next),
+    );
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -300,7 +314,7 @@ class MoneyAccountSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final accountSelected = ref.watch(moneyAccountSelectorProvider);
+    final accountSelected = ref.watch(transactionFormProvider).account;
     final theme = Theme.of(context).primaryTextTheme;
 
     return InkWell(
@@ -395,15 +409,13 @@ class MoneyAccountListTile extends ConsumerWidget {
     final theme = Theme.of(context).colorScheme;
 
     final isSelected =
-        ref.watch(moneyAccountSelectorProvider)?.id == account.id;
+        ref.watch(transactionFormProvider).account?.id == account.id;
 
     return ListTile(
       visualDensity: VisualDensity.standard,
       dense: false,
       onTap: () {
-        ref
-            .read(moneyAccountSelectorProvider.notifier)
-            .update((state) => account);
+        ref.read(transactionFormProvider.notifier).changeAccount(account);
         context.pop();
       },
       leading: Container(
@@ -450,18 +462,18 @@ class TransactionTypeSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final transactionTypeSelected = ref.watch(transactionTypeProvider);
+    final transactionTypeSelected = ref.watch(transactionFormProvider);
     return SegmentedButton(
-      selectedIcon: icon(transactionTypeSelected),
-      showSelectedIcon: false,
+      selectedIcon: icon(transactionTypeSelected.type),
+      showSelectedIcon: true,
       segments: const [
         ButtonSegment(value: TransactionType.income, label: Text('INCOME')),
         ButtonSegment(value: TransactionType.expense, label: Text('EXPENSE')),
-        ButtonSegment(value: TransactionType.transfer, label: Text('TRANSFER')),
+        // ButtonSegment(value: TransactionType.transfer, label: Text('TRANSFER')),
       ],
-      selected: {transactionTypeSelected},
+      selected: {transactionTypeSelected.type},
       onSelectionChanged: (v) {
-        ref.read(transactionTypeProvider.notifier).update((state) => v.first);
+        ref.read(transactionFormProvider.notifier).changeType(v.first);
       },
     );
   }
@@ -476,6 +488,10 @@ class Keyboard extends ConsumerWidget {
     mainAxisExtent: 80,
   );
 
+  void _addDigit(WidgetRef ref, int digit) {
+    ref.read(keyboarValueProvider.notifier).addValue(digit);
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return GridView(
@@ -485,39 +501,39 @@ class Keyboard extends ConsumerWidget {
       children: [
         KeyboardButton(
           title: '7',
-          onTap: () => ref.read(keyboarValueProvider.notifier).addValue(7),
+          onTap: () => _addDigit(ref, 7),
         ),
         KeyboardButton(
           title: '8',
-          onTap: () => ref.read(keyboarValueProvider.notifier).addValue(8),
+          onTap: () => _addDigit(ref, 8),
         ),
         KeyboardButton(
           title: '9',
-          onTap: () => ref.read(keyboarValueProvider.notifier).addValue(9),
+          onTap: () => _addDigit(ref, 9),
         ),
         KeyboardButton(
           title: '4',
-          onTap: () => ref.read(keyboarValueProvider.notifier).addValue(4),
+          onTap: () => _addDigit(ref, 4),
         ),
         KeyboardButton(
           title: '5',
-          onTap: () => ref.read(keyboarValueProvider.notifier).addValue(5),
+          onTap: () => _addDigit(ref, 5),
         ),
         KeyboardButton(
           title: '6',
-          onTap: () => ref.read(keyboarValueProvider.notifier).addValue(6),
+          onTap: () => _addDigit(ref, 6),
         ),
         KeyboardButton(
           title: '1',
-          onTap: () => ref.read(keyboarValueProvider.notifier).addValue(1),
+          onTap: () => _addDigit(ref, 1),
         ),
         KeyboardButton(
           title: '2',
-          onTap: () => ref.read(keyboarValueProvider.notifier).addValue(2),
+          onTap: () => _addDigit(ref, 2),
         ),
         KeyboardButton(
           title: '3',
-          onTap: () => ref.read(keyboarValueProvider.notifier).addValue(3),
+          onTap: () => _addDigit(ref, 3),
         ),
         KeyboardButton(
           title: '.',
@@ -525,7 +541,7 @@ class Keyboard extends ConsumerWidget {
         ),
         KeyboardButton(
           title: '0',
-          onTap: () => ref.read(keyboarValueProvider.notifier).addValue(0),
+          onTap: () => _addDigit(ref, 0),
         ),
         KeyboardButton(
           type: KeyboardButtonType.error,
@@ -578,6 +594,61 @@ class KeyboardButton extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class BalanceChecker extends ConsumerWidget {
+  const BalanceChecker({super.key});
+
+  Color _bg(BuildContext context, bool? error) {
+    final colors = Theme.of(context).colorScheme;
+
+    if (error == null) return colors.background;
+
+    if (error) return colors.error;
+
+    return DarkTheme.green;
+  }
+
+  Color _fg(BuildContext context, bool? error) {
+    final colors = Theme.of(context).colorScheme;
+
+    if (error == null) return colors.onBackground;
+
+    if (error) return colors.onError;
+
+    return colors.background;
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final form = ref.watch(transactionFormProvider);
+
+    if (form.amount.value == 0) {
+      return Text(form.account!.amountTxt,
+          style: const TextStyle(fontSize: 14));
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Text(form.account!.amountTxt, style: const TextStyle(fontSize: 14)),
+        const SizedBox(width: 4),
+        const Icon(Icons.arrow_right_alt_rounded),
+        const SizedBox(width: 4),
+        Badge(
+          backgroundColor: _bg(context, form.balanceError),
+          largeSize: 20,
+          label: Text(
+            form.diffAmountTxt,
+            style: TextStyle(
+              color: _fg(context, form.balanceError),
+              fontSize: 14,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

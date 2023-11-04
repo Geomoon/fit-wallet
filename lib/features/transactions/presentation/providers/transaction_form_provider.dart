@@ -1,5 +1,8 @@
+import 'package:fit_wallet/features/money_accounts/domain/entities/entities.dart';
+import 'package:fit_wallet/features/money_accounts/presentation/providers/money_accounts_get_all_provider.dart';
 import 'package:fit_wallet/features/shared/domain/domain.dart';
 import 'package:fit_wallet/features/shared/infrastructure/inputs/number_input.dart';
+import 'package:fit_wallet/features/shared/infrastructure/utils/utils.dart';
 import 'package:fit_wallet/features/transactions/domain/domain.dart';
 import 'package:fit_wallet/features/transactions/presentation/providers/providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,20 +11,34 @@ final transactionFormProvider =
     StateNotifierProvider.autoDispose<_StateNotifier, _State>((ref) {
   final repository = ref.watch(transactionsRepositoryProvider);
 
-  return _StateNotifier(repository: repository);
+  final accounts = ref.watch(moneyAccountsProvider).value;
+  final account = accounts?.where((account) => account.order == 0).first;
+
+  return _StateNotifier(repository: repository, account: account!);
 });
 
 class _StateNotifier extends StateNotifier<_State> {
-  _StateNotifier({required this.repository}) : super(_State());
+  _StateNotifier({
+    required this.repository,
+    required MoneyAccountLastTransactionEntity account,
+  }) : super(_State(account: account)) {
+    _validateAmount();
+  }
 
   final TransactionsRepository repository;
 
   void changeAmount(double value) {
     state = state.copyWith(amount: NumberInput.dirty(value: value));
+    _validateAmount();
   }
 
   void changeMaccId(String id) {
     state = state.copyWith(maccId: id);
+  }
+
+  void changeAccount(MoneyAccountLastTransactionEntity account) {
+    state = state.copyWith(account: account, maccId: account.id);
+    _validateAmount();
   }
 
   void changeCateId(String id) {
@@ -34,6 +51,7 @@ class _StateNotifier extends StateNotifier<_State> {
 
   void changeType(TransactionType type) {
     state = state.copyWith(type: type);
+    _validateAmount();
   }
 
   void changeMaccIdTransfer(String id) {
@@ -46,6 +64,27 @@ class _StateNotifier extends StateNotifier<_State> {
 
   void clearErrors() {
     state = state.copyWith(error: '');
+  }
+
+  void _validateAmount() {
+    double diff = 0;
+
+    switch (state.type) {
+      case TransactionType.income:
+        diff = state.account!.amount + state.amount.value;
+        break;
+      default:
+        diff = state.account!.amount - state.amount.value;
+    }
+
+    bool error = false;
+
+    if (diff <= 0) error = true;
+
+    state = state.copyWith(
+      balanceError: error,
+      accountDiffAmount: diff,
+    );
   }
 
   Future<bool> onSubmit() async {
@@ -88,8 +127,13 @@ final class _State {
   final String? debtId;
   final String? maccIdTransfer;
 
+  final double accountDiffAmount;
+
+  final MoneyAccountLastTransactionEntity? account;
+
   final String error;
   final bool isLoading;
+  final bool? balanceError;
 
   _State({
     this.description,
@@ -101,7 +145,12 @@ final class _State {
     this.maccIdTransfer,
     this.error = '',
     this.isLoading = false,
+    this.balanceError,
+    this.account,
+    this.accountDiffAmount = 0,
   });
+
+  String get diffAmountTxt => Utils.currencyFormat(accountDiffAmount);
 
   _State copyWith({
     String? description,
@@ -113,6 +162,9 @@ final class _State {
     String? maccIdTransfer,
     String? error,
     bool? isLoading,
+    bool? balanceError,
+    MoneyAccountLastTransactionEntity? account,
+    double? accountDiffAmount,
   }) =>
       _State(
         description: description ?? this.description,
@@ -124,5 +176,8 @@ final class _State {
         maccIdTransfer: maccIdTransfer ?? this.maccIdTransfer,
         error: error ?? this.error,
         isLoading: isLoading ?? this.isLoading,
+        balanceError: balanceError,
+        account: account ?? this.account,
+        accountDiffAmount: accountDiffAmount ?? this.accountDiffAmount,
       );
 }
