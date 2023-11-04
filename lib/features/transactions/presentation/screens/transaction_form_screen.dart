@@ -5,7 +5,7 @@ import 'package:fit_wallet/features/money_accounts/presentation/providers/provid
 import 'package:fit_wallet/features/shared/domain/entities/transaction_type_entity.dart';
 import 'package:fit_wallet/features/shared/presentation/widgets/widgets.dart';
 import 'package:fit_wallet/features/transactions/presentation/providers/keyboard_value_provider.dart';
-import 'package:fit_wallet/features/transactions/presentation/providers/transaction_type_provider.dart';
+import 'package:fit_wallet/features/transactions/presentation/providers/providers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,10 +15,55 @@ import 'package:go_router/go_router.dart';
 class TransactionFormScreen extends StatelessWidget {
   const TransactionFormScreen({super.key});
 
-  final TextStyle _textStyle = const TextStyle(fontWeight: FontWeight.bold);
-
   @override
   Widget build(BuildContext context) {
+    return const _TransactionFormScreen();
+  }
+}
+
+class _TransactionFormScreen extends ConsumerWidget {
+  const _TransactionFormScreen();
+
+  final TextStyle _textStyle = const TextStyle(fontWeight: FontWeight.bold);
+
+  void submit(BuildContext context, WidgetRef ref) {
+    final cateId = ref.read(categoriesSelectorProvider);
+    final maccId = ref.read(moneyAccountSelectorProvider);
+    final type = ref.read(transactionTypeProvider);
+
+    final value = ref.watch(keyboarValueProvider).value;
+
+    final form = ref.read(transactionFormProvider.notifier);
+
+    form.changeAmount(value);
+    form.changeCateId(cateId!.id);
+    form.changeMaccId(maccId!.id);
+    form.changeType(type);
+
+    ref.read(transactionFormProvider.notifier).onSubmit().then((value) {
+      if (value) {
+        ref.invalidate(moneyAccountsProvider);
+        ref.invalidate(getTransactionsProvider);
+        SystemChrome.setSystemUIOverlayStyle(
+          SystemUiOverlayStyle.dark.copyWith(
+            systemNavigationBarColor: const Color(0xff1e1e21),
+          ),
+        );
+
+        // showOverlay(context, 'Saved', SnackBarType.success);
+
+        const SnackBarContent(
+          title: 'Saved',
+          type: SnackBarType.success,
+          tinted: true,
+        ).show(context);
+        context.pop();
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context).colorScheme;
 
     SystemChrome.setSystemUIOverlayStyle(
@@ -26,6 +71,18 @@ class TransactionFormScreen extends StatelessWidget {
         systemNavigationBarColor: theme.background,
       ),
     );
+
+    ref.listen<String>(transactionFormProvider.select((value) => value.error),
+        (previous, next) {
+      if (next != '') {
+        SnackBarContent(
+          title: next,
+          type: SnackBarType.error,
+          tinted: true,
+        ).show(context);
+        ref.read(transactionFormProvider.notifier).clearErrors();
+      }
+    });
 
     return WillPopScope(
       onWillPop: () async {
@@ -89,7 +146,16 @@ class TransactionFormScreen extends StatelessWidget {
                   Expanded(
                     child: SizedBox(
                       height: 40,
-                      child: AsyncButton(callback: () {}, title: 'Save'),
+                      child: Consumer(builder: (_, ref, __) {
+                        return AsyncButton(
+                          callback: () {
+                            submit(context, ref);
+                          },
+                          isLoading:
+                              ref.watch(transactionFormProvider).isLoading,
+                          title: 'Save',
+                        );
+                      }),
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -180,7 +246,14 @@ class CategorySelector extends ConsumerWidget {
                 ? MainAxisAlignment.center
                 : MainAxisAlignment.start,
             children: [
-              if (categorySelected != null) Icon(categorySelected.iconData),
+              if (categorySelected != null)
+                Icon(categorySelected.iconData)
+              else
+                const SizedBox(
+                  height: 24,
+                  width: 24,
+                  child: CircularProgressIndicator(),
+                ),
               const SizedBox(width: 20),
               Flexible(
                 child: Column(

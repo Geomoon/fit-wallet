@@ -448,7 +448,7 @@ class TransactionListTile extends StatelessWidget {
             ),
           ),
           Text(
-            transaction.moneyAccount.shortNameTxt,
+            transaction.moneyAccount.name,
             style: textTheme.bodyLarge,
           ),
         ],

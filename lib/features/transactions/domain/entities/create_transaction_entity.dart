@@ -22,7 +22,7 @@ class CreateTransactionEntity {
   Map<String, dynamic> toJson() => {
         'description': description,
         'amount': amount,
-        'type': type,
+        'type': type.name.toUpperCase(),
         'maccId': maccId,
         'cateId': cateId,
         'debtId': debtId,

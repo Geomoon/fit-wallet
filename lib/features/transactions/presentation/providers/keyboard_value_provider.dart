@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final keyboarValueProvider = StateNotifierProvider<_StateNotifier, _State>(
+final keyboarValueProvider =
+    StateNotifierProvider.autoDispose<_StateNotifier, _State>(
   (ref) => _StateNotifier(),
 );
 
@@ -21,8 +22,6 @@ class _StateNotifier extends StateNotifier<_State> {
 
     final doubleValue = double.parse(strValue);
     state = state.copyWith(value: doubleValue, valueTxt: strValue);
-    print(state.valueTxt);
-    print(state.value);
   }
 
   void addPoint() {

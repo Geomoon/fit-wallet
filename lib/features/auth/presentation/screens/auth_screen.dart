@@ -122,18 +122,8 @@ class LoginFormView extends ConsumerWidget {
       authSignInProvider.select((state) => state.error),
       (previous, next) {
         if (next == '') return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: SnackBarContent(title: next, type: SnackBarType.error),
-            dismissDirection: DismissDirection.up,
-            behavior: SnackBarBehavior.floating,
-            margin: EdgeInsets.only(
-              bottom: MediaQuery.of(context).size.height - 120,
-              left: 10,
-              right: 10,
-            ),
-          ),
-        );
+        SnackBarContent(title: next, type: SnackBarType.error, tinted: false)
+            .show(context);
       },
     );
 

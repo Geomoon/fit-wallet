@@ -52,7 +52,7 @@ class MoneyAccountLastTransactionEntity {
 class LastTransaction {
   String id;
   double amount;
-  String description;
+  String? description;
   TransactionType type;
   DateTime createdAt;
 

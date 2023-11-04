@@ -6,6 +6,7 @@ class CategoryEntity {
   String name;
   String hexColor;
   String icon;
+  bool isDefault;
   DateTime createdAt;
 
   CategoryEntity({
@@ -14,6 +15,7 @@ class CategoryEntity {
     required this.hexColor,
     required this.icon,
     required this.createdAt,
+    required this.isDefault,
   });
 
   factory CategoryEntity.fromJson(Map<String, dynamic> json) => CategoryEntity(
@@ -22,6 +24,7 @@ class CategoryEntity {
         hexColor: json["hexColor"],
         icon: json["icon"],
         createdAt: DateTime.parse(json["createdAt"]),
+        isDefault: json["isDefault"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -30,6 +33,7 @@ class CategoryEntity {
         "hexColor": hexColor,
         "icon": icon,
         "createdAt": createdAt.toIso8601String(),
+        "isDefault": isDefault,
       };
 
   String get nameTxt {

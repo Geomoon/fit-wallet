@@ -2,7 +2,7 @@ import 'package:fit_wallet/features/shared/infrastructure/infrastructure.dart';
 
 class TransactionEntity {
   String id;
-  String description;
+  String? description;
   double amount;
   String type;
   String userId;
@@ -13,7 +13,7 @@ class TransactionEntity {
 
   TransactionEntity({
     required this.id,
-    required this.description,
+    this.description,
     required this.amount,
     required this.type,
     required this.userId,
