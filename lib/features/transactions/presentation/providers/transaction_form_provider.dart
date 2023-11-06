@@ -69,17 +69,16 @@ class _StateNotifier extends StateNotifier<_State> {
   void _validateAmount() {
     double diff = 0;
 
-    switch (state.type) {
-      case TransactionType.income:
-        diff = state.account!.amount + state.amount.value;
-        break;
-      default:
-        diff = state.account!.amount - state.amount.value;
+    if (state.type == TransactionType.income) {
+      diff = state.account!.amount + state.amount.value;
+    } else {
+      diff = state.account!.amount - state.amount.value;
     }
 
-    bool error = false;
+    bool? error;
 
     if (diff <= 0) error = true;
+    if (diff > state.account!.amount) error = false;
 
     state = state.copyWith(
       balanceError: error,
