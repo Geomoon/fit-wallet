@@ -180,9 +180,11 @@ class MoneyAccountsList extends StatelessWidget {
 
     if (confirmDelete == true) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Deleted')),
-        );
+        const SnackBarContent(
+          title: 'Deleted',
+          type: SnackBarType.success,
+          tinted: true,
+        ).show(context);
         ref.invalidate(moneyAccountsProvider);
         return true;
       }
@@ -191,7 +193,7 @@ class MoneyAccountsList extends StatelessWidget {
   }
 
   void _showFormDialog(BuildContext context, String id) async {
-    await showModalBottomSheet(
+    final saved = await showModalBottomSheet<bool?>(
       isScrollControlled: true,
       context: context,
       builder: (context) {
@@ -205,6 +207,16 @@ class MoneyAccountsList extends StatelessWidget {
         );
       },
     );
+
+    if (saved == true) {
+      if (context.mounted) {
+        const SnackBarContent(
+          title: 'Account saved',
+          type: SnackBarType.success,
+          tinted: true,
+        ).show(context);
+      }
+    }
   }
 
   @override

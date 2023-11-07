@@ -50,7 +50,7 @@ class MoneyAccountForm extends ConsumerWidget {
                       .then((value) {
                     ref.invalidate(moneyAccountsProvider);
 
-                    context.pop();
+                    context.pop(true);
                   });
                 },
               ),
