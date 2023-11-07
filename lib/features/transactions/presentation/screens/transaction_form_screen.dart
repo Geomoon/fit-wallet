@@ -1,4 +1,3 @@
-import 'package:fit_wallet/config/themes/colorschemes/color_schemes.g.dart';
 import 'package:fit_wallet/config/themes/dark_theme.dart';
 import 'package:fit_wallet/features/categories/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/categories/presentation/widgets/widgets.dart';
@@ -149,6 +148,16 @@ class _TransactionFormScreen extends ConsumerWidget {
                 children: [
                   const SizedBox(width: 10),
                   Expanded(
+                    flex: 1,
+                    child: IconButton.filledTonal(
+                      tooltip: 'Add comment',
+                      onPressed: () {},
+                      icon: const Icon(Icons.add_comment_rounded),
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+                  Expanded(
+                    flex: 2,
                     child: SizedBox(
                       height: 40,
                       child: Consumer(builder: (_, ref, __) {
@@ -536,12 +545,12 @@ class Keyboard extends ConsumerWidget {
           onTap: () => _addDigit(ref, 3),
         ),
         KeyboardButton(
-          title: '.',
-          onTap: ref.read(keyboarValueProvider.notifier).addPoint,
-        ),
-        KeyboardButton(
           title: '0',
           onTap: () => _addDigit(ref, 0),
+        ),
+        KeyboardButton(
+          title: '.',
+          onTap: ref.read(keyboarValueProvider.notifier).addPoint,
         ),
         KeyboardButton(
           type: KeyboardButtonType.error,

@@ -11,6 +11,7 @@ class MoneyAccountForm extends ConsumerWidget {
   const MoneyAccountForm({super.key, this.id});
 
   final String? id;
+  final _box20W = const SizedBox(width: 20);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -79,13 +80,6 @@ class MoneyAccountForm extends ConsumerWidget {
                     .onNameChange,
               ),
               const SizedBox(height: 20),
-              // const Row(
-              //   crossAxisAlignment: CrossAxisAlignment.start,
-              //   children: [
-              //     SizedBox(height: 30),
-              //     Text('Ammount'),
-              //   ],
-              // ),
               TextFormField(
                 initialValue: service.value.value.toString(),
                 keyboardType: TextInputType.number,
@@ -110,6 +104,22 @@ class MoneyAccountForm extends ConsumerWidget {
                 onChanged: ref
                     .read(moneyAccountFormProvider(id).notifier)
                     .onValueChange,
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const Text('Set as default'),
+                  _box20W,
+                  Switch.adaptive(
+                    value: service.order.value == 0,
+                    onChanged: (value) {
+                      ref
+                          .read(moneyAccountFormProvider(id).notifier)
+                          .onOrderChange(value ? 0 : 1);
+                    },
+                  ),
+                ],
               ),
             ],
           ),

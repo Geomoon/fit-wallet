@@ -35,6 +35,7 @@ class _FormNotifier extends StateNotifier<_FormState> {
       state = state.copyWith(
         name: TextInput.dirty(value: account!.name),
         value: NumberInput.dirty(value: account!.amount),
+        order: IntInput.dirty(value: account!.order),
       );
     }
   }
@@ -54,6 +55,10 @@ class _FormNotifier extends StateNotifier<_FormState> {
     }
   }
 
+  void onOrderChange(int? order) {
+    state = state.copyWith(order: IntInput.dirty(value: order ?? 1));
+  }
+
   Future<void> submit() async {
     state = state.copyWith(
       isValid: Formz.validate([state.name, state.value]),
@@ -63,7 +68,10 @@ class _FormNotifier extends StateNotifier<_FormState> {
 
     try {
       final account = CreateMoneyAccountEntity(
-          name: state.name.value, value: state.value.value);
+        name: state.name.value,
+        value: state.value.value,
+        order: state.order.value ?? 1,
+      );
       await onSubmit(account);
       state = state.copyWith(isPosting: false);
     } catch (e) {
@@ -78,6 +86,7 @@ class _FormState {
   final bool isPosting;
   final TextInput name;
   final NumberInput value;
+  final IntInput order;
   final String errorMessage;
 
   _FormState({
@@ -86,6 +95,7 @@ class _FormState {
     this.isPosting = false,
     this.name = const TextInput.pure(min: 2),
     this.value = const NumberInput.pure(),
+    this.order = const IntInput.pure(),
     this.errorMessage = '',
   });
 
@@ -96,6 +106,7 @@ class _FormState {
     TextInput? name,
     NumberInput? value,
     String? errorMessage,
+    IntInput? order,
   }) =>
       _FormState(
         isValid: isValid ?? this.isValid,
@@ -104,5 +115,6 @@ class _FormState {
         name: name ?? this.name,
         value: value ?? this.value,
         errorMessage: errorMessage ?? this.errorMessage,
+        order: order ?? this.order,
       );
 }

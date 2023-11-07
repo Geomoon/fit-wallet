@@ -12,7 +12,8 @@ final transactionFormProvider =
   final repository = ref.watch(transactionsRepositoryProvider);
 
   final accounts = ref.watch(moneyAccountsProvider).value;
-  final account = accounts?.where((account) => account.order == 0).first;
+
+  final account = accounts?.first;
 
   return _StateNotifier(repository: repository, account: account!);
 });
