@@ -7,6 +7,7 @@ import 'package:fit_wallet/features/shared/domain/entities/transaction_type_enti
 import 'package:fit_wallet/features/shared/presentation/widgets/widgets.dart';
 import 'package:fit_wallet/features/transactions/presentation/providers/keyboard_value_provider.dart';
 import 'package:fit_wallet/features/transactions/presentation/providers/providers.dart';
+import 'package:fit_wallet/features/transactions/presentation/providers/transactions_by_money_account_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -46,6 +47,7 @@ class _TransactionFormScreen extends ConsumerWidget {
         ref.invalidate(moneyAccountsProvider);
         ref.invalidate(getTransactionsProvider);
         ref.invalidate(moneyAccountByIdProvider(account!.id));
+        ref.invalidate(getTransactionsFilterProvider);
         SystemChrome.setSystemUIOverlayStyle(
           SystemUiOverlayStyle.dark.copyWith(
             systemNavigationBarColor: const Color(0xff1e1e21),

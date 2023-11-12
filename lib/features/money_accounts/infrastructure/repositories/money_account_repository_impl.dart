@@ -32,4 +32,9 @@ class MoneyAccountRepositoryImpl implements MoneyAccountRepository {
   Future<bool> update(String id, CreateMoneyAccountEntity entity) {
     return _datasource.update(id, entity);
   }
+
+  @override
+  Future<bool> archiveById(String id) {
+    return _datasource.archiveById(id);
+  }
 }

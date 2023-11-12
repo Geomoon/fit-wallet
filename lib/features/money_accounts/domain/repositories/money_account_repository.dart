@@ -6,4 +6,5 @@ abstract class MoneyAccountRepository {
   Future<List<MoneyAccountLastTransactionEntity>> getAll();
   Future<MoneyAccountLastTransactionEntity> getById(String id);
   Future<bool> deleteById(String id);
+  Future<bool> archiveById(String id);
 }

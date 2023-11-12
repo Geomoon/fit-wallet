@@ -70,4 +70,15 @@ class MoneyAccountDatasourceImpl implements MoneyAccountDatasource {
       return false;
     }
   }
+
+  @override
+  Future<bool> archiveById(String id) async {
+    try {
+      await _dio.patch('/money-accounts/$id/archive');
+      return true;
+    } catch (e) {
+      log('error api', error: e);
+      return false;
+    }
+  }
 }

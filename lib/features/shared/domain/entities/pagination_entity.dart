@@ -10,9 +10,9 @@ class PaginationEntity<T> {
     required this.items,
     required this.page,
     this.nextPage,
-    required this.totalPages,
-    required this.totalItems,
-    required this.total,
+    this.totalPages = 0,
+    this.totalItems = 0,
+    this.total = 0,
   });
 
   factory PaginationEntity.fromJson(

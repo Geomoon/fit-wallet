@@ -1,9 +1,12 @@
 import 'package:fit_wallet/config/themes/dark_theme.dart';
+import 'package:fit_wallet/features/home/presentation/presentation.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/widgets/widgets.dart';
 import 'package:fit_wallet/features/shared/domain/domain.dart';
 import 'package:fit_wallet/features/shared/presentation/providers/date_filter_provider.dart';
 import 'package:fit_wallet/features/shared/presentation/providers/transaction_type_filter_provider.dart';
+import 'package:fit_wallet/features/transactions/presentation/providers/get_transactions_provider.dart';
+import 'package:fit_wallet/features/transactions/presentation/providers/transactions_by_money_account_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,7 +27,7 @@ class MoneyAccountsDetailScreen extends StatelessWidget {
 }
 
 class _DetailView extends StatelessWidget {
-  const _DetailView({required this.maccId});
+  _DetailView({required this.maccId});
 
   final String maccId;
 
@@ -33,9 +36,12 @@ class _DetailView extends StatelessWidget {
     horizontal: 28,
   );
 
+  final ScrollController scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
+      controller: scrollController,
       slivers: [
         SliverToBoxAdapter(
           child: Consumer(
@@ -69,8 +75,55 @@ class _DetailView extends StatelessWidget {
               SizedBox(width: 20),
             ],
           ),
-        )
+        ),
+        const SliverToBoxAdapter(child: SizedBox(height: 20)),
+        MoneyAccountTransactionsList(
+          scrollController: scrollController,
+          maccId: maccId,
+        ),
       ],
+    );
+  }
+}
+
+class MoneyAccountTransactionsList extends ConsumerWidget {
+  const MoneyAccountTransactionsList({
+    super.key,
+    required this.scrollController,
+    required this.maccId,
+  });
+
+  final ScrollController scrollController;
+  final String maccId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final transactions = ref.watch(getTransactionsFilterProvider(maccId));
+
+    // scrollController.addListener(
+    //   () {
+    //     final maxScroll = scrollController.position.maxScrollExtent;
+    //     final currentScroll = scrollController.position.pixels;
+    //     final delta = MediaQuery.of(context).size.width * .2;
+    //     if (maxScroll - currentScroll <= delta) {
+    //       ref.read(getTransactionsFilterProvider.notifier).fetchFirst();
+    //     }
+    //   },
+    // );
+
+    return transactions.when(
+      data: (data) {
+        final items = data.items;
+        return SliverList.builder(
+          itemCount: items.length,
+          itemBuilder: (context, index) =>
+              TransactionListTile(transaction: items[index]),
+        );
+      },
+      error: (_, err) =>
+          const SliverToBoxAdapter(child: Center(child: Text('Error'))),
+      loading: () => const SliverToBoxAdapter(
+          child: Center(child: CircularProgressIndicator())),
     );
   }
 }
@@ -85,9 +138,7 @@ class ClearFiltersButton extends ConsumerWidget {
         ref
             .read(transactionTypeFilterProvider.notifier)
             .update((state) => TransactionTypeFilter.all);
-        ref
-            .read(dateFilterProvider.notifier)
-            .update((state) => DateFilter.empty);
+        ref.read(dateFilterValueProvider.notifier).setType(DateFilter.empty);
       },
       icon: const Icon(Icons.filter_alt_off_rounded),
     );
@@ -122,10 +173,14 @@ class FilterButton extends ConsumerWidget {
     await showModalBottomSheet(
       context: context,
       builder: (context) {
-        return CalendarPickerBottomDialog(
-          title: 'By date',
-          onDateChanged: (d) {},
-        );
+        return Consumer(builder: (context, ref, _) {
+          return CalendarPickerBottomDialog(
+            title: 'By date',
+            onDateChanged: (d) => ref
+                .read(dateFilterValueProvider.notifier)
+                .setType(DateFilter.date, d),
+          );
+        });
       },
     );
   }
@@ -166,7 +221,7 @@ class FilterButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final style = DarkTheme.primaryFilterStyle;
 
-    final filter = ref.watch(dateFilterProvider);
+    final filter = ref.watch(dateFilterValueProvider);
 
     return ElevatedButton(
       style: style,
@@ -174,9 +229,9 @@ class FilterButton extends ConsumerWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(title(filter)),
-          if (filter != DateFilter.date) const SizedBox(width: 10),
-          if (filter != DateFilter.date) Icon(icon(filter), size: 18),
+          Text(title(filter.type)),
+          if (filter.type != DateFilter.date) const SizedBox(width: 10),
+          if (filter.type != DateFilter.date) Icon(icon(filter.type), size: 18),
         ],
       ),
     );
@@ -220,8 +275,8 @@ class DatePickerBottomDialog extends ConsumerWidget {
             title: const Text('Today'),
             onTap: () {
               ref
-                  .read(dateFilterProvider.notifier)
-                  .update((state) => DateFilter.today);
+                  .read(dateFilterValueProvider.notifier)
+                  .setType(DateFilter.today);
               context.pop();
             },
           ),
@@ -230,8 +285,8 @@ class DatePickerBottomDialog extends ConsumerWidget {
             title: const Text('This week'),
             onTap: () {
               ref
-                  .read(dateFilterProvider.notifier)
-                  .update((state) => DateFilter.week);
+                  .read(dateFilterValueProvider.notifier)
+                  .setType(DateFilter.week);
               context.pop();
             },
           ),
@@ -240,8 +295,8 @@ class DatePickerBottomDialog extends ConsumerWidget {
             title: const Text('This month'),
             onTap: () {
               ref
-                  .read(dateFilterProvider.notifier)
-                  .update((state) => DateFilter.month);
+                  .read(dateFilterValueProvider.notifier)
+                  .setType(DateFilter.month);
               context.pop();
             },
           ),
@@ -249,9 +304,6 @@ class DatePickerBottomDialog extends ConsumerWidget {
             leading: const Icon(Icons.calendar_view_day_rounded),
             title: const Text('Pick date'),
             onTap: () {
-              ref
-                  .read(dateFilterProvider.notifier)
-                  .update((state) => DateFilter.date);
               onPickDate();
             },
             trailing: const Icon(Icons.arrow_forward_rounded),
@@ -305,7 +357,12 @@ class CalendarPickerBottomDialog extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           CalendarDatePicker(
-            onDateChanged: onDateChanged,
+            onDateChanged: (date) async {
+              await Future.delayed(const Duration(milliseconds: 200)).then(
+                (value) => context.pop(),
+              );
+              onDateChanged(date);
+            },
             initialDate: initialDate ?? DateTime.now(),
             firstDate: firstDate ?? DateTime(2000),
             lastDate: lastDate ?? DateTime.now(),

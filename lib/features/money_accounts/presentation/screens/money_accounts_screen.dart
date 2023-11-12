@@ -174,6 +174,8 @@ class MoneyAccountsList extends StatelessWidget {
           onConfirm: () =>
               ref.read(moneyAccountsRepositoryProvider).deleteById(maccId),
           title: 'Delete Account',
+          description:
+              'All transactions related to this account will be deleted',
         );
       },
     );

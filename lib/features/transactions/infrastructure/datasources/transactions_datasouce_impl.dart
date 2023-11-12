@@ -35,6 +35,7 @@ class TransactionsDatasourceImpl extends TransactionsDatasource {
   ) async {
     final Response response;
     try {
+      print(params.toJson());
       response =
           await _dio.get('/transactions', queryParameters: params.toJson());
 
