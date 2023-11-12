@@ -5,7 +5,6 @@ import 'package:fit_wallet/features/money_accounts/presentation/widgets/widgets.
 import 'package:fit_wallet/features/shared/domain/domain.dart';
 import 'package:fit_wallet/features/shared/presentation/providers/date_filter_provider.dart';
 import 'package:fit_wallet/features/shared/presentation/providers/transaction_type_filter_provider.dart';
-import 'package:fit_wallet/features/transactions/presentation/providers/get_transactions_provider.dart';
 import 'package:fit_wallet/features/transactions/presentation/providers/transactions_by_money_account_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

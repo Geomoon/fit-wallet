@@ -36,9 +36,6 @@ class _StateNotifier extends StateNotifier<DateFilterValues> {
       case DateFilter.empty:
         break;
     }
-
-    print('type: $type, startDate: $startDate, endDate: $endDate');
-
     state = state.copyWith(
         type: type, startDate: startDate, endDate: endDate, date: onlyDate);
   }
