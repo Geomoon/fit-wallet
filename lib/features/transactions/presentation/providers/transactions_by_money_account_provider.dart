@@ -4,78 +4,133 @@ import 'package:fit_wallet/features/transactions/domain/domain.dart';
 import 'package:fit_wallet/features/transactions/presentation/providers/providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final getTransactionsFilterProvider = StateNotifierProvider.autoDispose.family<
-    PaginationNotifier<TransactionEntity>,
-    AsyncValue<PaginationEntity<TransactionEntity>>,
-    String>(
+final getTransactionsFilterProvider = StateNotifierProvider.autoDispose
+    .family<PaginationNotifier<TransactionEntity>, _State, String>(
   (ref, maccId) {
     final repo = ref.watch(transactionsRepositoryProvider);
     final type = ref.watch(transactionTypeFilterProvider);
     final date = ref.watch(dateFilterValueProvider);
 
-    print(date.startDate);
-
     return PaginationNotifier(
-      params: GetTransactionsParams(
-        type: type,
-        page: 1,
-        limit: 10,
-        date: date.date,
-        startDate: date.startDate,
-        endDate: date.endDate,
-        maccId: maccId,
-      ),
+      dateFilter: date,
+      type: type,
       fetch: repo.getAll,
+      maccId: maccId,
     )..init();
   },
 );
 
-class PaginationNotifier<T>
-    extends StateNotifier<AsyncValue<PaginationEntity<T>>> {
+class PaginationNotifier<T> extends StateNotifier<_State> {
   PaginationNotifier({
-    required this.params,
+    required this.maccId,
     required this.fetch,
-  }) : super(const AsyncValue.loading()) {
-    _data = PaginationEntity(
-      items: [],
-      page: 0,
-      nextPage: 1,
-    );
-  }
+    required this.type,
+    required this.dateFilter,
+    this.limit = 10,
+  }) : super(_State(page: 1));
 
-  final GetTransactionsParams params;
   final Future<PaginationEntity<T>> Function(GetTransactionsParams) fetch;
-  late final PaginationEntity<T> _data;
+  final String maccId;
+  final TransactionTypeFilter type;
+  final DateFilterValues dateFilter;
+  final int limit;
 
   void init() {
-    print('INIT');
-    if (params.page <= 1) {
+    if (state.page == 1) {
       fetchFirst();
     }
   }
 
   Future<void> fetchFirst() async {
-    if (_data.page <= 1) {
-      state = const AsyncValue.loading();
-    }
-
+    if (state.isLoading || state.isLoadingMore) return;
     try {
-      print(params);
-      print(_data);
       final response = await fetch(
         GetTransactionsParams(
-          type: params.type,
-          page: _data.nextPage ?? 0,
-          limit: params.limit,
-          date: params.date,
-          startDate: params.startDate,
-          endDate: params.endDate,
-          maccId: params.maccId,
+          type: type,
+          page: 1,
+          limit: limit,
+          date: dateFilter.date,
+          startDate: dateFilter.startDate,
+          endDate: dateFilter.endDate,
+          maccId: maccId,
         ),
       );
-      state = AsyncValue.data(response);
-    } catch (e, stk) {
-      state = AsyncValue.error(e, stk);
+      state = state.copyWith(
+        page: response.nextPage,
+        isLoading: false,
+        items: response.items,
+        errorLoading: '',
+      );
+    } catch (e) {
+      state =
+          state.copyWith(errorLoading: 'Error at loading', isLoading: false);
     }
   }
+
+  Future<void> fetchNext() async {
+    if (state.isLoading || state.isLoadingMore || state.page == null) return;
+
+    state = state.copyWith(isLoadingMore: true, page: state.page);
+
+    try {
+      final response = await fetch(
+        GetTransactionsParams(
+          type: type,
+          page: state.page!,
+          limit: limit,
+          date: dateFilter.date,
+          startDate: dateFilter.startDate,
+          endDate: dateFilter.endDate,
+          maccId: maccId,
+        ),
+      );
+      state = state.copyWith(
+        page: response.nextPage,
+        isLoadingMore: false,
+        isLoading: false,
+        items: state.items..addAll(response.items),
+        errorLoading: '',
+      );
+    } catch (e) {
+      state = state.copyWith(
+        errorLoading: 'Error at loading',
+        isLoadingMore: false,
+      );
+    }
+  }
+}
+
+class _State<T> {
+  _State({
+    this.page,
+    this.items = const [],
+    this.isLoading = false,
+    this.isLoadingMore = false,
+    this.errorLoading = '',
+    this.errorLoadingMore = '',
+  });
+
+  final int? page;
+  final List<T> items;
+  final bool isLoadingMore;
+  final bool isLoading;
+  final String errorLoading;
+  final String errorLoadingMore;
+
+  _State copyWith({
+    int? page,
+    List<T>? items,
+    bool? isLoadingMore,
+    bool? isLoading,
+    String? errorLoading,
+    String? errorLoadingMore,
+  }) =>
+      _State(
+        page: page,
+        isLoading: isLoading ?? this.isLoading,
+        isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+        items: items ?? this.items,
+        errorLoading: errorLoading ?? this.errorLoading,
+        errorLoadingMore: errorLoadingMore ?? this.errorLoadingMore,
+      );
 }

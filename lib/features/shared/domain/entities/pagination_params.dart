@@ -1,8 +1,8 @@
 class PaginationParams {
-  int page;
-  int limit;
+  final int page;
+  final int limit;
 
-  PaginationParams({
+  const PaginationParams({
     required this.page,
     required this.limit,
   });

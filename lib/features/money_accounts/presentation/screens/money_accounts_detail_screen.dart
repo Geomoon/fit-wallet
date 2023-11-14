@@ -80,6 +80,20 @@ class _DetailView extends StatelessWidget {
           scrollController: scrollController,
           maccId: maccId,
         ),
+        Consumer(
+          builder: (context, ref, child) {
+            final transaction = ref.watch(getTransactionsFilterProvider(maccId)
+                .select((value) => value.isLoadingMore));
+
+            if (transaction) {
+              return const SliverToBoxAdapter(
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            return const SliverToBoxAdapter(child: SizedBox.shrink());
+          },
+        )
       ],
     );
   }
@@ -99,30 +113,36 @@ class MoneyAccountTransactionsList extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final transactions = ref.watch(getTransactionsFilterProvider(maccId));
 
-    // scrollController.addListener(
-    //   () {
-    //     final maxScroll = scrollController.position.maxScrollExtent;
-    //     final currentScroll = scrollController.position.pixels;
-    //     final delta = MediaQuery.of(context).size.width * .2;
-    //     if (maxScroll - currentScroll <= delta) {
-    //       ref.read(getTransactionsFilterProvider.notifier).fetchFirst();
-    //     }
-    //   },
-    // );
+    scrollController.addListener(
+      () {
+        final maxScroll = scrollController.position.maxScrollExtent;
+        final currentScroll = scrollController.position.pixels;
+        final delta = MediaQuery.of(context).size.width * .2;
+        if (maxScroll - currentScroll <= delta) {
+          if (transactions.isLoading || transactions.isLoadingMore) return;
 
-    return transactions.when(
-      data: (data) {
-        final items = data.items;
-        return SliverList.builder(
-          itemCount: items.length,
-          itemBuilder: (context, index) =>
-              TransactionListTile(transaction: items[index]),
-        );
+          ref.read(getTransactionsFilterProvider(maccId).notifier).fetchNext();
+        }
       },
-      error: (_, err) =>
-          const SliverToBoxAdapter(child: Center(child: Text('Error'))),
-      loading: () => const SliverToBoxAdapter(
-          child: Center(child: CircularProgressIndicator())),
+    );
+
+    if (transactions.isLoading) {
+      return const SliverToBoxAdapter(
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (transactions.errorLoading != '') {
+      return SliverToBoxAdapter(
+        child: Center(child: Text(transactions.errorLoading)),
+      );
+    }
+
+    return SliverList.builder(
+      itemCount: transactions.items.length,
+      itemBuilder: (context, index) => TransactionListTile(
+        transaction: transactions.items[index],
+      ),
     );
   }
 }

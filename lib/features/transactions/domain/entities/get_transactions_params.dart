@@ -1,7 +1,7 @@
 import 'package:fit_wallet/features/shared/domain/domain.dart';
 
 class GetTransactionsParams extends PaginationParams {
-  GetTransactionsParams({
+  const GetTransactionsParams({
     this.date,
     this.startDate,
     this.endDate,
