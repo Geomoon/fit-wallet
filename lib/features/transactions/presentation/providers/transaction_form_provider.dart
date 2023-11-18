@@ -22,7 +22,7 @@ class _StateNotifier extends StateNotifier<_State> {
   _StateNotifier({
     required this.repository,
     required MoneyAccountLastTransactionEntity account,
-  }) : super(_State(account: account)) {
+  }) : super(_State(account: account, maccId: account.id)) {
     _validateAmount();
   }
 

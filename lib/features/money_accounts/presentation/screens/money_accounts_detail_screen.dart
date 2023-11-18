@@ -62,41 +62,78 @@ class _DetailView extends StatelessWidget {
             },
           ),
         ),
-        const SliverToBoxAdapter(
-          child: Row(
-            children: [
-              SizedBox(width: 20),
-              FilterButton(),
-              SizedBox(width: 10),
-              TransactionTypeFilterButton(),
-              Spacer(),
-              ClearFiltersButton(),
-              SizedBox(width: 20),
-            ],
-          ),
+        SliverPersistentHeader(
+          pinned: true,
+          delegate: MyHeaderDelegate(),
         ),
-        const SliverToBoxAdapter(child: SizedBox(height: 20)),
         MoneyAccountTransactionsList(
           scrollController: scrollController,
           maccId: maccId,
         ),
-        Consumer(
-          builder: (context, ref, child) {
-            final transaction = ref.watch(getTransactionsFilterProvider(maccId)
-                .select((value) => value.isLoadingMore));
-
-            if (transaction) {
-              return const SliverToBoxAdapter(
-                child: Center(child: CircularProgressIndicator()),
-              );
-            }
-
-            return const SliverToBoxAdapter(child: SizedBox.shrink());
-          },
-        )
+        LoadingMoreTransactions(maccId: maccId),
       ],
     );
   }
+}
+
+class LoadingMoreTransactions extends StatelessWidget {
+  const LoadingMoreTransactions({
+    super.key,
+    required this.maccId,
+  });
+
+  final String maccId;
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer(
+      builder: (context, ref, child) {
+        final transaction = ref.watch(getTransactionsFilterProvider(maccId)
+            .select((value) => value.isLoadingMore));
+
+        if (transaction) {
+          return const SliverToBoxAdapter(
+            child: LinearProgressIndicator(),
+          );
+        }
+
+        return const SliverToBoxAdapter(child: SizedBox.shrink());
+      },
+    );
+  }
+}
+
+class MyHeaderDelegate extends SliverPersistentHeaderDelegate {
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    final colors = Theme.of(context).colorScheme.background;
+    return Container(
+      color: colors,
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: const Row(
+        children: [
+          SizedBox(width: 20),
+          FilterButton(),
+          SizedBox(width: 10),
+          TransactionTypeFilterButton(),
+          Spacer(),
+          ClearFiltersButton(),
+          SizedBox(width: 20),
+        ],
+      ),
+    );
+  }
+
+  @override
+  double get maxExtent => 68;
+
+  @override
+  double get minExtent => 68;
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
+      true;
 }
 
 class MoneyAccountTransactionsList extends ConsumerWidget {
@@ -115,12 +152,11 @@ class MoneyAccountTransactionsList extends ConsumerWidget {
 
     scrollController.addListener(
       () {
+        if (transactions.isLoading || transactions.isLoadingMore) return;
         final maxScroll = scrollController.position.maxScrollExtent;
         final currentScroll = scrollController.position.pixels;
-        final delta = MediaQuery.of(context).size.width * .2;
+        final delta = MediaQuery.of(context).size.height * .5;
         if (maxScroll - currentScroll <= delta) {
-          if (transactions.isLoading || transactions.isLoadingMore) return;
-
           ref.read(getTransactionsFilterProvider(maccId).notifier).fetchNext();
         }
       },

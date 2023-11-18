@@ -30,15 +30,11 @@ class _TransactionFormScreen extends ConsumerWidget {
 
   void submit(BuildContext context, WidgetRef ref) {
     final cateId = ref.read(categoriesSelectorProvider);
-    final type = ref.read(transactionTypeProvider);
-
     final value = ref.watch(keyboarValueProvider).value;
-
     final form = ref.read(transactionFormProvider.notifier);
 
     form.changeAmount(value);
     form.changeCateId(cateId!.id);
-    form.changeType(type);
 
     final account = ref.read(transactionFormProvider).account;
 

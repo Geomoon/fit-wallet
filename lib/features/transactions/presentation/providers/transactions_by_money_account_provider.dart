@@ -26,7 +26,7 @@ class PaginationNotifier<T> extends StateNotifier<_State> {
     required this.fetch,
     required this.type,
     required this.dateFilter,
-    this.limit = 10,
+    this.limit = 25,
   }) : super(_State(page: 1));
 
   final Future<PaginationEntity<T>> Function(GetTransactionsParams) fetch;
