@@ -165,7 +165,10 @@ class MoneyAccountTransactionsList extends ConsumerWidget {
 
     if (transactions.isLoading) {
       return const SliverToBoxAdapter(
-        child: Center(child: CircularProgressIndicator()),
+        child: SizedBox(
+          height: 300,
+          child: Center(child: CircularProgressIndicator()),
+        ),
       );
     }
 
