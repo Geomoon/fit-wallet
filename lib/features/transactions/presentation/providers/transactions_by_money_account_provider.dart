@@ -43,6 +43,8 @@ class PaginationNotifier<T> extends StateNotifier<_State> {
 
   Future<void> fetchFirst() async {
     if (state.isLoading || state.isLoadingMore) return;
+
+    state = state.copyWith(isLoading: true);
     try {
       final response = await fetch(
         GetTransactionsParams(

@@ -7,41 +7,11 @@ import 'package:fit_wallet/features/shared/presentation/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// class MoneyAccountsScreen extends StatelessWidget {
-//   const MoneyAccountsScreen({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text(
-//           'Money Accounts',
-//           style: TextStyle(fontWeight: FontWeight.bold),
-//         ),
-//         actions: [
-//           Consumer(
-//             builder: (context, ref, child) {
-//               return IconButton(
-//                 onPressed: () => ref
-//                     .read(isEditModeProvider.notifier)
-//                     .update((state) => !state),
-//                 icon: const Icon(Icons.edit_rounded),
-//               );
-//             },
-//           ),
-//         ],
-//       ),
-//       body: const _MoneyAccountsScreenView(),
-//       floatingActionButton: const FABMoneyAccount(),
-//     );
-//   }
-// }
-
 class FABMoneyAccount extends StatelessWidget {
   const FABMoneyAccount({super.key});
 
   void _showFormDialog(BuildContext context) async {
-    await showModalBottomSheet(
+    final saved = await showModalBottomSheet<bool?>(
       isScrollControlled: true,
       context: context,
       builder: (context) {
@@ -55,6 +25,16 @@ class FABMoneyAccount extends StatelessWidget {
         );
       },
     );
+
+    if (saved == true) {
+      if (context.mounted) {
+        const SnackBarContent(
+          title: 'Account saved',
+          type: SnackBarType.success,
+          tinted: true,
+        ).show(context);
+      }
+    }
   }
 
   @override

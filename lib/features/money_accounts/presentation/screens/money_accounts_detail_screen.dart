@@ -9,6 +9,7 @@ import 'package:fit_wallet/features/transactions/presentation/providers/transact
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 class MoneyAccountsDetailScreen extends StatelessWidget {
@@ -165,6 +166,27 @@ class MoneyAccountTransactionsList extends ConsumerWidget {
     if (transactions.isLoading) {
       return const SliverToBoxAdapter(
         child: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (transactions.items.isEmpty) {
+      return SliverToBoxAdapter(
+        child: SizedBox(
+          height: 420,
+          width: double.infinity,
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SvgPicture.asset(
+                'assets/images/empty_list.svg',
+              ),
+              const SizedBox(height: 20),
+              const Text('No transactions'),
+            ],
+          ),
+        ),
       );
     }
 
