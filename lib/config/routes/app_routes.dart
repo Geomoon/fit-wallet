@@ -37,6 +37,10 @@ final routerProvider = Provider((ref) {
         },
       ),
       GoRoute(
+        path: '/transactions',
+        builder: (_, __) => const TransactionsScreen(),
+      ),
+      GoRoute(
         path: '/transactions/form',
         builder: (context, state) => const TransactionFormScreen(),
       ),

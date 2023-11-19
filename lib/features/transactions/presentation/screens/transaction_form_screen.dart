@@ -98,7 +98,7 @@ class _TransactionFormScreen extends ConsumerWidget {
           title: Text('New Transaction', style: _textStyle),
         ),
         body: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(12.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -106,14 +106,30 @@ class _TransactionFormScreen extends ConsumerWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     TextKeyboardValue(),
-                    SizedBox(height: 10),
+                    SizedBox(height: 10, width: double.infinity),
                     BalanceChecker(),
                   ],
                 ),
               ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  OutlinedButton.icon(
+                      onPressed: () {},
+                      label: Text(
+                        'Add comment',
+                        style: TextStyle(color: theme.onBackground),
+                      ),
+                      icon: Icon(
+                        Icons.comment_rounded,
+                        color: theme.onBackground,
+                      )),
+                ],
+              ),
+              const SizedBox(height: 20),
               const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -170,6 +186,21 @@ class _TransactionFormScreen extends ConsumerWidget {
   }
 }
 
+class AddCommentButton extends StatelessWidget {
+  const AddCommentButton({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final color = Theme.of(context).colorScheme.onPrimary;
+    return ElevatedButton(
+      onPressed: () {},
+      child: Icon(Icons.add_comment_rounded, color: color),
+    );
+  }
+}
+
 class TextKeyboardValue extends ConsumerWidget {
   const TextKeyboardValue({
     super.key,
@@ -194,33 +225,29 @@ class TextKeyboardValue extends ConsumerWidget {
       (previous, next) => _changeValueForm(ref, next),
     );
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Flexible(
-          child: RichText(
-            softWrap: true,
-            textAlign: TextAlign.end,
-            text: TextSpan(
-              children: [
-                const TextSpan(
-                  text: '\$ ',
-                  style: TextStyle(fontSize: 42),
-                ),
-                TextSpan(
-                  text: keyboarValue.intTxt,
-                ),
-                TextSpan(
-                  text: keyboarValue.decimalTxt,
-                  style: TextStyle(
-                      fontSize: 54, color: textTheme.bodySmall!.color),
-                ),
-              ],
-              style: _textStyle,
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      reverse: true,
+      child: RichText(
+        softWrap: true,
+        textAlign: TextAlign.end,
+        text: TextSpan(
+          children: [
+            const TextSpan(
+              text: '\$ ',
+              style: TextStyle(fontSize: 42),
             ),
-          ),
+            TextSpan(
+              text: keyboarValue.intTxt,
+            ),
+            TextSpan(
+              text: keyboarValue.decimalTxt,
+              style: TextStyle(fontSize: 54, color: textTheme.bodySmall!.color),
+            ),
+          ],
+          style: _textStyle,
         ),
-      ],
+      ),
     );
   }
 }
@@ -480,10 +507,10 @@ class Keyboard extends ConsumerWidget {
 
   final SliverGridDelegate _sliver =
       const SliverGridDelegateWithFixedCrossAxisCount(
-    crossAxisCount: 4,
-    crossAxisSpacing: 4,
+    crossAxisCount: 3,
+    crossAxisSpacing: 10,
     mainAxisSpacing: 10,
-    childAspectRatio: 1.5,
+    childAspectRatio: 2,
   );
 
   void _addDigit(WidgetRef ref, int digit) {
@@ -510,11 +537,6 @@ class Keyboard extends ConsumerWidget {
           onTap: () => _addDigit(ref, 9),
         ),
         KeyboardButton(
-          type: KeyboardButtonType.error,
-          child: Icons.backspace_rounded,
-          onTap: ref.read(keyboarValueProvider.notifier).removeDigit,
-        ),
-        KeyboardButton(
           title: '4',
           onTap: () => _addDigit(ref, 4),
         ),
@@ -525,10 +547,6 @@ class Keyboard extends ConsumerWidget {
         KeyboardButton(
           title: '6',
           onTap: () => _addDigit(ref, 6),
-        ),
-        KeyboardButton(
-          child: Icons.add_rounded,
-          onTap: () => _addDigit(ref, 5),
         ),
         KeyboardButton(
           title: '1',
@@ -543,12 +561,7 @@ class Keyboard extends ConsumerWidget {
           onTap: () => _addDigit(ref, 3),
         ),
         KeyboardButton(
-          title: '-',
-          onTap: () => _addDigit(ref, 5),
-        ),
-        KeyboardButton(
-          child: Icons.add_comment_rounded,
-          type: KeyboardButtonType.icon,
+          title: '.',
           onTap: ref.read(keyboarValueProvider.notifier).addPoint,
         ),
         KeyboardButton(
@@ -556,12 +569,9 @@ class Keyboard extends ConsumerWidget {
           onTap: () => _addDigit(ref, 0),
         ),
         KeyboardButton(
-          title: '.',
-          onTap: ref.read(keyboarValueProvider.notifier).addPoint,
-        ),
-        KeyboardButton(
-          title: '=',
-          onTap: ref.read(keyboarValueProvider.notifier).addPoint,
+          type: KeyboardButtonType.icon,
+          child: Icons.backspace_rounded,
+          onTap: ref.read(keyboarValueProvider.notifier).removeDigit,
         ),
       ],
     );
@@ -577,7 +587,7 @@ class KeyboardButton extends StatelessWidget {
     this.child,
     this.type = KeyboardButtonType.normal,
     this.height = 60,
-    required this.onTap,
+    this.onTap,
   });
 
   final String? title;
@@ -585,7 +595,7 @@ class KeyboardButton extends StatelessWidget {
   final KeyboardButtonType type;
   final double? height;
 
-  final void Function() onTap;
+  final void Function()? onTap;
 
   final TextStyle _textStyle = const TextStyle(
     fontSize: 24,
@@ -598,7 +608,6 @@ class KeyboardButton extends StatelessWidget {
     final color = type == KeyboardButtonType.error ? theme.error : null;
     return Center(
       child: SizedBox(
-        height: height,
         // width: 110,
         child: type == KeyboardButtonType.icon
             ? OutlinedButton(
@@ -650,29 +659,40 @@ class BalanceChecker extends ConsumerWidget {
     final form = ref.watch(transactionFormProvider);
 
     if (form.amount.value == 0) {
-      return Text(form.account!.amountTxt,
-          style: const TextStyle(fontSize: 14));
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Text(
+            form.account!.amountTxt,
+            style: const TextStyle(fontSize: 14),
+          ),
+        ],
+      );
     }
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Text(form.account!.amountTxt, style: const TextStyle(fontSize: 14)),
-        const SizedBox(width: 4),
-        const Icon(Icons.arrow_right_alt_rounded),
-        const SizedBox(width: 4),
-        Badge(
-          backgroundColor: _bg(context, form.balanceError),
-          largeSize: 20,
-          label: Text(
-            form.diffAmountTxt,
-            style: TextStyle(
-              color: _fg(context, form.balanceError),
-              fontSize: 14,
+    return SingleChildScrollView(
+      reverse: true,
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Text(form.account!.amountTxt, style: const TextStyle(fontSize: 14)),
+          const SizedBox(width: 4),
+          const Icon(Icons.arrow_right_alt_rounded),
+          const SizedBox(width: 4),
+          Badge(
+            backgroundColor: _bg(context, form.balanceError),
+            largeSize: 20,
+            label: Text(
+              form.diffAmountTxt,
+              style: TextStyle(
+                color: _fg(context, form.balanceError),
+                fontSize: 14,
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

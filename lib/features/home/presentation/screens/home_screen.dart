@@ -270,7 +270,7 @@ class _HomeScreenView extends StatelessWidget {
                 children: [
                   Text('LAST TRANSACTIONS', style: textTheme.bodyLarge),
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () => context.push('/transactions'),
                     icon: const Icon(Icons.arrow_forward_rounded),
                   ),
                 ],
