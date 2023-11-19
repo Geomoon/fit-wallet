@@ -491,8 +491,10 @@ class Keyboard extends ConsumerWidget {
 
   final SliverGridDelegate _sliver =
       const SliverGridDelegateWithFixedCrossAxisCount(
-    crossAxisCount: 3,
-    mainAxisExtent: 80,
+    crossAxisCount: 4,
+    crossAxisSpacing: 4,
+    mainAxisSpacing: 4,
+    childAspectRatio: 1.5,
   );
 
   void _addDigit(WidgetRef ref, int digit) {
@@ -519,6 +521,11 @@ class Keyboard extends ConsumerWidget {
           onTap: () => _addDigit(ref, 9),
         ),
         KeyboardButton(
+          type: KeyboardButtonType.error,
+          child: Icons.backspace_rounded,
+          onTap: ref.read(keyboarValueProvider.notifier).removeDigit,
+        ),
+        KeyboardButton(
           title: '4',
           onTap: () => _addDigit(ref, 4),
         ),
@@ -529,6 +536,10 @@ class Keyboard extends ConsumerWidget {
         KeyboardButton(
           title: '6',
           onTap: () => _addDigit(ref, 6),
+        ),
+        KeyboardButton(
+          title: '.',
+          onTap: ref.read(keyboarValueProvider.notifier).addPoint,
         ),
         KeyboardButton(
           title: '1',
@@ -543,17 +554,20 @@ class Keyboard extends ConsumerWidget {
           onTap: () => _addDigit(ref, 3),
         ),
         KeyboardButton(
-          title: '0',
-          onTap: () => _addDigit(ref, 0),
+          title: '.',
+          onTap: ref.read(keyboarValueProvider.notifier).addPoint,
         ),
         KeyboardButton(
           title: '.',
           onTap: ref.read(keyboarValueProvider.notifier).addPoint,
         ),
         KeyboardButton(
-          type: KeyboardButtonType.error,
-          child: Icons.backspace_rounded,
-          onTap: ref.read(keyboarValueProvider.notifier).removeDigit,
+          title: '0',
+          onTap: () => _addDigit(ref, 0),
+        ),
+        KeyboardButton(
+          title: '.',
+          onTap: ref.read(keyboarValueProvider.notifier).addPoint,
         ),
       ],
     );
@@ -568,12 +582,14 @@ class KeyboardButton extends StatelessWidget {
     this.title,
     this.child,
     this.type = KeyboardButtonType.normal,
+    this.height = 60,
     required this.onTap,
   });
 
   final String? title;
   final IconData? child;
   final KeyboardButtonType type;
+  final double? height;
 
   final void Function() onTap;
 
@@ -587,8 +603,8 @@ class KeyboardButton extends StatelessWidget {
     final theme = Theme.of(context).colorScheme;
     return Center(
       child: SizedBox(
-        height: 70,
-        width: 110,
+        height: height,
+        // width: 110,
         child: ElevatedButton(
           onPressed: onTap,
           child: Center(
