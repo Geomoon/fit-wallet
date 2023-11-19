@@ -139,21 +139,11 @@ class _TransactionFormScreen extends ConsumerWidget {
                   Expanded(child: TransactionTypeSelector()),
                 ],
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 26),
               const Center(child: Keyboard()),
-              const SizedBox(height: 20),
+              const SizedBox(height: 26),
               Row(
                 children: [
-                  const SizedBox(width: 10),
-                  Expanded(
-                    flex: 1,
-                    child: IconButton.filledTonal(
-                      tooltip: 'Add comment',
-                      onPressed: () {},
-                      icon: const Icon(Icons.add_comment_rounded),
-                    ),
-                  ),
-                  const SizedBox(width: 20),
                   Expanded(
                     flex: 2,
                     child: SizedBox(
@@ -170,7 +160,6 @@ class _TransactionFormScreen extends ConsumerWidget {
                       }),
                     ),
                   ),
-                  const SizedBox(width: 10),
                 ],
               ),
             ],
@@ -493,7 +482,7 @@ class Keyboard extends ConsumerWidget {
       const SliverGridDelegateWithFixedCrossAxisCount(
     crossAxisCount: 4,
     crossAxisSpacing: 4,
-    mainAxisSpacing: 4,
+    mainAxisSpacing: 10,
     childAspectRatio: 1.5,
   );
 
@@ -538,8 +527,8 @@ class Keyboard extends ConsumerWidget {
           onTap: () => _addDigit(ref, 6),
         ),
         KeyboardButton(
-          title: '.',
-          onTap: ref.read(keyboarValueProvider.notifier).addPoint,
+          child: Icons.add_rounded,
+          onTap: () => _addDigit(ref, 5),
         ),
         KeyboardButton(
           title: '1',
@@ -554,11 +543,12 @@ class Keyboard extends ConsumerWidget {
           onTap: () => _addDigit(ref, 3),
         ),
         KeyboardButton(
-          title: '.',
-          onTap: ref.read(keyboarValueProvider.notifier).addPoint,
+          title: '-',
+          onTap: () => _addDigit(ref, 5),
         ),
         KeyboardButton(
-          title: '.',
+          child: Icons.add_comment_rounded,
+          type: KeyboardButtonType.icon,
           onTap: ref.read(keyboarValueProvider.notifier).addPoint,
         ),
         KeyboardButton(
@@ -569,12 +559,16 @@ class Keyboard extends ConsumerWidget {
           title: '.',
           onTap: ref.read(keyboarValueProvider.notifier).addPoint,
         ),
+        KeyboardButton(
+          title: '=',
+          onTap: ref.read(keyboarValueProvider.notifier).addPoint,
+        ),
       ],
     );
   }
 }
 
-enum KeyboardButtonType { error, normal }
+enum KeyboardButtonType { error, normal, icon }
 
 class KeyboardButton extends StatelessWidget {
   const KeyboardButton({
@@ -601,21 +595,28 @@ class KeyboardButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
+    final color = type == KeyboardButtonType.error ? theme.error : null;
     return Center(
       child: SizedBox(
         height: height,
         // width: 110,
-        child: ElevatedButton(
-          onPressed: onTap,
-          child: Center(
-            child: (title != null)
-                ? Text(title!, style: _textStyle)
-                : Icon(
-                    child,
-                    color: theme.error,
-                  ),
-          ),
-        ),
+        child: type == KeyboardButtonType.icon
+            ? OutlinedButton(
+                onPressed: onTap,
+                child: Center(
+                  child: (title != null)
+                      ? Text(title!, style: _textStyle)
+                      : Icon(child, color: theme.onPrimary),
+                ),
+              )
+            : ElevatedButton(
+                onPressed: onTap,
+                child: Center(
+                  child: (title != null)
+                      ? Text(title!, style: _textStyle)
+                      : Icon(child, color: color),
+                ),
+              ),
       ),
     );
   }
