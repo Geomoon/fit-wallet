@@ -62,6 +62,18 @@ class _TransactionFormScreen extends ConsumerWidget {
     });
   }
 
+  void showAddCommentDialog(BuildContext context) async {
+    await showModalBottomSheet(
+      context: context,
+      builder: (context) => BottomSheet(
+        showDragHandle: false,
+        enableDrag: false,
+        onClosing: () {},
+        builder: (context) => const AddCommentDialog(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context).colorScheme;
@@ -94,6 +106,7 @@ class _TransactionFormScreen extends ConsumerWidget {
         return true;
       },
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: Text('New Transaction', style: _textStyle),
         ),
@@ -118,7 +131,7 @@ class _TransactionFormScreen extends ConsumerWidget {
               Row(
                 children: [
                   OutlinedButton.icon(
-                      onPressed: () {},
+                      onPressed: () => showAddCommentDialog(context),
                       label: Text(
                         'Add comment',
                         style: TextStyle(color: theme.onBackground),
@@ -181,6 +194,75 @@ class _TransactionFormScreen extends ConsumerWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class AddCommentDialog extends StatefulWidget {
+  const AddCommentDialog({
+    super.key,
+  });
+
+  @override
+  State<AddCommentDialog> createState() => _AddCommentDialogState();
+}
+
+class _AddCommentDialogState extends State<AddCommentDialog> {
+  final focus = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    focus.requestFocus();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).primaryTextTheme;
+    final size = MediaQuery.of(context).viewInsets.bottom;
+
+    return SingleChildScrollView(
+      physics: const NeverScrollableScrollPhysics(),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 10,
+              bottom: 10,
+              left: 10,
+              right: 20,
+            ),
+            child: Row(
+              children: [
+                const CloseButton(),
+                const SizedBox(width: 10),
+                Text(
+                  'Add comment',
+                  style: textTheme.headlineSmall
+                      ?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                const Spacer(),
+                AsyncButton(callback: () {}, title: 'Ok'),
+              ],
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(
+              top: 10,
+              bottom: 32 + size,
+              left: 20,
+              right: 20,
+            ),
+            child: TextFormField(
+              focusNode: focus,
+              decoration: const InputDecoration(
+                icon: Icon(Icons.comment_rounded),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

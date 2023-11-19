@@ -68,13 +68,9 @@ class MoneyAccountForm extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextFormField(
+              NameFormField(
                 initialValue: service.name.value,
-                decoration: InputDecoration(
-                    labelText: 'Account Name',
-                    icon: const Icon(Icons.account_balance_rounded),
-                    errorText: service.name.errorMessage),
-                textInputAction: TextInputAction.next,
+                errorMessage: service.name.errorMessage,
                 onChanged: ref
                     .read(moneyAccountFormProvider(id).notifier)
                     .onNameChange,
@@ -125,6 +121,48 @@ class MoneyAccountForm extends ConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class NameFormField extends StatefulWidget {
+  const NameFormField({
+    super.key,
+    required this.initialValue,
+    required this.onChanged,
+    this.errorMessage,
+  });
+
+  final String initialValue;
+  final String? errorMessage;
+
+  final void Function(String)? onChanged;
+
+  @override
+  State<NameFormField> createState() => _NameFormFieldState();
+}
+
+class _NameFormFieldState extends State<NameFormField> {
+  final focus = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    focus.requestFocus();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      focusNode: focus,
+      initialValue: widget.initialValue,
+      decoration: InputDecoration(
+        labelText: 'Account Name',
+        icon: const Icon(Icons.account_balance_rounded),
+        errorText: widget.errorMessage,
+      ),
+      textInputAction: TextInputAction.next,
+      onChanged: widget.onChanged,
     );
   }
 }
