@@ -20,7 +20,7 @@ class CreateTransactionEntity {
   });
 
   Map<String, dynamic> toJson() => {
-        'description': description,
+        'description': description == '' ? null : description,
         'amount': amount,
         'type': type.name.toUpperCase(),
         'maccId': maccId,

@@ -62,18 +62,6 @@ class _TransactionFormScreen extends ConsumerWidget {
     });
   }
 
-  void showAddCommentDialog(BuildContext context) async {
-    await showModalBottomSheet(
-      context: context,
-      builder: (context) => BottomSheet(
-        showDragHandle: false,
-        enableDrag: false,
-        onClosing: () {},
-        builder: (context) => const AddCommentDialog(),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context).colorScheme;
@@ -119,7 +107,7 @@ class _TransactionFormScreen extends ConsumerWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     TextKeyboardValue(),
                     SizedBox(height: 10, width: double.infinity),
@@ -128,20 +116,7 @@ class _TransactionFormScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              Row(
-                children: [
-                  OutlinedButton.icon(
-                      onPressed: () => showAddCommentDialog(context),
-                      label: Text(
-                        'Add comment',
-                        style: TextStyle(color: theme.onBackground),
-                      ),
-                      icon: Icon(
-                        Icons.comment_rounded,
-                        color: theme.onBackground,
-                      )),
-                ],
-              ),
+              const AddCommentButton(),
               const SizedBox(height: 20),
               const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -199,22 +174,71 @@ class _TransactionFormScreen extends ConsumerWidget {
   }
 }
 
-class AddCommentDialog extends StatefulWidget {
+class AddCommentButton extends ConsumerWidget {
+  const AddCommentButton({super.key});
+
+  void showAddCommentDialog(BuildContext context) async {
+    await showModalBottomSheet(
+      context: context,
+      builder: (context) => BottomSheet(
+        showDragHandle: false,
+        enableDrag: false,
+        onClosing: () {},
+        builder: (context) => const AddCommentDialog(),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context).colorScheme;
+    final form = ref.watch(transactionFormProvider);
+    final description = ref.read(transactionFormProvider).description;
+
+    return Row(
+      children: [
+        OutlinedButton.icon(
+          onPressed: () => showAddCommentDialog(context),
+          label: Text(
+            form.descriptionTxt,
+            style: TextStyle(color: theme.onBackground),
+          ),
+          icon: Icon(
+            Icons.comment_rounded,
+            color: theme.onBackground,
+          ),
+        ),
+        if (description?.isNotEmpty ?? false)
+          IconButton(
+            onPressed: () => ref
+                .read(transactionFormProvider.notifier)
+                .changeDescription(''),
+            icon: const Icon(Icons.close_rounded),
+          ),
+      ],
+    );
+  }
+}
+
+class AddCommentDialog extends ConsumerStatefulWidget {
   const AddCommentDialog({
     super.key,
   });
 
   @override
-  State<AddCommentDialog> createState() => _AddCommentDialogState();
+  ConsumerState createState() => _AddCommentDialogState();
 }
 
-class _AddCommentDialogState extends State<AddCommentDialog> {
+class _AddCommentDialogState extends ConsumerState<AddCommentDialog> {
   final focus = FocusNode();
+  final controller = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     focus.requestFocus();
+
+    controller.text = ref.read(transactionFormProvider).description ?? '';
   }
 
   @override
@@ -244,41 +268,38 @@ class _AddCommentDialogState extends State<AddCommentDialog> {
                       ?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
-                AsyncButton(callback: () {}, title: 'Ok'),
+                AsyncButton(
+                  callback: () {
+                    ref
+                        .read(transactionFormProvider.notifier)
+                        .changeDescription(controller.value.text.trim());
+                    context.pop();
+                  },
+                  title: 'Ok',
+                ),
               ],
             ),
           ),
           Padding(
             padding: EdgeInsets.only(
               top: 10,
-              bottom: 32 + size,
+              bottom: 40 + size,
               left: 20,
               right: 20,
             ),
             child: TextFormField(
+              controller: controller,
               focusNode: focus,
+              minLines: 1,
+              maxLines: 1,
               decoration: const InputDecoration(
                 icon: Icon(Icons.comment_rounded),
               ),
             ),
           ),
+          const SizedBox(height: 20),
         ],
       ),
-    );
-  }
-}
-
-class AddCommentButton extends StatelessWidget {
-  const AddCommentButton({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final color = Theme.of(context).colorScheme.onPrimary;
-    return ElevatedButton(
-      onPressed: () {},
-      child: Icon(Icons.add_comment_rounded, color: color),
     );
   }
 }

@@ -152,6 +152,18 @@ final class _State {
 
   String get diffAmountTxt => Utils.currencyFormat(accountDiffAmount);
 
+  String get descriptionTxt {
+    if (description != null && description!.isNotEmpty) {
+      if (description!.length > 20) {
+        return '${description!.substring(0, 20)}...';
+      }
+
+      return description!;
+    }
+
+    return 'Add comment';
+  }
+
   _State copyWith({
     String? description,
     NumberInput? amount,
