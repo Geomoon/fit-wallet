@@ -8,4 +8,5 @@ abstract class TransactionsDatasource {
   Future<TransactionEntity> getById(String id);
   Future<void> create(CreateTransactionEntity entity);
   Future<void> delete(String id);
+  Future<BalanceEntity> getBalance();
 }

@@ -26,4 +26,9 @@ class TransactionsRepositoryImpl extends TransactionsRepository {
   Future<TransactionEntity> getById(String id) {
     return _datasource.getById(id);
   }
+
+  @override
+  Future<BalanceEntity> getBalance() {
+    return _datasource.getBalance();
+  }
 }

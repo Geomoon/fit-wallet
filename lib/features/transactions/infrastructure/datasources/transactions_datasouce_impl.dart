@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:fit_wallet/features/shared/domain/entities/pagination_entity.dart';
+import 'package:fit_wallet/features/shared/infrastructure/exceptions/exceptions.dart';
 import 'package:fit_wallet/features/transactions/domain/domain.dart';
 
 class TransactionsDatasourceImpl extends TransactionsDatasource {
@@ -56,6 +57,20 @@ class TransactionsDatasourceImpl extends TransactionsDatasource {
     } catch (e) {
       log('error api', error: e);
       rethrow;
+    }
+  }
+
+  @override
+  Future<BalanceEntity> getBalance() async {
+    final Response response;
+
+    try {
+      response = await _dio.get('/transactions/balance');
+
+      return BalanceEntity.fromJson(response.data);
+    } catch (e) {
+      log('error api', error: e);
+      throw AppException('Error at get balance');
     }
   }
 }
