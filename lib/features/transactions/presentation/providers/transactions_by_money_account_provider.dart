@@ -5,7 +5,7 @@ import 'package:fit_wallet/features/transactions/presentation/providers/provider
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final getTransactionsFilterProvider = StateNotifierProvider.autoDispose
-    .family<PaginationNotifier<TransactionEntity>, _State, String>(
+    .family<PaginationNotifier<TransactionEntity>, _State, String?>(
   (ref, maccId) {
     final repo = ref.watch(transactionsRepositoryProvider);
     final type = ref.watch(transactionTypeFilterProvider);
@@ -30,7 +30,7 @@ class PaginationNotifier<T> extends StateNotifier<_State> {
   }) : super(_State(page: 1));
 
   final Future<PaginationEntity<T>> Function(GetTransactionsParams) fetch;
-  final String maccId;
+  final String? maccId;
   final TransactionTypeFilter type;
   final DateFilterValues dateFilter;
   final int limit;
