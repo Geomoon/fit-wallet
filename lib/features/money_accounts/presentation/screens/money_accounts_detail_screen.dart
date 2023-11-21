@@ -80,10 +80,10 @@ class _DetailView extends StatelessWidget {
 class LoadingMoreTransactions extends StatelessWidget {
   const LoadingMoreTransactions({
     super.key,
-    required this.maccId,
+    this.maccId,
   });
 
-  final String maccId;
+  final String? maccId;
 
   @override
   Widget build(BuildContext context) {

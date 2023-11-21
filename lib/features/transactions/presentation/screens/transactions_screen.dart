@@ -29,6 +29,7 @@ class _TransactionsScreenView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
+      controller: scrollController,
       slivers: [
         const SliverToBoxAdapter(
           child: TransactionsResume(),
@@ -37,7 +38,8 @@ class _TransactionsScreenView extends StatelessWidget {
           pinned: true,
           delegate: MyHeaderDelegate(),
         ),
-        TransactionsList(scrollController: scrollController)
+        TransactionsList(scrollController: scrollController),
+        const LoadingMoreTransactions(),
       ],
     );
   }
