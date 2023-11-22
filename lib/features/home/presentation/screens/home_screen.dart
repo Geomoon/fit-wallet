@@ -105,18 +105,29 @@ class HomeScreen extends StatelessWidget {
       ),
       body: _HomeView(screens: _screens),
       bottomNavigationBar: const BottomAppBar(
+        height: 80,
+        padding: EdgeInsets.symmetric(vertical: 2, horizontal: 20),
         child: Row(
           children: [
             NavigationButton(
               index: 0,
               icon: Icons.vertical_split_outlined,
               activeIcon: Icons.vertical_split_rounded,
+              title: 'Home',
             ),
-            SizedBox(width: 10),
+            SizedBox(width: 20),
             NavigationButton(
               index: 1,
               icon: Icons.account_balance_outlined,
               activeIcon: Icons.account_balance_rounded,
+              title: 'Accounts',
+            ),
+            SizedBox(width: 20),
+            NavigationButton(
+              index: 1,
+              icon: Icons.payment_outlined,
+              activeIcon: Icons.payment_rounded,
+              title: 'Pays',
             ),
           ],
         ),
@@ -197,13 +208,19 @@ class NavigationButton extends ConsumerWidget {
     required this.icon,
     required this.activeIcon,
     required this.index,
+    this.title,
   });
 
   final IconData icon;
   final IconData activeIcon;
   final int index;
+  final String? title;
 
-  final BoxConstraints _boxConstraints = const BoxConstraints(minWidth: 76);
+  final BoxConstraints _boxConstraints =
+      const BoxConstraints(minWidth: 64, maxHeight: 32);
+
+  final EdgeInsetsGeometry _padding =
+      const EdgeInsets.symmetric(vertical: 4, horizontal: 20);
 
   void _onTap(WidgetRef ref) {
     ref.read(homeNavigationProvider.notifier).update((state) => index);
@@ -212,19 +229,39 @@ class NavigationButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final actualIndex = ref.watch(homeNavigationProvider);
+    final textStyle = Theme.of(context).textTheme.labelMedium;
+    final textStyleBold = Theme.of(context)
+        .textTheme
+        .labelMedium
+        ?.copyWith(fontWeight: FontWeight.bold);
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 500),
       child: (index == actualIndex)
-          ? IconButton.filledTonal(
-              constraints: _boxConstraints,
-              onPressed: () => _onTap(ref),
-              icon: Icon(activeIcon),
+          ? Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton.filledTonal(
+                  padding: _padding,
+                  constraints: _boxConstraints,
+                  onPressed: () => _onTap(ref),
+                  icon: Icon(activeIcon),
+                ),
+                if (title != null) Text(title!, style: textStyleBold),
+              ],
             )
-          : IconButton(
-              constraints: _boxConstraints,
-              onPressed: () => _onTap(ref),
-              icon: Icon(icon)),
+          : Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  padding: _padding,
+                  constraints: _boxConstraints,
+                  onPressed: () => _onTap(ref),
+                  icon: Icon(icon),
+                ),
+                if (title != null) Text(title!, style: textStyle),
+              ],
+            ),
     );
   }
 }
@@ -505,7 +542,7 @@ class AccountCardsViewer extends ConsumerWidget {
     return moneyAccounts.when(
       data: (accounts) {
         return SizedBox(
-          height: 240,
+          height: 220,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: accounts.length,
