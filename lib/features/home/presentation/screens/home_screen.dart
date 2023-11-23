@@ -9,6 +9,7 @@ import 'package:fit_wallet/features/shared/infrastructure/infrastructure.dart';
 import 'package:fit_wallet/features/shared/presentation/presentation.dart';
 import 'package:fit_wallet/features/transactions/domain/domain.dart';
 import 'package:fit_wallet/features/transactions/presentation/providers/providers.dart';
+import 'package:fit_wallet/features/transactions/presentation/widgets/transaction_list_tile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -362,134 +363,6 @@ class LastTransactionsCard extends ConsumerWidget {
       loading: () {
         return const Center(child: CircularProgressIndicator());
       },
-    );
-  }
-}
-
-class TransactionListTile extends StatelessWidget {
-  const TransactionListTile({
-    super.key,
-    required this.transaction,
-  });
-
-  final TransactionEntity transaction;
-
-  Color get color {
-    switch (transaction.type) {
-      case 'TRANSFER':
-        return darkColorScheme.primary;
-      case 'EXPENSE':
-        return DarkTheme.expense;
-      case 'INCOME':
-        return DarkTheme.income;
-
-      default:
-        return DarkTheme.expense;
-    }
-  }
-
-  Color get iconColor {
-    switch (transaction.type) {
-      case 'TRANSFER':
-        return DarkTheme.primaryFg;
-      case 'EXPENSE':
-        return DarkTheme.red;
-      case 'INCOME':
-        return DarkTheme.green;
-
-      default:
-        return DarkTheme.primaryFg;
-    }
-  }
-
-  Color get iconColorCategory {
-    switch (transaction.type) {
-      case 'TRANSFER':
-        return darkColorScheme.onPrimary;
-
-      default:
-        return DarkTheme.primaryFg;
-    }
-  }
-
-  Icon get icon {
-    switch (transaction.type) {
-      case 'TRANSFER':
-        return Icon(
-          CupertinoIcons.arrow_right_arrow_left,
-          size: 18,
-          color: iconColor,
-        );
-      case 'EXPENSE':
-        return Icon(
-          Icons.arrow_downward_rounded,
-          size: 18,
-          color: iconColor,
-        );
-      case 'INCOME':
-        return Icon(
-          Icons.arrow_upward_rounded,
-          size: 18,
-          color: iconColor,
-        );
-      default:
-        return Icon(
-          Icons.arrow_upward_rounded,
-          size: 18,
-          color: iconColor,
-        );
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).primaryTextTheme;
-
-    return ListTile(
-      // visualDensity: VisualDensity.comfortable,
-      onTap: () {},
-      leading: Container(
-        height: 44,
-        width: 44,
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Center(
-          child: Icon(
-            Utils.iconFromCategory(transaction.category.name),
-            color: iconColorCategory,
-          ),
-        ),
-      ),
-      title: Row(
-        children: [
-          Text(transaction.category.nameTxt),
-          const SizedBox(width: 10),
-          icon,
-        ],
-      ),
-      subtitle: Text(
-        transaction.dateTxt,
-        style: textTheme.bodyLarge,
-      ),
-      trailing: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            transaction.amountTxt,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 14,
-            ),
-          ),
-          Text(
-            transaction.moneyAccount.name,
-            style: textTheme.bodyLarge,
-          ),
-        ],
-      ),
     );
   }
 }

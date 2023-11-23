@@ -1,8 +1,10 @@
 import 'package:fit_wallet/config/themes/themes.dart';
 import 'package:fit_wallet/features/home/presentation/presentation.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/presentation.dart';
+import 'package:fit_wallet/features/shared/presentation/presentation.dart';
 import 'package:fit_wallet/features/transactions/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/transactions/presentation/providers/transactions_by_money_account_provider.dart';
+import 'package:fit_wallet/features/transactions/presentation/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -52,6 +54,21 @@ class TransactionsList extends ConsumerWidget {
   });
 
   final ScrollController scrollController;
+
+  Future<bool?> onDissmissTile(BuildContext context) async {
+    final dissmiss = await showDialog(
+      context: context,
+      builder: (context) {
+        return ConfirmDialog(
+          onConfirm: () async => true,
+          title: 'Delete transaction',
+          description: 'Are you sure to delete this transaction?',
+        );
+      },
+    );
+
+    return dissmiss;
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -108,7 +125,9 @@ class TransactionsList extends ConsumerWidget {
     return SliverList.builder(
       itemCount: transactions.items.length,
       itemBuilder: (context, index) => TransactionListTile(
+        isDissmisable: true,
         transaction: transactions.items[index],
+        confirmDismiss: (p) => onDissmissTile(context),
       ),
     );
   }
