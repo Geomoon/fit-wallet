@@ -125,7 +125,7 @@ class HomeScreen extends StatelessWidget {
               index: 2,
               icon: Icons.payment_outlined,
               activeIcon: Icons.payment_rounded,
-              title: 'Pays',
+              title: 'Payments',
             ),
           ],
         ),
@@ -387,6 +387,7 @@ class AccountCardsViewer extends ConsumerWidget {
                 child: SizedBox(
                   width: 260,
                   child: MoneyAccountCard(
+                    isTwoLines: true,
                     account: account,
                     onTap: () => context.push('/money-accounts/${account.id}'),
                   ),

@@ -613,7 +613,7 @@ class Keyboard extends ConsumerWidget {
     crossAxisCount: 3,
     crossAxisSpacing: 10,
     mainAxisSpacing: 10,
-    childAspectRatio: 2,
+    childAspectRatio: 2.1,
   );
 
   void _addDigit(WidgetRef ref, int digit) {
@@ -711,7 +711,6 @@ class KeyboardButton extends StatelessWidget {
     final color = type == KeyboardButtonType.error ? theme.error : null;
     return Center(
       child: SizedBox(
-        // width: 110,
         child: type == KeyboardButtonType.icon
             ? OutlinedButton(
                 onPressed: onTap,

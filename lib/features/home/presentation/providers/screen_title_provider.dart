@@ -4,5 +4,5 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 final screenTitleProvider = Provider((ref) {
   final actualPageIndex = ref.watch(homeNavigationProvider);
 
-  return ['Wallet', 'Money Accounts', 'Pays'][actualPageIndex];
+  return ['FitWallet', 'Money Accounts', 'Payments'][actualPageIndex];
 });

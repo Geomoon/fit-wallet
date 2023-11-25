@@ -8,16 +8,24 @@ class DebtsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return const SingleChildScrollView(
-      physics: AlwaysScrollableScrollPhysics(),
-      child: Padding(
-        padding: EdgeInsets.only(
-          top: 10.0,
-          bottom: 20.0,
-        ),
-        child: Center(
-          child: Icon(Icons.storefront_rounded),
-        ),
+    return const Padding(
+      padding: EdgeInsets.only(
+        top: 10.0,
+        bottom: 20.0,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(Icons.storefront_rounded),
+          SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('This feature is not available'),
+            ],
+          ),
+        ],
       ),
     );
   }

@@ -35,7 +35,7 @@ class MoneyAccountForm extends ConsumerWidget {
               const CloseButton(),
               const SizedBox(width: 10),
               Text(
-                'New Account',
+                id == null ? 'New Account' : 'Edit account',
                 style: textTheme.headlineSmall
                     ?.copyWith(fontWeight: FontWeight.bold),
               ),

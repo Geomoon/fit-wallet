@@ -8,10 +8,12 @@ class MoneyAccountCard extends StatelessWidget {
     required this.account,
     this.onTap,
     this.margin = const EdgeInsets.only(right: 8, left: 12),
+    this.isTwoLines = false,
   });
 
   final EdgeInsets margin;
   final Function()? onTap;
+  final bool isTwoLines;
 
   final MoneyAccountLastTransactionEntity account;
 
@@ -79,8 +81,14 @@ class MoneyAccountCard extends StatelessWidget {
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 20.0),
+                  if (isTwoLines && account.lastTransaction != null)
+                    const Text('Last transaction'),
                   Text(
-                    'Last transaction - ${account.lastTransactionTxt}',
+                    isTwoLines
+                        ? account.lastTransactionTxt
+                        : (account.lastTransaction != null)
+                            ? 'Last transaction - ${account.lastTransactionTxt}'
+                            : account.lastTransactionTxt,
                     style: (account.order == 0)
                         ? TextStyle(color: theme.onPrimary)
                         : textTheme.bodyLarge,
