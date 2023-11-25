@@ -21,9 +21,10 @@ class TransactionsDatasourceImpl extends TransactionsDatasource {
   }
 
   @override
-  Future<void> delete(String id) async {
+  Future<bool> delete(String id) async {
     try {
       await _dio.delete('/transactions/$id');
+      return true;
     } catch (e) {
       log('error api', error: e);
       rethrow;

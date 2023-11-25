@@ -7,10 +7,10 @@ final getTransactionsProvider = FutureProvider(
   (ref) {
     final repo = ref.watch(transactionsRepositoryProvider);
     return repo.getAll(
-      GetTransactionsParams(
+      const GetTransactionsParams(
         type: TransactionTypeFilter.all,
         page: 1,
-        limit: 10,
+        limit: 25,
       ),
     );
   },

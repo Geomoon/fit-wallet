@@ -10,7 +10,7 @@ abstract class TransactionsRepository {
 
   Future<void> create(CreateTransactionEntity entity);
 
-  Future<void> delete(String id);
+  Future<bool> delete(String id);
 
   Future<BalanceEntity> getBalance();
 }

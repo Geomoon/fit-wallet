@@ -351,7 +351,7 @@ class LastTransactionsCard extends ConsumerWidget {
         }
 
         return ListView.builder(
-          itemCount: data.total,
+          itemCount: data.total > 10 ? 10 : data.total,
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           itemBuilder: (context, index) {

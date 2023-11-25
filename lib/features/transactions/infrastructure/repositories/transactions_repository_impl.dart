@@ -12,7 +12,7 @@ class TransactionsRepositoryImpl extends TransactionsRepository {
   }
 
   @override
-  Future<void> delete(String id) {
+  Future<bool> delete(String id) {
     return _datasource.delete(id);
   }
 

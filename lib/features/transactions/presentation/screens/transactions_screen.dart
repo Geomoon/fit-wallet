@@ -55,19 +55,41 @@ class TransactionsList extends ConsumerWidget {
 
   final ScrollController scrollController;
 
-  Future<bool?> onDissmissTile(BuildContext context) async {
-    final dissmiss = await showDialog(
+  Future<bool?> onDissmissTile(
+      BuildContext context, WidgetRef ref, String id) async {
+    final deleted = await showDialog(
       context: context,
       builder: (context) {
         return ConfirmDialog(
-          onConfirm: () async => true,
+          onConfirm: () => ref.read(transactionsRepositoryProvider).delete(id),
           title: 'Delete transaction',
           description: 'Are you sure to delete this transaction?',
         );
       },
     );
 
-    return dissmiss;
+    if (deleted == false) {
+      if (context.mounted) {
+        const SnackBarContent(
+          title: 'Error at delete',
+          tinted: true,
+          type: SnackBarType.error,
+        ).show(context);
+      }
+    }
+
+    if (deleted == true) {
+      if (context.mounted) {
+        const SnackBarContent(
+          title: 'Transactions deleted',
+          tinted: true,
+          type: SnackBarType.success,
+        ).show(context);
+        ref.read(getTransactionsFilterProvider(null).notifier).removeItem(id);
+      }
+    }
+
+    return deleted;
   }
 
   @override
@@ -127,7 +149,8 @@ class TransactionsList extends ConsumerWidget {
       itemBuilder: (context, index) => TransactionListTile(
         isDissmisable: true,
         transaction: transactions.items[index],
-        confirmDismiss: (p) => onDissmissTile(context),
+        confirmDismiss: (_) =>
+            onDissmissTile(context, ref, transactions.items[index].id),
       ),
     );
   }

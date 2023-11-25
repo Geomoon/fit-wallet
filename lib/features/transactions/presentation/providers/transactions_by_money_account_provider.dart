@@ -100,6 +100,12 @@ class PaginationNotifier<T> extends StateNotifier<_State> {
       );
     }
   }
+
+  void removeItem(String id) {
+    state = state.copyWith(
+      items: state.items.where((e) => e.id != id).toList(),
+    );
+  }
 }
 
 class _State<T> {

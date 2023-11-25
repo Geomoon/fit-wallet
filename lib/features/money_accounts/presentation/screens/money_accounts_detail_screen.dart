@@ -3,9 +3,11 @@ import 'package:fit_wallet/features/home/presentation/presentation.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/widgets/widgets.dart';
 import 'package:fit_wallet/features/shared/domain/domain.dart';
+import 'package:fit_wallet/features/shared/presentation/presentation.dart';
 import 'package:fit_wallet/features/shared/presentation/providers/date_filter_provider.dart';
 import 'package:fit_wallet/features/shared/presentation/providers/transaction_type_filter_provider.dart';
 import 'package:fit_wallet/features/transactions/presentation/providers/transactions_by_money_account_provider.dart';
+import 'package:fit_wallet/features/transactions/presentation/providers/transactions_repository_provider.dart';
 import 'package:fit_wallet/features/transactions/presentation/widgets/widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -148,6 +150,41 @@ class MoneyAccountTransactionsList extends ConsumerWidget {
   final ScrollController scrollController;
   final String maccId;
 
+  Future<bool?> onDissmissTile(
+      BuildContext context, WidgetRef ref, String id) async {
+    final deleted = await showDialog<bool?>(
+      context: context,
+      builder: (context) {
+        return ConfirmDialog(
+          onConfirm: () => ref.read(transactionsRepositoryProvider).delete(id),
+          title: 'Delete transaction',
+          description: 'Are you sure to delete this transaction?',
+        );
+      },
+    );
+
+    if (deleted == true) {
+      if (context.mounted) {
+        const SnackBarContent(
+          title: 'Transactions deleted',
+          tinted: true,
+          type: SnackBarType.success,
+        ).show(context);
+        ref.read(getTransactionsFilterProvider(maccId).notifier).removeItem(id);
+      }
+    } else if (deleted == false) {
+      if (context.mounted) {
+        const SnackBarContent(
+          title: 'Error at delete',
+          tinted: true,
+          type: SnackBarType.error,
+        ).show(context);
+      }
+    }
+
+    return deleted;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final transactions = ref.watch(getTransactionsFilterProvider(maccId));
@@ -204,6 +241,9 @@ class MoneyAccountTransactionsList extends ConsumerWidget {
       itemCount: transactions.items.length,
       itemBuilder: (context, index) => TransactionListTile(
         transaction: transactions.items[index],
+        isDissmisable: true,
+        confirmDismiss: (_) =>
+            onDissmissTile(context, ref, transactions.items[index].id),
       ),
     );
   }
