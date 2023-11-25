@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:fit_wallet/features/auth/presentation/presentation.dart';
 import 'package:fit_wallet/features/auth/presentation/providers/providers.dart';
+import 'package:fit_wallet/features/debts/presentation/screens/screens.dart';
 import 'package:fit_wallet/features/home/presentation/presentation.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/presentation.dart';
 import 'package:fit_wallet/features/transactions/presentation/presentation.dart';
@@ -35,6 +36,10 @@ final routerProvider = Provider((ref) {
 
           return MoneyAccountsDetailScreen(maccId: maccId!);
         },
+      ),
+      GoRoute(
+        path: '/debts',
+        builder: (_, __) => const DebtsScreen(),
       ),
       GoRoute(
         path: '/transactions',

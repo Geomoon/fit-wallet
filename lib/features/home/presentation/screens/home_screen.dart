@@ -1,4 +1,5 @@
 import 'package:fit_wallet/features/auth/presentation/providers/auth_state_provider.dart';
+import 'package:fit_wallet/features/debts/presentation/screens/screens.dart';
 import 'package:fit_wallet/features/home/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/screens/money_accounts_screen.dart';
@@ -89,6 +90,7 @@ class HomeScreen extends StatelessWidget {
   final List<Widget> _screens = const [
     _HomeScreenView(),
     MoneyAccountsScreen(),
+    DebtsScreen(),
   ];
 
   @override
@@ -111,16 +113,16 @@ class HomeScreen extends StatelessWidget {
               activeIcon: Icons.vertical_split_rounded,
               title: 'Home',
             ),
-            SizedBox(width: 20),
+            SizedBox(width: 24),
             NavigationButton(
               index: 1,
               icon: Icons.account_balance_outlined,
               activeIcon: Icons.account_balance_rounded,
               title: 'Accounts',
             ),
-            SizedBox(width: 20),
+            SizedBox(width: 24),
             NavigationButton(
-              index: 1,
+              index: 2,
               icon: Icons.payment_outlined,
               activeIcon: Icons.payment_rounded,
               title: 'Pays',
@@ -231,33 +233,31 @@ class NavigationButton extends ConsumerWidget {
         .labelMedium
         ?.copyWith(fontWeight: FontWeight.bold);
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 500),
-      child: (index == actualIndex)
-          ? Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton.filledTonal(
-                  padding: _padding,
-                  constraints: _boxConstraints,
-                  onPressed: () => _onTap(ref),
-                  icon: Icon(activeIcon),
-                ),
-                if (title != null) Text(title!, style: textStyleBold),
-              ],
-            )
-          : Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  padding: _padding,
-                  constraints: _boxConstraints,
-                  onPressed: () => _onTap(ref),
-                  icon: Icon(icon),
-                ),
-                if (title != null) Text(title!, style: textStyle),
-              ],
-            ),
+    if (index == actualIndex) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton.filledTonal(
+            padding: _padding,
+            constraints: _boxConstraints,
+            onPressed: () => _onTap(ref),
+            icon: Icon(activeIcon),
+          ),
+          if (title != null) Text(title!, style: textStyleBold),
+        ],
+      );
+    }
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        IconButton(
+          padding: _padding,
+          constraints: _boxConstraints,
+          onPressed: () => _onTap(ref),
+          icon: Icon(icon),
+        ),
+        if (title != null) Text(title!, style: textStyle),
+      ],
     );
   }
 }
@@ -362,44 +362,6 @@ class LastTransactionsCard extends ConsumerWidget {
   }
 }
 
-// class AccountCardsViewer extends ConsumerWidget {
-//   const AccountCardsViewer({super.key});
-
-//   @override
-//   Widget build(BuildContext context, WidgetRef ref) {
-//     final controller = PageController(viewportFraction: .9);
-//     final moneyAccounts = ref.watch(moneyAccountsProvider);
-
-//     return moneyAccounts.when(
-//       data: (accounts) {
-//         return SizedBox(
-//           height: 192,
-//           child: PageView.builder(
-//             controller: controller,
-//             itemCount: accounts.length,
-//             itemBuilder: (context, index) {
-//               final account = accounts[index];
-//               return Hero(
-//                 tag: account.id,
-//                 flightShuttleBuilder: (_, __, ___, ____, toHeroContext) {
-//                   // this fix overflow
-//                   return SingleChildScrollView(child: toHeroContext.widget);
-//                 },
-//                 child: MoneyAccountCard(
-//                   account: account,
-//                   onTap: () => context.push('/money-accounts/${account.id}'),
-//                 ),
-//               );
-//             },
-//           ),
-//         );
-//       },
-//       error: (_, __) => Container(),
-//       loading: () => Container(),
-//     );
-//   }
-// }
-
 class AccountCardsViewer extends ConsumerWidget {
   const AccountCardsViewer({super.key});
 
@@ -436,73 +398,6 @@ class AccountCardsViewer extends ConsumerWidget {
       },
       error: (_, __) => Container(),
       loading: () => Container(),
-    );
-  }
-}
-
-class AccountCard extends StatelessWidget {
-  const AccountCard({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final theme = Theme.of(context).colorScheme;
-
-    return Card(
-      margin: const EdgeInsets.only(right: 16),
-      child: InkWell(
-        onTap: () {},
-        borderRadius: BorderRadius.circular(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('\$170.23', style: textTheme.headlineSmall),
-                  Container(
-                    height: 36,
-                    width: 36,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(6.0),
-                    ),
-                    child: Center(
-                        child: Text(
-                      'IB',
-                      style: TextStyle(
-                        color: theme.onPrimary,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    )),
-                  ),
-                ],
-              ),
-            ),
-            DashedLine(color: theme.onPrimaryContainer),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('International Bank'),
-                  const SizedBox(height: 20.0),
-                  Text(
-                    'Last transaction - yesterday',
-                    style: textTheme.bodyLarge,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
