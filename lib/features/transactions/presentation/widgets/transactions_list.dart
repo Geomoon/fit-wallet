@@ -1,3 +1,4 @@
+import 'package:fit_wallet/features/money_accounts/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/shared/presentation/presentation.dart';
 import 'package:fit_wallet/features/transactions/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/transactions/presentation/providers/transactions_by_money_account_provider.dart';
@@ -47,6 +48,10 @@ class TransactionsList extends ConsumerWidget {
           type: SnackBarType.success,
         ).show(context);
         ref.read(getTransactionsFilterProvider(maccId).notifier).removeItem(id);
+        ref.invalidate(balanceProvider);
+        ref.invalidate(moneyAccountByIdProvider);
+        ref.invalidate(moneyAccountsProvider);
+        ref.invalidate(getTransactionsProvider);
       }
     }
 
