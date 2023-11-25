@@ -1,16 +1,11 @@
-import 'package:fit_wallet/config/themes/colorschemes/color_schemes.g.dart';
-import 'package:fit_wallet/config/themes/dark_theme.dart';
 import 'package:fit_wallet/features/auth/presentation/providers/auth_state_provider.dart';
 import 'package:fit_wallet/features/home/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/screens/money_accounts_screen.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/widgets/widgets.dart';
-import 'package:fit_wallet/features/shared/infrastructure/infrastructure.dart';
 import 'package:fit_wallet/features/shared/presentation/presentation.dart';
-import 'package:fit_wallet/features/transactions/domain/domain.dart';
 import 'package:fit_wallet/features/transactions/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/transactions/presentation/widgets/transaction_list_tile.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
