@@ -21,7 +21,7 @@ class SQLiteDatasource {
         await createTables(db);
         debugPrint('TABLES HAS BEEN CREATED');
       },
-      version: 1,
+      version: 2,
     );
   }
 
@@ -70,9 +70,11 @@ class SQLiteDatasource {
         tran_created_at INTEGER,
         tran_deleted_at INTEGER,
         macc_id TEXT,
+        macc_id_transfer TEXT,
         cate_id TEXT,
         PRIMARY KEY ( tran_id ),
         FOREIGN KEY ( macc_id ) REFERENCES money_accounts ( macc_id ),
+        FOREIGN KEY ( macc_id_transfer ) REFERENCES money_accounts ( macc_id ),
         FOREIGN KEY ( cate_id ) REFERENCES categories ( cate_id )
       );
     ''');
