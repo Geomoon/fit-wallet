@@ -8,6 +8,8 @@ class CategoryEntity {
   String icon;
   bool isDefault;
   DateTime createdAt;
+  DateTime? updatedAt;
+  DateTime? deletedAt;
 
   CategoryEntity({
     required this.id,
@@ -16,6 +18,8 @@ class CategoryEntity {
     required this.icon,
     required this.createdAt,
     required this.isDefault,
+    this.updatedAt,
+    this.deletedAt,
   });
 
   factory CategoryEntity.fromJson(Map<String, dynamic> json) => CategoryEntity(
@@ -23,8 +27,14 @@ class CategoryEntity {
         name: json["name"],
         hexColor: json["hexColor"],
         icon: json["icon"],
-        createdAt: DateTime.parse(json["createdAt"]),
         isDefault: json["isDefault"],
+        createdAt: DateTime.parse(json["createdAt"]),
+        updatedAt: json['updatedAt'] == null
+            ? null
+            : DateTime.parse(json['updatedAt']),
+        deletedAt: json['deletedAt'] == null
+            ? null
+            : DateTime.parse(json['deletedAt']),
       );
 
   Map<String, dynamic> toJson() => {
@@ -34,6 +44,8 @@ class CategoryEntity {
         "icon": icon,
         "createdAt": createdAt.toIso8601String(),
         "isDefault": isDefault,
+        "updatedAt": updatedAt?.toIso8601String(),
+        "deletedAt": deletedAt?.toIso8601String(),
       };
 
   String get nameTxt {

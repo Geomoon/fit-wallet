@@ -3,10 +3,12 @@ import 'dart:convert';
 import 'package:fit_wallet/features/categories/infrastructure/infrastructure.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 
 class Utils {
   static final dateFormat = DateFormat(DateFormat.YEAR_MONTH_WEEKDAY_DAY);
   static final dateFormatHHMM = DateFormat('HH:mm');
+  static const Uuid uuidv4 = Uuid();
 
   static Map<String, dynamic> parseJwt(String token) {
     final parts = token.split('.');
@@ -81,4 +83,11 @@ class Utils {
 
     return capitalizedWords.join(' ');
   }
+
+  static String uuid() => uuidv4.v4();
+
+  static int get now => DateTime.now().millisecondsSinceEpoch ~/ 1000;
+
+  static DateTime fromUnix(int time) =>
+      DateTime.fromMillisecondsSinceEpoch(time * 1000);
 }

@@ -8,6 +8,7 @@ class TransactionEntity {
   String userId;
   String? debtId; // TODO:
   DateTime createdAt;
+  DateTime? deletedAt;
   MoneyAccount moneyAccount;
   Category category;
 
@@ -21,6 +22,7 @@ class TransactionEntity {
     required this.createdAt,
     required this.moneyAccount,
     required this.category,
+    this.deletedAt,
   });
 
   factory TransactionEntity.fromJson(Map<String, dynamic> json) =>
@@ -34,6 +36,9 @@ class TransactionEntity {
         createdAt: DateTime.parse(json["createdAt"]),
         moneyAccount: MoneyAccount.fromJson(json["moneyAccount"]),
         category: Category.fromJson(json["category"]),
+        deletedAt: json['deletedAt'] == null
+            ? null
+            : DateTime.parse(json['deletedAt']),
       );
 
   Map<String, dynamic> toJson() => {
@@ -46,6 +51,7 @@ class TransactionEntity {
         "createdAt": createdAt.toIso8601String(),
         "moneyAccount": moneyAccount.toJson(),
         "category": category.toJson(),
+        "deletedAt": deletedAt?.toIso8601String(),
       };
 
   String get amountTxt {

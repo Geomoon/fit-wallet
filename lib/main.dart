@@ -1,11 +1,14 @@
 import 'package:fit_wallet/config/env/env.dart';
 import 'package:fit_wallet/config/routes/routes.dart';
 import 'package:fit_wallet/config/themes/themes.dart';
+import 'package:fit_wallet/features/shared/infrastructure/datasources/sqlite_datasource.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() async {
   await Env.init();
+  WidgetsFlutterBinding.ensureInitialized();
+  await SQLiteDatasource.initDB();
   runApp(const ProviderScope(child: MyApp()));
 }
 

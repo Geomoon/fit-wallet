@@ -4,6 +4,7 @@ class MoneyAccountEntity {
   double amount;
   DateTime createdAt;
   DateTime? updatedAt;
+  DateTime? deletedAt;
 
   MoneyAccountEntity({
     required this.id,
@@ -11,6 +12,7 @@ class MoneyAccountEntity {
     required this.amount,
     required this.createdAt,
     this.updatedAt,
+    this.deletedAt,
   });
 
   factory MoneyAccountEntity.fromJson(Map<String, dynamic> json) =>
@@ -22,5 +24,8 @@ class MoneyAccountEntity {
         updatedAt: json['updatedAt'] == null
             ? null
             : DateTime.parse(json['updatedAt']),
+        deletedAt: json['deletedAt'] == null
+            ? null
+            : DateTime.parse(json['deletedAt']),
       );
 }

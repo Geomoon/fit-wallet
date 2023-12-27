@@ -146,7 +146,10 @@ class MoneyAccountsList extends StatelessWidget {
   }
 
   Future<bool> _onDeleteAccount(
-      BuildContext context, WidgetRef ref, String maccId) async {
+    BuildContext context,
+    WidgetRef ref,
+    String maccId,
+  ) async {
     final confirmDelete = await showDialog<bool?>(
       context: context,
       builder: (context) {

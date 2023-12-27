@@ -1,5 +1,5 @@
 import 'package:fit_wallet/features/money_accounts/domain/entities/entities.dart';
-import 'package:fit_wallet/features/money_accounts/presentation/providers/money_accounts_repository_provider.dart';
+import 'package:fit_wallet/features/money_accounts/presentation/providers/money_account_repository_db_provider.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/shared/infrastructure/inputs/inputs.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,7 +8,8 @@ import 'package:formz/formz.dart';
 final moneyAccountFormProvider = StateNotifierProvider.autoDispose
     .family<_FormNotifier, _FormState, String?>(
   (ref, id) {
-    final repo = ref.watch(moneyAccountsRepositoryProvider);
+    // final repo = ref.watch(moneyAccountsRepositoryProvider);
+    final repo = ref.watch(moneyAccountRepositoryDbProvider);
     if (id != null) {
       // final account = ref.watch(moneyAccountByIdProvider(id)).asData?.value;
 

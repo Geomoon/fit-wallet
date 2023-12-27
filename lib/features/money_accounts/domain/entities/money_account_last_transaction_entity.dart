@@ -72,4 +72,13 @@ class LastTransaction {
         type: TransactionTypeMapper.fromString(json['type']),
         createdAt: DateTime.parse(json['createdAt']),
       );
+
+  factory LastTransaction.fromJsonDB(Map<String, dynamic> json) =>
+      LastTransaction(
+        id: json['id'],
+        amount: json['amount']?.toDouble(),
+        description: json['description'],
+        type: TransactionTypeMapper.fromString(json['type']),
+        createdAt: DateTime.parse(json['created_at']),
+      );
 }
