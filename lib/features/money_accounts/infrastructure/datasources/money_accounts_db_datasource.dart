@@ -72,6 +72,7 @@ class MoneyAccountDbDatasource implements MoneyAccountDatasource {
       from money_accounts macc
       left join transactions_tmp t on macc.macc_id = t.macc_id
       where macc.macc_deleted_at is null
+      order by macc_order asc, macc_created_at desc
     ''');
 
     return rows.map((e) => MoneyAccountMapper.fromDb(e)).toList();
@@ -104,9 +105,55 @@ class MoneyAccountDbDatasource implements MoneyAccountDatasource {
   }
 
   @override
-  Future<bool> update(String id, CreateMoneyAccountEntity entity) {
-    // TODO: implement update
-    throw UnimplementedError();
+  Future<bool> update(String id, CreateMoneyAccountEntity entity) async {
+    final accountByOrder = await getAccountByOrder(entity.order);
+
+    final accountToUpdate = MoneyAccountEntity(
+      id: id,
+      name: entity.name,
+      amount: entity.value,
+      order: entity.order,
+      updatedAt: DateTime.now(),
+    );
+
+    if (accountByOrder == null) {
+      accountToUpdate.order = entity.order;
+    } else if (accountByOrder.id != id) {
+      final lastOrder = await getLastOrder();
+
+      accountByOrder.order = lastOrder + 1;
+      accountByOrder.updatedAt = DateTime.now();
+
+      await _db.update(
+        table,
+        MoneyAccountMapper.entityToJsonDbUpdate(accountByOrder),
+        where: 'macc_id = ?',
+        whereArgs: [accountByOrder.id],
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+
+    await _db.update(
+      table,
+      MoneyAccountMapper.entityToJsonDbUpdate(accountToUpdate),
+      where: 'macc_id = ?',
+      whereArgs: [id],
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+
+    return true;
+  }
+
+  Future<MoneyAccountEntity?> getAccountByOrder(int order) async {
+    final account = await _db.query(
+      table,
+      where: 'macc_order = ?',
+      whereArgs: [order],
+    );
+
+    if (account.isEmpty) return null;
+
+    return MoneyAccountMapper.fromDbToEntity(account[0]);
   }
 
   Future<int> getLastOrder() async {
@@ -117,8 +164,6 @@ class MoneyAccountDbDatasource implements MoneyAccountDatasource {
       orderBy: 'macc_order DESC',
       limit: 1,
     );
-
-    print(account);
 
     if (account.isEmpty) return -1;
 

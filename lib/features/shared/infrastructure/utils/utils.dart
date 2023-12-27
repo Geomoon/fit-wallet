@@ -90,4 +90,6 @@ class Utils {
 
   static DateTime fromUnix(int time) =>
       DateTime.fromMillisecondsSinceEpoch(time * 1000);
+
+  static int unix(DateTime date) => date.millisecondsSinceEpoch ~/ 1000;
 }

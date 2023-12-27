@@ -29,4 +29,41 @@ final class MoneyAccountMapper {
 
     return account;
   }
+
+  static MoneyAccountEntity fromDbToEntity(Map<String, dynamic> json) {
+    return MoneyAccountEntity(
+      id: json['macc_id'],
+      name: json['macc_name'],
+      amount: json['macc_amount']?.toDouble(),
+      order: json['macc_order'],
+      createdAt: json['macc_createdAt'],
+    );
+  }
+
+  static Map<String, dynamic> entityToJsonDb(MoneyAccountEntity entity) {
+    return {
+      'macc_id': entity.id,
+      'macc_name': entity.name,
+      'macc_amount': entity.amount,
+      'macc_order': entity.order,
+      'macc_created_at':
+          entity.createdAt == null ? null : Utils.unix(entity.createdAt!),
+      'macc_updated_at':
+          entity.updatedAt == null ? null : Utils.unix(entity.updatedAt!),
+      'macc_deleted_at':
+          entity.deletedAt == null ? null : Utils.unix(entity.deletedAt!),
+    };
+  }
+
+  static Map<String, dynamic> entityToJsonDbUpdate(MoneyAccountEntity entity) {
+    return {
+      'macc_name': entity.name,
+      'macc_amount': entity.amount,
+      'macc_order': entity.order,
+      'macc_updated_at':
+          entity.updatedAt == null ? null : Utils.unix(entity.updatedAt!),
+      'macc_deleted_at':
+          entity.deletedAt == null ? null : Utils.unix(entity.deletedAt!),
+    };
+  }
 }
