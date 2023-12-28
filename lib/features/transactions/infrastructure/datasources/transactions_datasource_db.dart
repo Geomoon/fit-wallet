@@ -213,8 +213,20 @@ class TransactionsDatasourceDb implements TransactionsDatasource {
   }
 
   @override
-  Future<TransactionEntity> getById(String id) {
-    // TODO: implement getById
-    throw UnimplementedError();
+  Future<TransactionEntity> getById(String id) async {
+    final query = await _db.rawQuery(
+      '''
+      select tran_id, tran_description, tran_amount, tran_type, tran_created_at, 
+        macc.macc_id, macc_name, 
+        cate.cate_id, cate_name, cate_icon, cate_hex_color
+      from transactions tran
+      left join money_accounts macc on macc.macc_id = tran.macc_id 
+      left join categories cate on cate.cate_id = tran.cate_id
+      where tran.tran_id = ?
+    ''',
+      [id],
+    );
+
+    return TransactionsMapper.fromJsonDb(query.first);
   }
 }

@@ -22,7 +22,7 @@ final class MoneyAccountMapper {
         amount: json['tran_amount']?.toDouble(),
         description: json['tran_description'],
         type: TransactionTypeMapper.fromString(json['tran_type']),
-        createdAt: DateTime.parse(json['tran_created_at']),
+        createdAt: Utils.fromUnix(json['tran_created_at']),
       );
       account.lastTransaction = transaction;
     }

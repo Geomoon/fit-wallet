@@ -30,7 +30,7 @@ class MoneyAccountDbDatasource implements MoneyAccountDatasource {
   Future<bool> create(CreateMoneyAccountEntity entity) async {
     Map<String, dynamic> data = Map.from(entity.toJson());
 
-    final id = Utils.uuid();
+    final id = Utils.uuid;
     final order = await getLastOrder();
 
     data['macc_id'] = id;

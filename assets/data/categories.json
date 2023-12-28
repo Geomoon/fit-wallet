@@ -1,0 +1,162 @@
+[
+  {
+    "cate_id": "f037e4a0-8a66-42d3-b69f-1edba6efdd08",
+    "cate_name": "CAR",
+    "cate_hex_color": "c6e3fa",
+    "cate_icon": "car",
+    "cate_created_at": 1703742438678,
+    "cate_is_default": 0
+  },
+  {
+    "cate_id": "3bfb9361-a92e-42f8-af62-c058ce189535",
+    "cate_name": "GAS",
+    "cate_hex_color": "3a7931",
+    "cate_icon": "gas",
+    "cate_created_at": 1703742438678,
+    "cate_is_default": 0
+  },
+  {
+    "cate_id": "61bffab3-8c7e-4b51-9e68-07527373cb73",
+    "cate_name": "TRANSPORT",
+    "cate_hex_color": "6b84c1",
+    "cate_icon": "transport",
+    "cate_created_at": 1703742438678,
+    "cate_is_default": 0
+  },
+  {
+    "cate_id": "31278eb7-c55d-4d43-8e68-e5d89066eb41",
+    "cate_name": "RESTAURANT",
+    "cate_hex_color": "a93549",
+    "cate_icon": "restaurant",
+    "cate_created_at": 1703742438678,
+    "cate_is_default": 0
+  },
+  {
+    "cate_id": "362cb01a-a19f-477c-88b4-bc233fa62a1d",
+    "cate_name": "STORE",
+    "cate_hex_color": "d99433",
+    "cate_icon": "store",
+    "cate_created_at": 1703742438678,
+    "cate_is_default": 0
+  },
+  {
+    "cate_id": "3ce830f0-7a25-4353-b229-613e5dd6f62a",
+    "cate_name": "SHOPPING",
+    "cate_hex_color": "a5c976",
+    "cate_icon": "shopping",
+    "cate_created_at": 1703742438678,
+    "cate_is_default": 0
+  },
+  {
+    "cate_id": "daaffff7-e460-4071-a765-3eda38521bcf",
+    "cate_name": "MEDICAL",
+    "cate_hex_color": "8c4c51",
+    "cate_icon": "medical",
+    "cate_created_at": 1703742438678,
+    "cate_is_default": 0
+  },
+  {
+    "cate_id": "c7a87222-e434-439e-9671-fc87b800a778",
+    "cate_name": "SCHOOL",
+    "cate_hex_color": "b175d6",
+    "cate_icon": "school",
+    "cate_created_at": 1703742438678,
+    "cate_is_default": 0
+  },
+  {
+    "cate_id": "acb8694e-612f-4285-b544-e03e7adeb550",
+    "cate_name": "ENTERTAINMENT",
+    "cate_hex_color": "59855c",
+    "cate_icon": "entertainment",
+    "cate_created_at": 1703742438678,
+    "cate_is_default": 0
+  },
+  {
+    "cate_id": "bd66fbe6-1708-4d7d-9371-6f736428230d",
+    "cate_name": "GYM",
+    "cate_hex_color": "ea7c93",
+    "cate_icon": "gym",
+    "cate_created_at": 1703742438678,
+    "cate_is_default": 0
+  },
+  {
+    "cate_id": "2960c57a-1290-4990-9cbf-c0b59bdc61ce",
+    "cate_name": "TRIP",
+    "cate_hex_color": "754768",
+    "cate_icon": "trip",
+    "cate_created_at": 1703742438678,
+    "cate_is_default": 0
+  },
+  {
+    "cate_id": "36ab92a1-5fd4-4c8c-aa27-32285e9e2013",
+    "cate_name": "INTERNET",
+    "cate_hex_color": "f4d88e",
+    "cate_icon": "internet",
+    "cate_created_at": 1703742438678,
+    "cate_is_default": 0
+  },
+  {
+    "cate_id": "dc5958c0-b145-42ea-af01-74a9e1befaab",
+    "cate_name": "BANK",
+    "cate_hex_color": "547e7c",
+    "cate_icon": "bank",
+    "cate_created_at": 1703742438678,
+    "cate_is_default": 0
+  },
+  {
+    "cate_id": "37431c78-a65e-450f-8aec-1a13977db5fa",
+    "cate_name": "PAY",
+    "cate_hex_color": "d883d1",
+    "cate_icon": "pay",
+    "cate_created_at": 1703742438678,
+    "cate_is_default": 0
+  },
+  {
+    "cate_id": "9a085cd3-6fd4-437f-b3fc-c424ab0c620d",
+    "cate_name": "PARKING",
+    "cate_hex_color": "74d19a",
+    "cate_icon": "parking",
+    "cate_created_at": 1703742438678,
+    "cate_is_default": 0
+  },
+  {
+    "cate_id": "33f014a4-2603-49cf-93cf-42cde3be001a",
+    "cate_name": "OTHER",
+    "cate_hex_color": "937a96",
+    "cate_icon": "other",
+    "cate_created_at": 1703742438678,
+    "cate_is_default": 1
+  },
+  {
+    "cate_id": "f24f86a5-a774-49e1-94e6-069e3b20c006",
+    "cate_name": "FOOD",
+    "cate_hex_color": "4aacc5",
+    "cate_icon": "food",
+    "cate_created_at": 1703742438678,
+    "cate_is_default": 0
+  },
+  {
+    "cate_id": "1a2ca90d-9a35-451c-9255-510dbe0848f3",
+    "cate_name": "HOME",
+    "cate_hex_color": "944b9d",
+    "cate_icon": "home",
+    "cate_created_at": 1703742438678,
+    "cate_is_default": 0
+  },
+  {
+    "cate_id": "417d66db-fcd6-47e5-8740-545c8e1be5e3",
+    "cate_name": "PHONE",
+    "cate_hex_color": "bf70a6",
+    "cate_icon": "phone",
+    "cate_created_at": 1703742438678,
+    "cate_is_default": 0
+  },
+  {
+    "cate_id": "853b73b2-4a7a-4a74-9603-afbba03474bf",
+    "cate_name": "TRANSACTION",
+    "cate_hex_color": "6f5667",
+    "cate_icon": "transaction",
+    "cate_created_at": 1703742438678,
+    "cate_is_default": 0
+  }
+]

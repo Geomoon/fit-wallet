@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:fit_wallet/features/categories/infrastructure/infrastructure.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
@@ -84,7 +85,7 @@ class Utils {
     return capitalizedWords.join(' ');
   }
 
-  static String uuid() => uuidv4.v4();
+  static String get uuid => uuidv4.v4();
 
   static int get now => DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
@@ -92,4 +93,10 @@ class Utils {
       DateTime.fromMillisecondsSinceEpoch(time * 1000);
 
   static int unix(DateTime date) => date.millisecondsSinceEpoch ~/ 1000;
+
+  static Future<dynamic> readJsonFile(String filePath) async {
+    final String response = await rootBundle.loadString(filePath);
+    final data = await json.decode(response);
+    return data;
+  }
 }

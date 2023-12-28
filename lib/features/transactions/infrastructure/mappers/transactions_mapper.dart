@@ -1,3 +1,4 @@
+import 'package:fit_wallet/features/shared/infrastructure/utils/utils.dart';
 import 'package:fit_wallet/features/transactions/domain/domain.dart';
 
 final class TransactionsMapper {
@@ -33,7 +34,7 @@ final class TransactionsMapper {
       type: json["tran_type"],
       userId: json["userId"] ?? '',
       debtId: json["debtId"] ?? '',
-      createdAt: DateTime.parse(json["tran_created_at"]),
+      createdAt: Utils.fromUnix(json["tran_created_at"]),
       moneyAccount: account,
       category: category,
       deletedAt: json['tran_deleted_at'] == null
