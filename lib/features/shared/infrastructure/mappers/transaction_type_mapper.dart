@@ -2,7 +2,7 @@ import 'package:fit_wallet/features/shared/domain/entities/transaction_type_enti
 
 class TransactionTypeMapper {
   static TransactionType fromString(String type) {
-    switch (type) {
+    switch (type.toUpperCase()) {
       case 'TRANSFER':
         return TransactionType.transfer;
       case 'INCOME':

@@ -12,4 +12,35 @@ final class TransactionsMapper {
       'macc_id_transfer': entity.maccIdTransfer,
     };
   }
+
+  static TransactionEntity fromJsonDb(Map<String, dynamic> json) {
+    final account = MoneyAccount(
+      id: json['macc_id'],
+      name: json['macc_name'],
+    );
+
+    final category = Category(
+      id: json['cate_id'],
+      name: json['cate_name'],
+      hexColor: json['cate_hex_color'],
+      icon: json['cate_icon'],
+    );
+
+    final transaction = TransactionEntity(
+      id: json["tran_id"],
+      description: json["tran_description"],
+      amount: json["tran_amount"]?.toDouble(),
+      type: json["tran_type"],
+      userId: json["userId"] ?? '',
+      debtId: json["debtId"] ?? '',
+      createdAt: DateTime.parse(json["tran_created_at"]),
+      moneyAccount: account,
+      category: category,
+      deletedAt: json['tran_deleted_at'] == null
+          ? null
+          : DateTime.parse(json['tran_deleted_at']),
+    );
+
+    return transaction;
+  }
 }
