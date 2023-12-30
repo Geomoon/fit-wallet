@@ -184,8 +184,8 @@ class TransactionsDatasourceDb implements TransactionsDatasource {
       );
     }
 
-    final rawIncomes =
-        query.firstWhere((element) => element['type'] == 'INCOME');
+    final rawIncomes = query
+        .firstWhere((element) => element['type'] == 'INCOME', orElse: () => {});
 
     BalanceDetail incomes;
     if (rawIncomes.isEmpty) {
@@ -194,8 +194,9 @@ class TransactionsDatasourceDb implements TransactionsDatasource {
       incomes = BalanceDetail.fromJson(rawIncomes);
     }
 
-    final rawExpenses =
-        query.firstWhere((element) => element['type'] == 'EXPENSE');
+    final rawExpenses = query.firstWhere(
+        (element) => element['type'] == 'EXPENSE',
+        orElse: () => {});
     BalanceDetail expenses;
     if (rawExpenses.isEmpty) {
       expenses = BalanceDetail(0);

@@ -20,6 +20,8 @@ class TransactionsResume extends ConsumerWidget {
     final colors = Theme.of(context).colorScheme;
     final fontSize = Theme.of(context).primaryTextTheme.titleLarge!.fontSize;
 
+    final textTheme = Theme.of(context).primaryTextTheme;
+
     return balance.when(
       data: (data) => GridView(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -37,8 +39,9 @@ class TransactionsResume extends ConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
+                      Text(
                         'Incomes',
+                        style: textTheme.labelLarge,
                       ),
                       CircleAvatar(
                         backgroundColor: DarkTheme.green,
@@ -53,7 +56,7 @@ class TransactionsResume extends ConsumerWidget {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         data.incomes.valueTxt,
-                        style: TextStyle(fontSize: fontSize),
+                        style: textTheme.titleLarge,
                       ),
                     ),
                   ),
@@ -71,7 +74,10 @@ class TransactionsResume extends ConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('Expenses'),
+                      Text(
+                        'Expenses',
+                        style: textTheme.labelLarge,
+                      ),
                       CircleAvatar(
                         backgroundColor: colors.error,
                         foregroundColor: colors.onError,
@@ -85,7 +91,7 @@ class TransactionsResume extends ConsumerWidget {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         data.expenses.valueTxt,
-                        style: TextStyle(fontSize: fontSize),
+                        style: textTheme.titleLarge,
                       ),
                     ),
                   ),

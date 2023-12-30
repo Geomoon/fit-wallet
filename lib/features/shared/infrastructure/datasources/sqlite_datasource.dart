@@ -23,14 +23,25 @@ class SQLiteDatasource {
       },
       onCreate: (db, version) async {
         await createTables(db);
+        await createFirstAccount(db);
         await insertCategories(db);
         debugPrint('TABLES HAS BEEN CREATED');
       },
-      version: 2,
+      version: 1,
     );
   }
 
   Database get db => _db!;
+
+  static Future<void> createFirstAccount(Database db) async {
+    await db.insert('money_accounts', {
+      'macc_id': Utils.uuid,
+      'macc_name': 'PERSONAL',
+      'macc_amount': 0,
+      'macc_order': 0,
+      'macc_created_at': Utils.now,
+    });
+  }
 
   static Future<void> createTables(Database db) async {
     final batch = db;

@@ -52,6 +52,8 @@ final routerProvider = Provider((ref) {
     ],
     redirect: (context, state) {
       if (authStatus.status == AuthStatus.notAuthenticated) {
+        if (authStatus.route == '/' || authStatus.route == '/login')
+          return null;
         return authStatus.route;
       }
       return null;

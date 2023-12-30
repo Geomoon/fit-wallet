@@ -336,12 +336,14 @@ class TextKeyboardValue extends ConsumerWidget {
         textAlign: TextAlign.end,
         text: TextSpan(
           children: [
-            const TextSpan(
+            TextSpan(
               text: '\$ ',
-              style: TextStyle(fontSize: 42),
+              style:
+                  TextStyle(fontSize: 42, color: textTheme.titleLarge!.color),
             ),
             TextSpan(
               text: keyboarValue.intTxt,
+              style: TextStyle(color: textTheme.titleLarge!.color),
             ),
             TextSpan(
               text: keyboarValue.decimalTxt,
@@ -407,11 +409,20 @@ class CategorySelector extends ConsumerWidget {
                         child: Text(
                           categorySelected.name,
                           softWrap: true,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: theme.headlineSmall?.color,
+                          ),
                         ),
                       )
                     else
-                      const Text('Select Category'),
+                      Text(
+                        'Select Category',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: theme.headlineSmall?.color,
+                        ),
+                      ),
                     Text('CATEGORY', style: theme.bodyLarge),
                   ],
                 ),
@@ -463,7 +474,10 @@ class MoneyAccountSelector extends ConsumerWidget {
                         child: Text(
                           accountSelected.name,
                           softWrap: true,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: theme.headlineSmall?.color,
+                          ),
                         ),
                       )
                     else
@@ -493,14 +507,11 @@ class MoneyAccountsListSelector extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Text('SELECT AN ACCOUNT', style: textTheme.bodyLarge),
-        ),
         Expanded(
           child: accounts.when(
             data: (data) {
               return ListView.builder(
+                reverse: true,
                 itemCount: data.length,
                 itemBuilder: (_, i) {
                   return MoneyAccountListTile(account: data[i]);
@@ -514,6 +525,10 @@ class MoneyAccountsListSelector extends ConsumerWidget {
               child: CircularProgressIndicator(),
             ),
           ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: Text('SELECT AN ACCOUNT', style: textTheme.bodyLarge),
         ),
       ],
     );
@@ -717,7 +732,7 @@ class KeyboardButton extends StatelessWidget {
                 child: Center(
                   child: (title != null)
                       ? Text(title!, style: _textStyle)
-                      : Icon(child, color: theme.onPrimary),
+                      : Icon(child, color: theme.onBackground),
                 ),
               )
             : ElevatedButton(
@@ -759,6 +774,7 @@ class BalanceChecker extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final form = ref.watch(transactionFormProvider);
+    final color = Theme.of(context).colorScheme.onBackground;
 
     if (form.amount.value == 0) {
       return Row(
@@ -766,7 +782,7 @@ class BalanceChecker extends ConsumerWidget {
         children: [
           Text(
             form.account!.amountTxt,
-            style: const TextStyle(fontSize: 14),
+            style: TextStyle(fontSize: 14, color: color),
           ),
         ],
       );
@@ -778,9 +794,10 @@ class BalanceChecker extends ConsumerWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Text(form.account!.amountTxt, style: const TextStyle(fontSize: 14)),
+          Text(form.account!.amountTxt,
+              style: TextStyle(fontSize: 14, color: color)),
           const SizedBox(width: 4),
-          const Icon(Icons.arrow_right_alt_rounded),
+          Icon(Icons.arrow_right_alt_rounded, color: color),
           const SizedBox(width: 4),
           Badge(
             backgroundColor: _bg(context, form.balanceError),

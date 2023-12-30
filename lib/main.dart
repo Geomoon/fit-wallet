@@ -2,6 +2,7 @@ import 'package:fit_wallet/config/env/env.dart';
 import 'package:fit_wallet/config/routes/routes.dart';
 import 'package:fit_wallet/config/themes/themes.dart';
 import 'package:fit_wallet/features/shared/infrastructure/datasources/sqlite_datasource.dart';
+import 'package:fit_wallet/features/shared/presentation/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -18,14 +19,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer(
-      builder: (context, ref, _) => MaterialApp.router(
-        title: 'FitWallet',
-        theme: ref.watch(lightTheme),
-        darkTheme: DarkTheme.theme,
-        themeMode: ref.watch(themeModeProvider),
-        routerConfig: ref.watch(routerProvider),
-        debugShowCheckedModeBanner: false,
-      ),
+      builder: (context, ref, _) {
+        final storage = ref.watch(localStorageProvider);
+
+        return MaterialApp.router(
+          title: 'FitWallet',
+          theme: LightTheme.theme,
+          darkTheme: DarkTheme.theme,
+          themeMode: ref.watch(themeModeProvider),
+          routerConfig: ref.watch(routerProvider),
+          debugShowCheckedModeBanner: false,
+        );
+      },
     );
   }
 }
