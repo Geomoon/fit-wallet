@@ -5,6 +5,7 @@ import 'package:fit_wallet/features/auth/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/debts/presentation/screens/screens.dart';
 import 'package:fit_wallet/features/home/presentation/presentation.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/presentation.dart';
+import 'package:fit_wallet/features/settings/presentation/screens/screens.dart';
 import 'package:fit_wallet/features/transactions/presentation/presentation.dart';
 import 'package:fit_wallet/features/welcome/presentation/presentation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -49,11 +50,16 @@ final routerProvider = Provider((ref) {
         path: '/transactions/form',
         builder: (context, state) => const TransactionFormScreen(),
       ),
+      GoRoute(
+        path: '/settings',
+        builder: (context, state) => const SettingsScreen(),
+      )
     ],
     redirect: (context, state) {
       if (authStatus.status == AuthStatus.notAuthenticated) {
-        if (authStatus.route == '/' || authStatus.route == '/login')
+        if (authStatus.route == '/' || authStatus.route == '/login') {
           return null;
+        }
         return authStatus.route;
       }
       return null;

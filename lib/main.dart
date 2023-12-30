@@ -20,13 +20,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
-        final storage = ref.watch(localStorageProvider);
-
+        final themeMode = ref.watch(themeModeProvider);
+        print('themeMode $themeMode');
         return MaterialApp.router(
           title: 'FitWallet',
           theme: LightTheme.theme,
           darkTheme: DarkTheme.theme,
-          themeMode: ref.watch(themeModeProvider),
+          themeMode: themeMode,
           routerConfig: ref.watch(routerProvider),
           debugShowCheckedModeBanner: false,
         );

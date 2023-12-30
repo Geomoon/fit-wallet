@@ -20,7 +20,7 @@ class LocalStorageService {
     await _storage.ready;
 
     await _storage
-        .setItem(key, value)
+        .setItem(key, value, (nonEncodable) => nonEncodable)
         .then((_) => log('SAVED VALUE $key:$value'));
   }
 

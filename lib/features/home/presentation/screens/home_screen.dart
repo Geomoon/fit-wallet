@@ -69,16 +69,12 @@ class HomeScreenAppBarActions extends StatelessWidget {
         SizedBox(
           height: 36,
           width: 36,
-          child: Consumer(builder: (_, ref, __) {
-            return IconButton(
-              onPressed: () {
-                ref.read(themeModeProvider.notifier).update((state) =>
-                    state == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark);
-                // ref.read(authStatusProvider.notifier).logout();
-              },
-              icon: const Icon(Icons.settings_rounded),
-            );
-          }),
+          child: IconButton(
+            onPressed: () {
+              context.push('/settings');
+            },
+            icon: const Icon(Icons.settings_rounded),
+          ),
         ),
         const SizedBox(width: 10),
       ],
