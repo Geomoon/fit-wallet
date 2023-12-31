@@ -106,7 +106,7 @@ class MoneyAccountForm extends ConsumerWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Text('Set as default', style: textTheme.bodyLarge),
+                  Text('Set as favorite', style: textTheme.bodyLarge),
                   _box20W,
                   Switch.adaptive(
                     value: service.order.value == 0,

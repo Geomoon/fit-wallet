@@ -42,6 +42,15 @@ final class TransactionsMapper {
           : DateTime.parse(json['tran_deleted_at']),
     );
 
+    if (json['macc_id_transfer'] != null) {
+      final accountTransfer = MoneyAccount(
+        id: json['macc_id_transfer'],
+        name: json['macc_name_transfer'],
+      );
+
+      transaction.moneyAccountTransfer = accountTransfer;
+    }
+
     return transaction;
   }
 }

@@ -8,15 +8,15 @@ import 'package:fit_wallet/features/transactions/presentation/providers/provider
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final transactionFormProvider =
-    StateNotifierProvider.autoDispose<_StateNotifier, _State>((ref) {
-  final repository = ref.watch(transactionsRepositoryProvider);
+    StateNotifierProvider.autoDispose<_StateNotifier, _State>(
+  (ref) {
+    final repository = ref.watch(transactionsRepositoryProvider);
+    final accounts = ref.watch(moneyAccountsProvider).value;
+    final account = accounts?.first;
 
-  final accounts = ref.watch(moneyAccountsProvider).value;
-
-  final account = accounts?.first;
-
-  return _StateNotifier(repository: repository, account: account!);
-});
+    return _StateNotifier(repository: repository, account: account!);
+  },
+);
 
 class _StateNotifier extends StateNotifier<_State> {
   _StateNotifier({
@@ -29,42 +29,45 @@ class _StateNotifier extends StateNotifier<_State> {
   final TransactionsRepository repository;
 
   void changeAmount(double value) {
-    state = state.copyWith(amount: NumberInput.dirty(value: value));
+    state = state.copyWith(
+        amount: NumberInput.dirty(value: value), accountTo: state.accountTo);
     _validateAmount();
   }
 
   void changeMaccId(String id) {
-    state = state.copyWith(maccId: id);
+    state = state.copyWith(maccId: id, accountTo: state.accountTo);
   }
 
   void changeAccount(MoneyAccountLastTransactionEntity account) {
-    state = state.copyWith(account: account, maccId: account.id);
+    state = state.copyWith(
+        account: account, maccId: account.id, accountTo: state.accountTo);
+    _validateAmount();
+  }
+
+  void changeAccountTo(MoneyAccountLastTransactionEntity account) {
+    state = state.copyWith(accountTo: account, maccIdTransfer: account.id);
     _validateAmount();
   }
 
   void changeCateId(String id) {
-    state = state.copyWith(cateId: id);
+    state = state.copyWith(cateId: id, accountTo: state.accountTo);
   }
 
   void changeDescription(String value) {
-    state = state.copyWith(description: value);
+    state = state.copyWith(description: value, accountTo: state.accountTo);
   }
 
   void changeType(TransactionType type) {
-    state = state.copyWith(type: type);
+    state = state.copyWith(type: type, accountTo: null);
     _validateAmount();
   }
 
-  void changeMaccIdTransfer(String id) {
-    state = state.copyWith(maccIdTransfer: id);
-  }
-
   void changeDebtId(String id) {
-    state = state.copyWith(debtId: id);
+    state = state.copyWith(debtId: id, accountTo: state.accountTo);
   }
 
   void clearErrors() {
-    state = state.copyWith(error: '');
+    state = state.copyWith(error: '', accountTo: state.accountTo);
   }
 
   void _validateAmount() {
@@ -84,14 +87,16 @@ class _StateNotifier extends StateNotifier<_State> {
     state = state.copyWith(
       balanceError: error,
       accountDiffAmount: diff,
+      accountTo: state.accountTo,
     );
   }
 
   Future<bool> onSubmit() async {
-    state = state.copyWith(isLoading: true);
+    state = state.copyWith(isLoading: true, accountTo: state.accountTo);
 
     if (state.amount.value == 0) {
-      state = state.copyWith(error: 'Enter a value', isLoading: false);
+      state = state.copyWith(
+          error: 'Enter a value', isLoading: false, accountTo: state.accountTo);
       return false;
     }
 
@@ -108,11 +113,12 @@ class _StateNotifier extends StateNotifier<_State> {
     try {
       await repository.create(transaction);
     } catch (e) {
-      state = state.copyWith(error: e.toString(), isLoading: false);
+      state = state.copyWith(
+          error: e.toString(), isLoading: false, accountTo: state.accountTo);
       return false;
     }
 
-    state = state.copyWith(isLoading: false);
+    state = state.copyWith(isLoading: false, accountTo: state.accountTo);
 
     return true;
   }
@@ -130,6 +136,7 @@ final class _State {
   final double accountDiffAmount;
 
   final MoneyAccountLastTransactionEntity? account;
+  final MoneyAccountLastTransactionEntity? accountTo;
 
   final String error;
   final bool isLoading;
@@ -148,6 +155,7 @@ final class _State {
     this.balanceError,
     this.account,
     this.accountDiffAmount = 0,
+    this.accountTo,
   });
 
   String get diffAmountTxt => Utils.currencyFormat(accountDiffAmount);
@@ -177,6 +185,7 @@ final class _State {
     bool? balanceError,
     MoneyAccountLastTransactionEntity? account,
     double? accountDiffAmount,
+    MoneyAccountLastTransactionEntity? accountTo,
   }) =>
       _State(
         description: description ?? this.description,
@@ -191,5 +200,6 @@ final class _State {
         balanceError: balanceError,
         account: account ?? this.account,
         accountDiffAmount: accountDiffAmount ?? this.accountDiffAmount,
+        accountTo: accountTo,
       );
 }

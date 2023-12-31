@@ -50,8 +50,6 @@ class _TransactionFormScreen extends ConsumerWidget {
           ),
         );
 
-        // showOverlay(context, 'Saved', SnackBarType.success);
-
         const SnackBarContent(
           title: 'Saved',
           type: SnackBarType.success,
@@ -65,6 +63,9 @@ class _TransactionFormScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context).colorScheme;
+
+    final transactionType =
+        ref.watch(transactionFormProvider.select((value) => value.type));
 
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle.dark.copyWith(
@@ -118,22 +119,28 @@ class _TransactionFormScreen extends ConsumerWidget {
               const SizedBox(height: 20),
               const AddCommentButton(),
               const SizedBox(height: 20),
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Expanded(
-                    child: CategorySelector(),
+                  const Expanded(
+                    child: MoneyAccountSelector(origin: OriginType.from),
                   ),
-                  SizedBox(width: 4),
-                  SizedBox(
-                    width: 10,
-                    height: 48,
-                    child: VerticalDivider(
-                      thickness: 1,
+                  const SizedBox(width: 4),
+                  if (transactionType == TransactionType.transfer)
+                    const SizedBox(
+                        height: 48, child: Icon(CupertinoIcons.arrow_right))
+                  else
+                    const SizedBox(
+                      width: 10,
+                      height: 48,
+                      child: VerticalDivider(
+                        thickness: 1,
+                      ),
                     ),
-                  ),
                   Expanded(
-                    child: MoneyAccountSelector(),
+                    child: transactionType == TransactionType.transfer
+                        ? const MoneyAccountSelector(origin: OriginType.to)
+                        : const CategorySelector(),
                   ),
                 ],
               ),
@@ -435,15 +442,22 @@ class CategorySelector extends ConsumerWidget {
   }
 }
 
+enum OriginType { from, to }
+
 class MoneyAccountSelector extends ConsumerWidget {
-  const MoneyAccountSelector({super.key});
+  const MoneyAccountSelector({
+    super.key,
+    this.origin = OriginType.from,
+  });
+
+  final OriginType origin;
 
   void _showAccountsSelector(BuildContext context) {
     showDialog(
       context: context,
       builder: (_) {
-        return const Dialog.fullscreen(
-          child: MoneyAccountsListSelector(),
+        return Dialog.fullscreen(
+          child: MoneyAccountsListSelector(origin: origin),
         );
       },
     );
@@ -451,7 +465,11 @@ class MoneyAccountSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final accountSelected = ref.watch(transactionFormProvider).account;
+    final accountSelected = ref.watch(
+      transactionFormProvider.select((value) {
+        return (origin == OriginType.from) ? value.account : value.accountTo;
+      }),
+    );
     final theme = Theme.of(context).primaryTextTheme;
 
     return InkWell(
@@ -497,11 +515,20 @@ class MoneyAccountSelector extends ConsumerWidget {
 class MoneyAccountsListSelector extends ConsumerWidget {
   const MoneyAccountsListSelector({
     super.key,
+    this.origin = OriginType.from,
   });
+
+  final OriginType origin;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final accounts = ref.watch(moneyAccountsProvider);
+    final selectedAccount = ref.watch(
+      transactionFormProvider.select(
+        (value) => origin == OriginType.from ? value.account : value.accountTo,
+      ),
+    );
+
     final textTheme = Theme.of(context).primaryTextTheme;
 
     return Column(
@@ -510,16 +537,33 @@ class MoneyAccountsListSelector extends ConsumerWidget {
         Expanded(
           child: accounts.when(
             data: (data) {
+              List filteredData = data;
               return ListView.builder(
                 reverse: true,
-                itemCount: data.length,
+                itemCount: filteredData.length,
                 itemBuilder: (_, i) {
-                  return MoneyAccountListTile(account: data[i]);
+                  final isSelected = selectedAccount?.id == filteredData[i].id;
+                  return MoneyAccountListTile(
+                    account: filteredData[i],
+                    isSelected: isSelected,
+                    onTap: () {
+                      if (origin == OriginType.from) {
+                        ref
+                            .read(transactionFormProvider.notifier)
+                            .changeAccount(filteredData[i]);
+                      } else {
+                        ref
+                            .read(transactionFormProvider.notifier)
+                            .changeAccountTo(filteredData[i]);
+                      }
+                      context.pop();
+                    },
+                  );
                 },
               );
             },
             error: (_, __) => const Center(
-              child: Text('Error'),
+              child: Text('Something went wrong'),
             ),
             loading: () => const Center(
               child: CircularProgressIndicator(),
@@ -539,9 +583,14 @@ class MoneyAccountListTile extends ConsumerWidget {
   const MoneyAccountListTile({
     super.key,
     required this.account,
+    required this.onTap,
+    this.isSelected = false,
   });
 
   final MoneyAccountLastTransactionEntity account;
+
+  final bool isSelected;
+  final void Function() onTap;
 
   final _textStyle = const TextStyle(fontWeight: FontWeight.bold);
 
@@ -549,16 +598,10 @@ class MoneyAccountListTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context).colorScheme;
 
-    final isSelected =
-        ref.watch(transactionFormProvider).account?.id == account.id;
-
     return ListTile(
       visualDensity: VisualDensity.standard,
       dense: false,
-      onTap: () {
-        ref.read(transactionFormProvider.notifier).changeAccount(account);
-        context.pop();
-      },
+      onTap: onTap,
       leading: Container(
         height: 44,
         width: 44,
@@ -604,13 +647,14 @@ class TransactionTypeSelector extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final transactionTypeSelected = ref.watch(transactionFormProvider);
+    final width = MediaQuery.of(context).size.width;
     return SegmentedButton(
       selectedIcon: icon(transactionTypeSelected.type),
-      showSelectedIcon: true,
+      showSelectedIcon: width >= 400,
       segments: const [
         ButtonSegment(value: TransactionType.income, label: Text('INCOME')),
         ButtonSegment(value: TransactionType.expense, label: Text('EXPENSE')),
-        // ButtonSegment(value: TransactionType.transfer, label: Text('TRANSFER')),
+        ButtonSegment(value: TransactionType.transfer, label: Text('TRANSFER')),
       ],
       selected: {transactionTypeSelected.type},
       onSelectionChanged: (v) {

@@ -36,6 +36,16 @@ class TransactionsDatasourceDb implements TransactionsDatasource {
       ''',
       [value, entity.maccId],
     );
+
+    if (entity.type == TransactionType.transfer) {
+      await _db.rawUpdate(
+        '''
+      update money_accounts set macc_amount = ( macc_amount + ? )
+      where macc_id = ?
+      ''',
+        [value * -1, entity.maccIdTransfer],
+      );
+    }
   }
 
   @override
@@ -43,7 +53,7 @@ class TransactionsDatasourceDb implements TransactionsDatasource {
     try {
       final transaction = await _db.query(
         table,
-        columns: ['tran_amount', 'tran_type', 'macc_id'],
+        columns: ['tran_amount', 'tran_type', 'macc_id', 'macc_id_transfer'],
         where: 'tran_id = ?',
         whereArgs: [id],
         limit: 1,
@@ -75,6 +85,18 @@ class TransactionsDatasourceDb implements TransactionsDatasource {
         ''',
         [value, maccId],
       );
+
+      final maccIdTransfer = transaction.first['macc_id_transfer'];
+
+      if (maccIdTransfer != null) {
+        await _db.rawUpdate(
+          '''
+          update money_accounts set macc_amount = ( macc_amount + ? )
+          where macc_id = ?
+        ''',
+          [value * -1, maccIdTransfer],
+        );
+      }
     } catch (e) {
       log('ERROR delete transaction', error: e);
       return false;
@@ -112,7 +134,8 @@ class TransactionsDatasourceDb implements TransactionsDatasource {
 
     String andMaccIdIs = '';
     if (params.maccId != null) {
-      andMaccIdIs = " and tran.macc_id = '${params.maccId}' ";
+      andMaccIdIs =
+          " and ( tran.macc_id = '${params.maccId}' or tran.macc_id_transfer = '${params.maccId}' ) ";
     }
 
     final offset = params.page * params.limit - params.limit;
@@ -120,10 +143,12 @@ class TransactionsDatasourceDb implements TransactionsDatasource {
     final query = await _db.rawQuery(
       '''
       select tran_id, tran_description, tran_amount, tran_type, tran_created_at, 
-        macc.macc_id, macc_name, 
+        macc.macc_id, macc.macc_name, 
+        macc_transfer.macc_id as macc_id_transfer, macc_transfer.macc_name as macc_name_transfer, 
         cate.cate_id, cate_name, cate_icon, cate_hex_color
       from transactions tran
       left join money_accounts macc on macc.macc_id = tran.macc_id 
+      left join money_accounts macc_transfer on macc_transfer.macc_id = tran.macc_id_transfer 
       left join categories cate on cate.cate_id = tran.cate_id
       where tran.tran_deleted_at is null
         $andTypeIs $andDateIs $andStartDateIs $andEndDateIs $andMaccIdIs

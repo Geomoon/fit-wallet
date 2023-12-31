@@ -189,10 +189,26 @@ class _ListTile extends StatelessWidget {
               fontSize: 14,
             ),
           ),
-          Text(
-            transaction.moneyAccount.name,
-            style: textTheme.bodyLarge,
-          ),
+          if (transaction.moneyAccountTransfer == null)
+            Text(
+              transaction.moneyAccount.name,
+              style: textTheme.bodyLarge,
+            )
+          else
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  transaction.moneyAccount.shortNameTxt,
+                  style: textTheme.bodyLarge,
+                ),
+                const Icon(Icons.arrow_right_alt_rounded),
+                Text(
+                  transaction.moneyAccountTransfer?.shortNameTxt ?? '',
+                  style: textTheme.bodyLarge,
+                ),
+              ],
+            )
         ],
       ),
     );

@@ -10,6 +10,7 @@ class TransactionEntity {
   DateTime createdAt;
   DateTime? deletedAt;
   MoneyAccount moneyAccount;
+  MoneyAccount? moneyAccountTransfer;
   Category category;
 
   TransactionEntity({
@@ -21,6 +22,7 @@ class TransactionEntity {
     required this.debtId,
     required this.createdAt,
     required this.moneyAccount,
+    this.moneyAccountTransfer,
     required this.category,
     this.deletedAt,
   });
@@ -115,6 +117,15 @@ class MoneyAccount {
         "name": name,
       };
 
-  String get shortNameTxt =>
-      name.trim().split(' ').map((e) => e[0].toUpperCase()).join();
+  String get shortNameTxt {
+    final list = name.trim().split(' ');
+    if (list.length == 1) {
+      if (list[0].length >= 2) return list[0].substring(0, 2).toUpperCase();
+      return list[0][0].toUpperCase();
+    }
+
+    final words = list.getRange(0, 2);
+
+    return words.fold('', (previousValue, element) => element[0].toUpperCase());
+  }
 }
