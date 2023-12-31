@@ -95,6 +95,23 @@ class SQLiteDatasource {
         FOREIGN KEY ( cate_id ) REFERENCES categories ( cate_id )
       );
     ''');
+
+    await batch.execute('''
+      CREATE TABLE IF NOT EXISTS payments (
+        paym_id TEXT,
+        paym_description TEXT,
+        paym_amount TEXT,
+        paym_date INTEGER,
+        paym_is_completed INTEGER,
+        paym_created_at INTEGER,
+        paym_updated_at INTEGER,
+        macc_id TEXT,
+        cate_id TEXT,
+        PRIMARY KEY ( paym_id ),
+        FOREIGN KEY ( macc_id ) REFERENCES money_accounts ( macc_id ),
+        FOREIGN KEY ( cate_id ) REFERENCES categories ( cate_id )
+      );
+    ''');
   }
 
   static insertCategories(Database db) async {

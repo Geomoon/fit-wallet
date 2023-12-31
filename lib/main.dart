@@ -2,7 +2,6 @@ import 'package:fit_wallet/config/env/env.dart';
 import 'package:fit_wallet/config/routes/routes.dart';
 import 'package:fit_wallet/config/themes/themes.dart';
 import 'package:fit_wallet/features/shared/infrastructure/datasources/sqlite_datasource.dart';
-import 'package:fit_wallet/features/shared/presentation/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -21,7 +20,6 @@ class MyApp extends StatelessWidget {
     return Consumer(
       builder: (context, ref, _) {
         final themeMode = ref.watch(themeModeProvider);
-        print('themeMode $themeMode');
         return MaterialApp.router(
           title: 'FitWallet',
           theme: LightTheme.theme,

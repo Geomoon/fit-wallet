@@ -16,10 +16,7 @@ class TransactionsResume extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final balance = ref.watch(balanceProvider);
-
     final colors = Theme.of(context).colorScheme;
-    final fontSize = Theme.of(context).primaryTextTheme.titleLarge!.fontSize;
-
     final textTheme = Theme.of(context).primaryTextTheme;
 
     return balance.when(

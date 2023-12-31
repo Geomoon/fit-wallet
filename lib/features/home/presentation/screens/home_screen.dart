@@ -1,4 +1,3 @@
-import 'package:fit_wallet/config/themes/theme_provider.dart';
 import 'package:fit_wallet/features/debts/presentation/screens/screens.dart';
 import 'package:fit_wallet/features/home/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/providers/providers.dart';
