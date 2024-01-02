@@ -414,7 +414,7 @@ class CategorySelector extends ConsumerWidget {
                     if (categorySelected != null)
                       Flexible(
                         child: Text(
-                          categorySelected.name,
+                          categorySelected.name ?? '',
                           softWrap: true,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,

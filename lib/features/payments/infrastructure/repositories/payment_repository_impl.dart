@@ -1,5 +1,5 @@
 import 'package:fit_wallet/features/payments/domain/datasources/datasources.dart';
-import 'package:fit_wallet/features/payments/domain/entities/payment_entity.dart';
+import 'package:fit_wallet/features/payments/domain/entities/entities.dart';
 import 'package:fit_wallet/features/payments/domain/repositories/repositories.dart';
 
 class PaymentRepositoryImpl implements PaymentRepository {
@@ -14,16 +14,16 @@ class PaymentRepositoryImpl implements PaymentRepository {
 
   @override
   Future<void> delete(String id) async {
-    datasource.delete(id);
+    await datasource.delete(id);
   }
 
   @override
-  Future<PaymentEntity> getAll() async {
-    return await datasource.getAll();
+  Future<List<PaymentEntity>> getAll(GetPaymentParams params) async {
+    return await datasource.getAll(params);
   }
 
   @override
   Future<bool> update(PaymentEntity entity) async {
-    return datasource.update(entity);
+    return await datasource.update(entity);
   }
 }

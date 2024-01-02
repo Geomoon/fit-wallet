@@ -7,6 +7,8 @@ final categoriesSelectorProvider = StateProvider.autoDispose<CategoryEntity?>(
     final categories = ref.watch(categoriesGetAllProvider).asData;
     if (categories?.value.isEmpty ?? true) return null;
 
-    return categories!.value.where((element) => element.isDefault).first;
+    return categories!.value
+        .where((element) => element.isDefault == true)
+        .first;
   },
 );

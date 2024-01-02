@@ -25,8 +25,9 @@ final class CategoriesMapper {
       "cate_name": entity.name,
       "cate_hex_color": entity.hexColor,
       "cate_icon": entity.icon,
-      "cate_created_at": Utils.unix(entity.createdAt),
-      "cate_is_default": entity.isDefault ? 1 : 0,
+      "cate_created_at":
+          entity.createdAt != null ? Utils.unix(entity.createdAt!) : null,
+      "cate_is_default": (entity.isDefault == true) ? 1 : 0,
       "cate_updated_at":
           entity.updatedAt == null ? null : Utils.unix(entity.updatedAt!),
       "cate_deleted_at":

@@ -49,9 +49,10 @@ class MoneyAccountForm extends ConsumerWidget {
                       .read(moneyAccountFormProvider(id).notifier)
                       .submit()
                       .then((value) {
-                    ref.invalidate(moneyAccountsProvider);
-
-                    context.pop(true);
+                    if (value) {
+                      ref.invalidate(moneyAccountsProvider);
+                      context.pop(true);
+                    }
                   });
                 },
               ),

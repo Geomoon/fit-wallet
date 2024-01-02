@@ -43,7 +43,8 @@ class MoneyAccountLastTransactionEntity {
     final list = name.trim().split(' ');
     if (list.length == 1) {
       if (list[0].length >= 2) return list[0].substring(0, 2).toUpperCase();
-      return list[0][0].toUpperCase();
+      // return list[0][0].toUpperCase();
+      return '';
     }
 
     final words = list.getRange(0, 2);
