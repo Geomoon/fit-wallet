@@ -12,7 +12,7 @@ class PaymentsList extends StatelessWidget {
 
     if (payments.isEmpty) {
       return SizedBox(
-        height: height - 160,
+        height: height - 360,
         child: const Center(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,

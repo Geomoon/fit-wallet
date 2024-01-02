@@ -35,22 +35,23 @@ class PaymentDatasourceDb implements PaymentDatasource {
   @override
   Future<List<PaymentEntity>> getAll(GetPaymentParams params) async {
     try {
-      String orderBy = ' paym.created_at desc ';
+      String orderBy = ' paym.paym_created_at desc ';
       if (params.dateType == DateType.asc) {
-        orderBy = ' paym.created_at asc ';
+        orderBy = ' paym.paym_created_at asc ';
       }
 
       String whereIsCompleted = '';
       if (params.isCompleted == true) {
         whereIsCompleted = ' where paym.paym_is_completed = 1 ';
-      } else {
+      }
+      if (params.isCompleted == false) {
         whereIsCompleted = ' where paym.paym_is_completed = 0 ';
       }
 
       final list = await _db.rawQuery('''
         select paym_id, paym_description, paym_amount, paym_date, paym_is_completed, paym_created_at,
           macc.macc_id, macc.macc_name,
-          cate.cate_id, cate.cate_name,
+          cate.cate_id, cate.cate_name
         from payments paym
         left join money_accounts macc on macc.macc_id = paym.macc_id 
         left join categories cate on cate.cate_id = paym.cate_id

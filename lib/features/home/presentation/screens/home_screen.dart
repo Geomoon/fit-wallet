@@ -1,8 +1,8 @@
-import 'package:fit_wallet/features/debts/presentation/screens/screens.dart';
 import 'package:fit_wallet/features/home/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/screens/money_accounts_screen.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/widgets/widgets.dart';
+import 'package:fit_wallet/features/payments/presentation/screens/screens.dart';
 import 'package:fit_wallet/features/shared/presentation/presentation.dart';
 import 'package:fit_wallet/features/transactions/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/transactions/presentation/widgets/transaction_list_tile.dart';
@@ -87,7 +87,7 @@ class HomeScreen extends StatelessWidget {
   final List<Widget> _screens = const [
     _HomeScreenView(),
     MoneyAccountsScreen(),
-    DebtsScreen(),
+    PaymentsScreen(),
   ];
 
   @override

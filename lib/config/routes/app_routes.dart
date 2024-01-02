@@ -5,6 +5,7 @@ import 'package:fit_wallet/features/auth/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/debts/presentation/screens/screens.dart';
 import 'package:fit_wallet/features/home/presentation/presentation.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/presentation.dart';
+import 'package:fit_wallet/features/payments/presentation/screens/screens.dart';
 import 'package:fit_wallet/features/settings/presentation/screens/screens.dart';
 import 'package:fit_wallet/features/transactions/presentation/presentation.dart';
 import 'package:fit_wallet/features/welcome/presentation/presentation.dart';
@@ -22,14 +23,10 @@ final routerProvider = Provider((ref) {
       GoRoute(path: '/welcome', builder: (_, __) => const WelcomeScreen()),
       GoRoute(path: '/login', builder: (_, __) => const AuthScreen()),
       GoRoute(path: '/signup', builder: (_, __) => const SignupScreen()),
+      GoRoute(path: '/', builder: (_, __) => const HomeScreen()),
       GoRoute(
-        path: '/',
-        builder: (_, __) => const HomeScreen(),
-      ),
-      GoRoute(
-        path: '/money-accounts',
-        builder: (_, __) => const MoneyAccountsScreen(),
-      ),
+          path: '/money-accounts',
+          builder: (_, __) => const MoneyAccountsScreen()),
       GoRoute(
         path: '/money-accounts/:id',
         builder: (_, state) {
@@ -38,22 +35,19 @@ final routerProvider = Provider((ref) {
           return MoneyAccountsDetailScreen(maccId: maccId!);
         },
       ),
+      GoRoute(path: '/debts', builder: (_, __) => const DebtsScreen()),
       GoRoute(
-        path: '/debts',
-        builder: (_, __) => const DebtsScreen(),
-      ),
+          path: '/transactions',
+          builder: (_, __) => const TransactionsScreen()),
       GoRoute(
-        path: '/transactions',
-        builder: (_, __) => const TransactionsScreen(),
-      ),
+          path: '/transactions/form',
+          builder: (context, state) => const TransactionFormScreen()),
       GoRoute(
-        path: '/transactions/form',
-        builder: (context, state) => const TransactionFormScreen(),
-      ),
+          path: '/settings',
+          builder: (context, state) => const SettingsScreen()),
       GoRoute(
-        path: '/settings',
-        builder: (context, state) => const SettingsScreen(),
-      )
+          path: '/payments',
+          builder: (context, state) => const PaymentsScreen())
     ],
     redirect: (context, state) {
       if (authStatus.status == AuthStatus.notAuthenticated) {

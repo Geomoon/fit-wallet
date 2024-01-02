@@ -1,4 +1,3 @@
-import 'package:fit_wallet/features/payments/domain/entities/entities.dart';
 import 'package:fit_wallet/features/payments/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/payments/presentation/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +22,7 @@ class _PaymentsScreenView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final payments = ref.watch(paymentsProvider(GetPaymentParams()));
+    final payments = ref.watch(paymentsProvider);
     // final textTheme = Theme.of(context).primaryTextTheme;
 
     return SingleChildScrollView(
