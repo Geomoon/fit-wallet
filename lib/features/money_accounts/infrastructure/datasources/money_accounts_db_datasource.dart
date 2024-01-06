@@ -147,7 +147,7 @@ class MoneyAccountDbDatasource implements MoneyAccountDatasource {
   Future<MoneyAccountEntity?> getAccountByOrder(int order) async {
     final account = await _db.query(
       table,
-      where: 'macc_order = ? and deleted_at is null',
+      where: 'macc_order = ? and macc_deleted_at is null',
       whereArgs: [order],
     );
 

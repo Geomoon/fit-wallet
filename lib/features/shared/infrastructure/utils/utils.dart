@@ -87,7 +87,7 @@ class Utils {
 
   static String get uuid => uuidv4.v4();
 
-  static int get now => DateTime.now().millisecondsSinceEpoch ~/ 1000;
+  static int get now => DateTime.now().toLocal().millisecondsSinceEpoch ~/ 1000;
 
   static DateTime fromUnix(int time) =>
       DateTime.fromMillisecondsSinceEpoch(time * 1000);

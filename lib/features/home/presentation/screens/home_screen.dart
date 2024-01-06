@@ -123,7 +123,7 @@ class HomeScreen extends StatelessWidget {
               index: 2,
               icon: Icons.payment_outlined,
               activeIcon: Icons.payment_rounded,
-              title: 'Payments',
+              title: 'Debts',
             ),
           ],
         ),

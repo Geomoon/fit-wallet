@@ -61,7 +61,7 @@ class _FormNotifier extends StateNotifier<_FormState> {
   }
 
   Future<bool> submit() async {
-    if (!state.name.isValid || state.name.value == '') {
+    if (!state.name.isValid || state.name.value == '' || state.name.isPure) {
       final nameInput = TextInput.dirty(value: state.name.value.trim(), min: 2);
       state = state.copyWith(
         name: nameInput,

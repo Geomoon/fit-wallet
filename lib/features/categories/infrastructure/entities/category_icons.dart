@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 const Map<String, IconData> categoryIcons = {
@@ -21,4 +22,6 @@ const Map<String, IconData> categoryIcons = {
   "transaction": Icons.attach_money_rounded,
   "parking": Icons.local_parking_rounded,
   "other": Icons.park_rounded,
+  "transfer": CupertinoIcons.arrow_right_arrow_left,
+  "adjustment": Icons.unfold_less_sharp
 };

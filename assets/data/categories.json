@@ -162,8 +162,16 @@
   {
     "cate_id": "4d8699cd-3c04-43fa-85b0-5dad9f5ca1a5",
     "cate_name": "TRANSFER",
-    "cate_hex_color": "6f5667",
-    "cate_icon": "transaction",
+    "cate_hex_color": "4caf50",
+    "cate_icon": "transfer",
+    "cate_created_at": 1703742438678,
+    "cate_is_default": 0
+  },
+  {
+    "cate_id": "0aefa50a-6b10-4836-9337-470b379825ca",
+    "cate_name": "ADJUSTMENT",
+    "cate_hex_color": "ffd700",
+    "cate_icon": "adjustment",
     "cate_created_at": 1703742438678,
     "cate_is_default": 0
   }

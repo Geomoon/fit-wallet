@@ -2,6 +2,7 @@ import 'package:fit_wallet/features/money_accounts/presentation/providers/money_
 import 'package:fit_wallet/features/money_accounts/presentation/providers/money_accounts_get_all_provider.dart';
 import 'package:fit_wallet/features/shared/infrastructure/formatters/formatters.dart';
 import 'package:fit_wallet/features/shared/presentation/widgets/widgets.dart';
+import 'package:fit_wallet/features/transactions/presentation/providers/get_transactions_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -51,6 +52,7 @@ class MoneyAccountForm extends ConsumerWidget {
                       .then((value) {
                     if (value) {
                       ref.invalidate(moneyAccountsProvider);
+                      ref.invalidate(getTransactionsProvider);
                       context.pop(true);
                     }
                   });
