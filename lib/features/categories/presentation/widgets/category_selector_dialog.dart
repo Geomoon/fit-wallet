@@ -17,14 +17,12 @@ class CategorySelectorDialog extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Text('SELECT A CATEGORY', style: textTheme.bodyLarge),
-        ),
         Expanded(
           child: accounts.when(
             data: (data) {
               return ListView.builder(
+                padding: const EdgeInsetsDirectional.only(top: 20),
+                reverse: true,
                 itemCount: data.length,
                 itemBuilder: (_, i) {
                   return CategoryListTile(category: data[i]);
@@ -38,6 +36,10 @@ class CategorySelectorDialog extends ConsumerWidget {
               child: CircularProgressIndicator(),
             ),
           ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: Text('SELECT A CATEGORY', style: textTheme.bodyLarge),
         ),
       ],
     );

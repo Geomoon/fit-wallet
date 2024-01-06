@@ -146,7 +146,10 @@ class MoneyAccountsList extends StatelessWidget {
   }
 
   Future<bool> _onDeleteAccount(
-      BuildContext context, WidgetRef ref, String maccId) async {
+    BuildContext context,
+    WidgetRef ref,
+    String maccId,
+  ) async {
     final confirmDelete = await showDialog<bool?>(
       context: context,
       builder: (context) {
@@ -203,6 +206,22 @@ class MoneyAccountsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (accounts.isEmpty) {
+      return const SizedBox(
+        height: 120,
+        child: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('No accounts'),
+              SizedBox(width: 20),
+              Icon(Icons.account_balance_rounded),
+            ],
+          ),
+        ),
+      );
+    }
+
     return ListView.builder(
       shrinkWrap: true,
       itemCount: accounts.length,

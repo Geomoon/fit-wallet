@@ -10,8 +10,8 @@ class CreateMoneyAccountEntity {
   });
 
   Map<String, dynamic> toJson() => {
-        'name': name,
-        'amount': value,
-        'order': order,
+        'macc_name': name,
+        'macc_amount': value,
+        'macc_order': order,
       };
 }

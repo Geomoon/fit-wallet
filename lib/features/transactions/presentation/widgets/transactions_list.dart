@@ -61,6 +61,7 @@ class TransactionsList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final transactions = ref.watch(getTransactionsFilterProvider(maccId));
+    final textTheme = Theme.of(context).primaryTextTheme;
 
     scrollController.addListener(
       () {
@@ -97,7 +98,7 @@ class TransactionsList extends ConsumerWidget {
                 'assets/images/empty_list.svg',
               ),
               const SizedBox(height: 20),
-              const Text('No transactions'),
+              Text('No transactions', style: textTheme.bodyMedium),
             ],
           ),
         ),

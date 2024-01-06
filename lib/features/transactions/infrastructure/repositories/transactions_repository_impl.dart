@@ -18,7 +18,9 @@ class TransactionsRepositoryImpl extends TransactionsRepository {
 
   @override
   Future<PaginationEntity<TransactionEntity>> getAll(
-      GetTransactionsParams params) {
+    GetTransactionsParams params,
+  ) {
+    print(params.toJson());
     return _datasource.getAll(params);
   }
 

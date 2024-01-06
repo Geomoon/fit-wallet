@@ -39,8 +39,18 @@ class MoneyAccountLastTransactionEntity {
 
   String get amountTxt => Utils.currencyFormat(amount);
 
-  String get shortNameTxt =>
-      name.trim().split(' ').map((e) => e[0].toUpperCase()).join();
+  String get shortNameTxt {
+    final list = name.trim().split(' ');
+    if (list.length == 1) {
+      if (list[0].length >= 2) return list[0].substring(0, 2).toUpperCase();
+      // return list[0][0].toUpperCase();
+      return '';
+    }
+
+    final words = list.getRange(0, 2);
+
+    return words.fold('', (previousValue, element) => element[0].toUpperCase());
+  }
 
   String get lastTransactionTxt {
     if (lastTransaction == null) return 'No transactions';
@@ -71,5 +81,14 @@ class LastTransaction {
         description: json['description'],
         type: TransactionTypeMapper.fromString(json['type']),
         createdAt: DateTime.parse(json['createdAt']),
+      );
+
+  factory LastTransaction.fromJsonDB(Map<String, dynamic> json) =>
+      LastTransaction(
+        id: json['id'],
+        amount: json['amount']?.toDouble(),
+        description: json['description'],
+        type: TransactionTypeMapper.fromString(json['type']),
+        createdAt: DateTime.parse(json['created_at']),
       );
 }

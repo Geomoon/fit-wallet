@@ -1,5 +1,5 @@
 import 'package:fit_wallet/features/money_accounts/domain/entities/entities.dart';
-import 'package:fit_wallet/features/money_accounts/presentation/providers/money_accounts_repository_provider.dart';
+import 'package:fit_wallet/features/money_accounts/presentation/providers/money_account_repository_db_provider.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/shared/infrastructure/inputs/inputs.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,7 +8,8 @@ import 'package:formz/formz.dart';
 final moneyAccountFormProvider = StateNotifierProvider.autoDispose
     .family<_FormNotifier, _FormState, String?>(
   (ref, id) {
-    final repo = ref.watch(moneyAccountsRepositoryProvider);
+    // final repo = ref.watch(moneyAccountsRepositoryProvider);
+    final repo = ref.watch(moneyAccountRepositoryDbProvider);
     if (id != null) {
       // final account = ref.watch(moneyAccountByIdProvider(id)).asData?.value;
 
@@ -59,7 +60,16 @@ class _FormNotifier extends StateNotifier<_FormState> {
     state = state.copyWith(order: IntInput.dirty(value: order ?? 1));
   }
 
-  Future<void> submit() async {
+  Future<bool> submit() async {
+    if (!state.name.isValid || state.name.value == '' || state.name.isPure) {
+      final nameInput = TextInput.dirty(value: state.name.value.trim(), min: 2);
+      state = state.copyWith(
+        name: nameInput,
+        isValid: Formz.validate([nameInput, state.value]),
+      );
+      return false;
+    }
+
     state = state.copyWith(
       isValid: Formz.validate([state.name, state.value]),
       isPosted: true,
@@ -74,8 +84,10 @@ class _FormNotifier extends StateNotifier<_FormState> {
       );
       await onSubmit(account);
       state = state.copyWith(isPosting: false);
+      return true;
     } catch (e) {
       state = state.copyWith(isPosting: false, errorMessage: e.toString());
+      return false;
     }
   }
 }

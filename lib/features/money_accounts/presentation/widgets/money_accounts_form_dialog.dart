@@ -2,6 +2,7 @@ import 'package:fit_wallet/features/money_accounts/presentation/providers/money_
 import 'package:fit_wallet/features/money_accounts/presentation/providers/money_accounts_get_all_provider.dart';
 import 'package:fit_wallet/features/shared/infrastructure/formatters/formatters.dart';
 import 'package:fit_wallet/features/shared/presentation/widgets/widgets.dart';
+import 'package:fit_wallet/features/transactions/presentation/providers/get_transactions_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,6 +18,7 @@ class MoneyAccountForm extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final textTheme = Theme.of(context).primaryTextTheme;
     final size = MediaQuery.of(context).viewInsets.bottom;
+    final color = Theme.of(context).colorScheme.onBackground;
 
     final service = ref.watch(moneyAccountFormProvider(id));
 
@@ -32,7 +34,7 @@ class MoneyAccountForm extends ConsumerWidget {
           ),
           child: Row(
             children: [
-              const CloseButton(),
+              CloseButton(color: color),
               const SizedBox(width: 10),
               Text(
                 id == null ? 'New Account' : 'Edit account',
@@ -48,9 +50,11 @@ class MoneyAccountForm extends ConsumerWidget {
                       .read(moneyAccountFormProvider(id).notifier)
                       .submit()
                       .then((value) {
-                    ref.invalidate(moneyAccountsProvider);
-
-                    context.pop(true);
+                    if (value) {
+                      ref.invalidate(moneyAccountsProvider);
+                      ref.invalidate(getTransactionsProvider);
+                      context.pop(true);
+                    }
                   });
                 },
               ),
@@ -87,10 +91,10 @@ class MoneyAccountForm extends ConsumerWidget {
                       replacementString: '.'),
                   CurrencyNumberFormatter(),
                 ],
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: textTheme.bodyMedium?.color),
                 decoration: InputDecoration(
                   hintText: '0.00',
                   icon: const Icon(Icons.attach_money_rounded),
@@ -105,7 +109,7 @@ class MoneyAccountForm extends ConsumerWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  const Text('Set as default'),
+                  Text('Set as favorite', style: textTheme.bodyLarge),
                   _box20W,
                   Switch.adaptive(
                     value: service.order.value == 0,
@@ -153,6 +157,8 @@ class _NameFormFieldState extends State<NameFormField> {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).primaryTextTheme;
+
     return TextFormField(
       focusNode: focus,
       initialValue: widget.initialValue,
@@ -163,6 +169,7 @@ class _NameFormFieldState extends State<NameFormField> {
       ),
       textInputAction: TextInputAction.next,
       onChanged: widget.onChanged,
+      style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.normal),
     );
   }
 }

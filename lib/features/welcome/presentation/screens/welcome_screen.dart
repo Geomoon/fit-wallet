@@ -71,7 +71,11 @@ class WelcomeScreen extends ConsumerWidget {
                 Expanded(
                   child: page == 0
                       ? TextButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            await ref
+                                .read(authStatusProvider.notifier)
+                                .toPassedWelcome();
+                          },
                           child: const Text('Skip'),
                         )
                       : Container(),

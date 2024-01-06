@@ -78,11 +78,12 @@ class MoneyAccountCard extends StatelessWidget {
                 children: [
                   Text(
                     account.name,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    style: textTheme.labelLarge
+                        ?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 20.0),
                   if (isTwoLines && account.lastTransaction != null)
-                    const Text('Last transaction'),
+                    Text('Last transaction', style: textTheme.labelLarge),
                   Text(
                     isTwoLines
                         ? account.lastTransactionTxt

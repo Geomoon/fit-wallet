@@ -1,9 +1,9 @@
-import 'package:fit_wallet/features/auth/presentation/providers/auth_state_provider.dart';
-import 'package:fit_wallet/features/debts/presentation/screens/screens.dart';
 import 'package:fit_wallet/features/home/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/screens/money_accounts_screen.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/widgets/widgets.dart';
+import 'package:fit_wallet/features/payments/presentation/screens/screens.dart';
+import 'package:fit_wallet/features/payments/presentation/widgets/widgets.dart';
 import 'package:fit_wallet/features/shared/presentation/presentation.dart';
 import 'package:fit_wallet/features/transactions/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/transactions/presentation/widgets/transaction_list_tile.dart';
@@ -69,14 +69,12 @@ class HomeScreenAppBarActions extends StatelessWidget {
         SizedBox(
           height: 36,
           width: 36,
-          child: Consumer(builder: (_, ref, __) {
-            return IconButton(
-              onPressed: () {
-                ref.read(authStatusProvider.notifier).logout();
-              },
-              icon: const Icon(Icons.settings_rounded),
-            );
-          }),
+          child: IconButton(
+            onPressed: () {
+              context.push('/settings');
+            },
+            icon: const Icon(Icons.settings_rounded),
+          ),
         ),
         const SizedBox(width: 10),
       ],
@@ -90,7 +88,7 @@ class HomeScreen extends StatelessWidget {
   final List<Widget> _screens = const [
     _HomeScreenView(),
     MoneyAccountsScreen(),
-    DebtsScreen(),
+    PaymentsScreen(),
   ];
 
   @override
@@ -125,7 +123,7 @@ class HomeScreen extends StatelessWidget {
               index: 2,
               icon: Icons.payment_outlined,
               activeIcon: Icons.payment_rounded,
-              title: 'Payments',
+              title: 'Debts',
             ),
           ],
         ),
@@ -143,16 +141,35 @@ class FAButtons extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final actualPage = ref.watch(homeNavigationProvider);
 
+    final accounts = ref.watch(moneyAccountsProvider);
+
     switch (actualPage) {
       case 0:
-        return FloatingActionButton(
-          onPressed: () {
-            context.push('/transactions/form');
+        return accounts.when(
+          data: (data) {
+            return FloatingActionButton(
+              onPressed: () {
+                if (data.isEmpty) {
+                  const SnackBarContent(
+                    title: 'Create an account first',
+                    tinted: true,
+                    type: SnackBarType.error,
+                  ).show(context);
+                  return;
+                }
+
+                context.push('/transactions/form');
+              },
+              child: const Icon(Icons.add_rounded),
+            );
           },
-          child: const Icon(Icons.add_rounded),
+          loading: () => Container(),
+          error: (error, stackTrace) => Container(),
         );
       case 1:
         return const FABMoneyAccount();
+      case 2:
+        return const FABPaymentsScreen();
       default:
         return Container();
     }
@@ -227,9 +244,9 @@ class NavigationButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final actualIndex = ref.watch(homeNavigationProvider);
-    final textStyle = Theme.of(context).textTheme.labelMedium;
+    final textStyle = Theme.of(context).primaryTextTheme.labelMedium;
     final textStyleBold = Theme.of(context)
-        .textTheme
+        .primaryTextTheme
         .labelMedium
         ?.copyWith(fontWeight: FontWeight.bold);
 
@@ -324,6 +341,7 @@ class LastTransactionsCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final list = ref.watch(getTransactionsProvider);
+    final textTheme = Theme.of(context).primaryTextTheme;
 
     return list.when(
       data: (data) {
@@ -339,7 +357,7 @@ class LastTransactionsCard extends ConsumerWidget {
                 SvgPicture.asset(
                   'assets/images/empty_list.svg',
                 ),
-                const Text('No transactions'),
+                Text('No transactions', style: textTheme.bodyMedium),
               ],
             ),
           );
@@ -371,6 +389,22 @@ class AccountCardsViewer extends ConsumerWidget {
 
     return moneyAccounts.when(
       data: (accounts) {
+        if (accounts.isEmpty) {
+          return const SizedBox(
+            height: 120,
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('No accounts'),
+                  SizedBox(width: 20),
+                  Icon(Icons.account_balance_rounded),
+                ],
+              ),
+            ),
+          );
+        }
+
         return SizedBox(
           height: 220,
           child: ListView.builder(
