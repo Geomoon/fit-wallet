@@ -8,7 +8,7 @@ final class PaymentMapper {
     final payment = PaymentEntity(
       id: json['paym_id'],
       description: json['paym_description'],
-      amount: json['paym_amount']?.toDouble(),
+      amount: double.parse(json['paym_amount'].toString()),
       createdAt: Utils.fromUnix(json['paym_created_at']),
       updatedAt: json['paym_updated_at'] == null
           ? null

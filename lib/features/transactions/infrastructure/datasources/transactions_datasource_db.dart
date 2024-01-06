@@ -163,22 +163,6 @@ class TransactionsDatasourceDb implements TransactionsDatasource {
       [params.limit, offset],
     );
 
-    print('''
-      select tran_id, tran_description, tran_amount, tran_type, tran_created_at, 
-        macc.macc_id, macc.macc_name, 
-        macc_transfer.macc_id as macc_id_transfer, macc_transfer.macc_name as macc_name_transfer, 
-        cate.cate_id, cate_name, cate_icon, cate_hex_color
-      from transactions tran
-      left join money_accounts macc on macc.macc_id = tran.macc_id 
-      left join money_accounts macc_transfer on macc_transfer.macc_id = tran.macc_id_transfer 
-      left join categories cate on cate.cate_id = tran.cate_id
-      where tran.tran_deleted_at is null
-        $andTypeIs $andDateIs $andStartDateIs $andEndDateIs $andMaccIdIs
-      order by tran_created_at desc
-      limit ?
-      offset ?
-      ''');
-
     final total = Sqflite.firstIntValue(
       await _db.rawQuery('''
       select count(*)

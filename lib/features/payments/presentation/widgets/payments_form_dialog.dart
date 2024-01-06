@@ -1,20 +1,47 @@
+import 'package:fit_wallet/features/money_accounts/presentation/presentation.dart';
+import 'package:fit_wallet/features/payments/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/shared/infrastructure/formatters/number_formatter.dart';
 import 'package:fit_wallet/features/shared/presentation/presentation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
-class PaymentsFormDialog extends StatelessWidget {
+class PaymentsFormDialog extends ConsumerWidget {
   const PaymentsFormDialog({super.key, this.id});
 
   final String? id;
-  final _box20W = const SizedBox(width: 20);
+
+  void _showDatePickerDialog(
+      BuildContext context, Function(DateTime?) onChange) async {
+    final lastDate = DateTime(2200);
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      barrierColor: Colors.transparent,
+      builder: (context) {
+        return BottomSheet(
+          onClosing: () {},
+          showDragHandle: false,
+          enableDrag: false,
+          builder: (context) => CalendarPickerBottomDialog(
+            title: 'Pick a date',
+            lastDate: lastDate,
+            onDateChanged: onChange,
+          ),
+        );
+      },
+    );
+  }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final textTheme = Theme.of(context).primaryTextTheme;
     final theme = Theme.of(context).colorScheme;
     final size = MediaQuery.of(context).viewInsets.bottom;
     final color = Theme.of(context).colorScheme.onBackground;
+
+    final provider = ref.watch(paymentFormProvider(id));
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -38,17 +65,17 @@ class PaymentsFormDialog extends StatelessWidget {
               const Spacer(),
               AsyncButton(
                 title: 'Save',
-                isLoading: false,
+                isLoading: provider.isSaving,
                 callback: () {
-                  // ref
-                  //     .read(moneyAccountFormProvider(id).notifier)
-                  //     .submit()
-                  //     .then((value) {
-                  //   if (value) {
-                  //     ref.invalidate(moneyAccountsProvider);
-                  //     context.pop(true);
-                  //   }
-                  // });
+                  final service = ref.read(paymentFormProvider(id).notifier);
+                  service.submit().then(
+                    (value) {
+                      if (value) {
+                        context.pop(true);
+                        ref.invalidate(paymentsProvider);
+                      }
+                    },
+                  );
                 },
               ),
             ],
@@ -65,31 +92,42 @@ class PaymentsFormDialog extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ValueInput(),
+              ValueInput(
+                initialValue: provider.amount.value,
+                onChanged: (value) {
+                  final service = ref.read(paymentFormProvider(id).notifier);
+                  service.changeAmount(value);
+                },
+              ),
               const SizedBox(height: 20),
               NameFormField(
-                initialValue: '',
+                initialValue: provider.description.value,
                 errorMessage: null,
-                onChanged: (e) => {},
+                onChanged: (e) {
+                  final service = ref.read(paymentFormProvider(id).notifier);
+                  service.changeDescription(e);
+                },
               ),
               const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   OutlinedButton.icon(
-                    onPressed: () => {},
+                    onPressed: () => _showDatePickerDialog(
+                      context,
+                      ref.read(paymentFormProvider(id).notifier).changeDueDate,
+                    ),
                     label: Text(
-                      'Add due date',
+                      provider.dueDateTxt,
                       style: TextStyle(color: theme.onBackground),
                     ),
-                    icon: Icon(
-                      Icons.access_time_rounded,
-                      // color: theme.onBackground,
-                    ),
+                    icon: const Icon(Icons.access_time_rounded),
                   ),
-                  if (false)
+                  if (provider.dueDate != null)
                     IconButton(
-                      onPressed: () => {},
+                      onPressed: ref
+                          .read(paymentFormProvider(id).notifier)
+                          .clearDueDate,
                       icon: const Icon(Icons.close_rounded),
                     ),
                 ],
@@ -105,7 +143,15 @@ class PaymentsFormDialog extends StatelessWidget {
 class ValueInput extends StatefulWidget {
   const ValueInput({
     super.key,
+    required this.initialValue,
+    this.errorMessage,
+    this.onChanged,
   });
+
+  final double initialValue;
+  final String? errorMessage;
+
+  final void Function(String)? onChanged;
 
   @override
   State<ValueInput> createState() => _ValueInputState();
@@ -126,7 +172,8 @@ class _ValueInputState extends State<ValueInput> {
 
     return TextFormField(
       focusNode: focus,
-      initialValue: '',
+      initialValue:
+          widget.initialValue == 0 ? null : widget.initialValue.toString(),
       keyboardType: TextInputType.number,
       textAlign: TextAlign.end,
       inputFormatters: [
@@ -139,16 +186,17 @@ class _ValueInputState extends State<ValueInput> {
         CurrencyNumberFormatter(),
       ],
       style: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-          color: textTheme.bodyMedium?.color),
+        fontSize: 24,
+        fontWeight: FontWeight.bold,
+        color: textTheme.bodyMedium?.color,
+      ),
       decoration: const InputDecoration(
         hintText: '0.00',
         icon: Icon(Icons.attach_money_rounded),
         errorText: null,
       ),
-      textInputAction: TextInputAction.done,
-      onChanged: (e) => {},
+      textInputAction: TextInputAction.next,
+      onChanged: widget.onChanged,
     );
   }
 }

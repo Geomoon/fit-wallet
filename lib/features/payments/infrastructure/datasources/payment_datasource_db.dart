@@ -71,4 +71,22 @@ class PaymentDatasourceDb implements PaymentDatasource {
     // TODO: implement update
     throw UnimplementedError();
   }
+
+  @override
+  Future<PaymentEntity> getById(String id) async {
+    final list = await _db.rawQuery(
+      '''
+        select paym_id, paym_description, paym_amount, paym_date, paym_is_completed, paym_created_at,
+          macc.macc_id, macc.macc_name,
+          cate.cate_id, cate.cate_name
+        from payments paym
+        left join money_accounts macc on macc.macc_id = paym.macc_id 
+        left join categories cate on cate.cate_id = paym.cate_id
+        where paym.paym_id = ?
+     ''',
+      [id],
+    );
+
+    return PaymentMapper.fromJsonDB(list[0]);
+  }
 }

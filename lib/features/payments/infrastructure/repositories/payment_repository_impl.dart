@@ -26,4 +26,9 @@ class PaymentRepositoryImpl implements PaymentRepository {
   Future<bool> update(PaymentEntity entity) async {
     return await datasource.update(entity);
   }
+
+  @override
+  Future<PaymentEntity> getById(String id) async {
+    return await datasource.getById(id);
+  }
 }
