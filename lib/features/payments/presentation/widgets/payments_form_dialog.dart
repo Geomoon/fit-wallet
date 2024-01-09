@@ -94,6 +94,7 @@ class PaymentsFormDialog extends ConsumerWidget {
             children: [
               ValueInput(
                 initialValue: provider.amount.value,
+                isPrimary: true,
                 onChanged: (value) {
                   final service = ref.read(paymentFormProvider(id).notifier);
                   service.changeAmount(value);
@@ -146,10 +147,12 @@ class ValueInput extends StatefulWidget {
     required this.initialValue,
     this.errorMessage,
     this.onChanged,
+    this.isPrimary = false,
   });
 
   final double initialValue;
   final String? errorMessage;
+  final bool isPrimary;
 
   final void Function(String)? onChanged;
 
@@ -163,7 +166,7 @@ class _ValueInputState extends State<ValueInput> {
   @override
   void initState() {
     super.initState();
-    focus.requestFocus();
+    if (widget.isPrimary) focus.requestFocus();
   }
 
   @override

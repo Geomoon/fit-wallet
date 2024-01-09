@@ -27,4 +27,9 @@ class PaymentEntity {
 
   String get amountTxt => Utils.currencyFormat(amount);
   String get dateTxt => date == null ? '' : Utils.formatYYYDDMM(date!);
+
+  bool get hasPriority {
+    if (date == null) return false;
+    return date!.difference(DateTime.now()).inDays <= 2;
+  }
 }

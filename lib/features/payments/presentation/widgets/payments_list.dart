@@ -2,6 +2,7 @@ import 'package:fit_wallet/config/themes/dark_theme.dart';
 import 'package:fit_wallet/features/money_accounts/domain/entities/entities.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/providers/money_accounts_get_all_provider.dart';
 import 'package:fit_wallet/features/payments/domain/entities/entities.dart';
+import 'package:fit_wallet/features/payments/presentation/providers/payments_provider.dart';
 import 'package:fit_wallet/features/payments/presentation/widgets/widgets.dart';
 import 'package:fit_wallet/features/shared/presentation/presentation.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,40 @@ class PaymentsList extends StatelessWidget {
     );
   }
 
+  void _showDeleteDialog(BuildContext context, WidgetRef ref, String id) async {
+    final deleted = await showDialog(
+      context: context,
+      builder: (context) {
+        return ConfirmDialog(
+          onConfirm: () => ref.read(paymentsProvider.notifier).delete(id),
+          title: 'Delete payment',
+          description: 'Are you sure to delete this payment?',
+        );
+      },
+    );
+
+    if (deleted == false) {
+      if (context.mounted) {
+        const SnackBarContent(
+          title: 'Error at delete',
+          tinted: true,
+          type: SnackBarType.error,
+        ).show(context);
+      }
+    }
+
+    if (deleted == true) {
+      if (context.mounted) {
+        const SnackBarContent(
+          title: 'Payment deleted',
+          tinted: true,
+          type: SnackBarType.success,
+        ).show(context);
+        ref.read(paymentsProvider.notifier).refetch();
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
@@ -48,15 +83,18 @@ class PaymentsList extends StatelessWidget {
       );
     }
 
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: payments.length,
-      physics: const NeverScrollableScrollPhysics(),
-      itemBuilder: (context, index) => PaymentCard(
-        payment: payments[index],
-        onPay: (id) => _showPayDialog(context, payments[index].id),
-      ),
-    );
+    return Consumer(builder: (context, ref, child) {
+      return ListView.builder(
+        shrinkWrap: true,
+        itemCount: payments.length,
+        physics: const NeverScrollableScrollPhysics(),
+        itemBuilder: (context, index) => PaymentCard(
+          payment: payments[index],
+          onPay: (id) => _showPayDialog(context, payments[index].id),
+          onDelete: (id) => _showDeleteDialog(context, ref, id),
+        ),
+      );
+    });
   }
 }
 
@@ -65,9 +103,11 @@ class PaymentCard extends StatelessWidget {
     super.key,
     required this.payment,
     required this.onPay,
+    required this.onDelete,
   });
 
   final Function(String id) onPay;
+  final Function(String id) onDelete;
 
   final PaymentEntity payment;
 
@@ -115,7 +155,7 @@ class PaymentCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   EditCardBackground(onDelete: () {}),
-                  DeleteCardBackground(onDelete: () {}),
+                  DeleteCardBackground(onDelete: () => onDelete(payment.id)),
                 ],
               )
             ],
@@ -137,6 +177,7 @@ class _PaymentCardContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.only(top: 10, bottom: 10, left: 20),
       child: Row(
@@ -157,7 +198,17 @@ class _PaymentCardContent extends StatelessWidget {
                     const Icon(Icons.access_time_rounded, size: 18),
                   if (payment.date != null) const SizedBox(width: 10),
                   if (payment.date != null)
-                    Text(payment.dateTxt, style: textTheme.bodyLarge),
+                    if (payment.hasPriority)
+                      Badge(
+                        backgroundColor: theme.error,
+                        label: Text(payment.dateTxt,
+                            style: textTheme.bodyLarge
+                                ?.copyWith(color: theme.onError)),
+                        textColor: theme.onError,
+                        largeSize: 20,
+                      )
+                    else
+                      Text(payment.dateTxt, style: textTheme.bodyLarge),
                 ],
               ),
             ],
@@ -263,22 +314,26 @@ class PayDialog extends StatelessWidget {
             ],
           ),
         ),
-        Padding(
+        const Padding(
           padding: EdgeInsets.only(
             top: 10,
-            bottom: 40 + size,
             left: 20,
             right: 20,
           ),
-          child: const Column(
+          child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ValueInput(initialValue: 10),
               SizedBox(height: 20),
-              MoneyAccountsSelector(),
             ],
           ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(
+            bottom: 20 + size,
+          ),
+          child: const MoneyAccountsSelector(),
         ),
       ],
     );
@@ -324,16 +379,36 @@ class _MoneyAccountCardSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).primaryTextTheme;
+
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(account.name),
-            const SizedBox(height: 10),
-            Text(account.amountTxt),
-          ],
+      margin: const EdgeInsets.only(left: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(width: 1, color: theme.primary),
+      ),
+      child: SizedBox(
+        height: 120,
+        width: 160,
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                account.amountTxt,
+                style: textTheme.titleMedium,
+              ),
+              const SizedBox(height: 10),
+              Text(
+                account.name,
+                style:
+                    textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -35,10 +35,10 @@ class PaymentDatasourceDb implements PaymentDatasource {
   @override
   Future<List<PaymentEntity>> getAll(GetPaymentParams params) async {
     try {
-      String orderBy = ' paym.paym_created_at desc ';
-      if (params.dateType == DateType.asc) {
-        orderBy = ' paym.paym_created_at asc ';
-      }
+      String orderBy = ' paym.paym_date asc nulls last ';
+      // if (params.dateType == DateType.asc) {
+      //   orderBy = ' paym.paym_created_at asc ';
+      // }
 
       String whereIsCompleted = '';
       if (params.isCompleted == true) {

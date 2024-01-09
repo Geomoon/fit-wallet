@@ -1,5 +1,8 @@
+import 'package:fit_wallet/config/themes/themes.dart';
+import 'package:fit_wallet/features/payments/domain/entities/get_payment_params.dart';
 import 'package:fit_wallet/features/payments/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/payments/presentation/widgets/widgets.dart';
+import 'package:fit_wallet/features/shared/infrastructure/infrastructure.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -26,18 +29,11 @@ class _PaymentsScreenView extends ConsumerWidget {
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
       child: Padding(
-        padding: const EdgeInsets.only(
-          top: 10.0,
-          bottom: 20.0,
-        ),
-        child: payments.when(
-          error: (error, stackTrace) => Center(
-            child: Text(error.toString()),
+          padding: const EdgeInsets.only(
+            top: 10.0,
+            bottom: 20.0,
           ),
-          loading: () => const Center(
-            child: CircularProgressIndicator(),
-          ),
-          data: (data) => Column(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -49,18 +45,17 @@ class _PaymentsScreenView extends ConsumerWidget {
               const SizedBox(height: 10),
               Padding(
                 padding: padding,
-                child: Text('\$40.00', style: textTheme.headlineLarge),
+                child: Text(Utils.currencyFormat(payments.total),
+                    style: textTheme.headlineLarge),
               ),
               const SizedBox(height: 20),
               const FilterButtonsDelegate(),
               PaymentsList(
-                payments: data,
+                payments: payments.payments,
               ),
               const SizedBox(height: 60),
             ],
-          ),
-        ),
-      ),
+          )),
     );
   }
 }
@@ -121,15 +116,17 @@ class StateFilter extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(paymentsStateProvider);
+    final state = ref.watch(paymentsProvider);
+    final style = DarkTheme.primaryFilterStyle;
     return ElevatedButton(
+      style: style,
       onPressed: () => _showDialogFilter(context),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(title(state)),
+          Text(title(state.params.isCompleted)),
           const SizedBox(width: 10),
-          Icon(icon(state), size: 18),
+          Icon(icon(state.params.isCompleted), size: 18),
         ],
       ),
     );
@@ -166,7 +163,9 @@ class StateDialog extends ConsumerWidget {
             leading: const Icon(Icons.circle_rounded),
             title: const Text('All'),
             onTap: () {
-              ref.read(paymentsStateProvider.notifier).update((state) => null);
+              ref
+                  .read(paymentsProvider.notifier)
+                  .load(GetPaymentParams(isCompleted: null));
               context.pop();
             },
           ),
@@ -174,7 +173,9 @@ class StateDialog extends ConsumerWidget {
             leading: const Icon(Icons.done_rounded),
             title: const Text('Completed'),
             onTap: () {
-              ref.read(paymentsStateProvider.notifier).update((state) => true);
+              ref
+                  .read(paymentsProvider.notifier)
+                  .load(GetPaymentParams(isCompleted: true));
               context.pop();
             },
           ),
@@ -182,7 +183,9 @@ class StateDialog extends ConsumerWidget {
             leading: const Icon(Icons.circle_outlined),
             title: const Text('Pending'),
             onTap: () {
-              ref.read(paymentsStateProvider.notifier).update((state) => false);
+              ref
+                  .read(paymentsProvider.notifier)
+                  .load(GetPaymentParams(isCompleted: false));
               context.pop();
             },
           ),
@@ -199,7 +202,7 @@ class ClearFiltersButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return IconButton(
       onPressed: () {
-        ref.read(paymentsStateProvider.notifier).update((state) => null);
+        ref.read(paymentsProvider.notifier).load(GetPaymentParams());
       },
       icon: const Icon(Icons.filter_alt_off_rounded),
     );
