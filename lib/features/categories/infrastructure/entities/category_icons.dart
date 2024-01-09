@@ -23,5 +23,6 @@ const Map<String, IconData> categoryIcons = {
   "parking": Icons.local_parking_rounded,
   "other": Icons.park_rounded,
   "transfer": CupertinoIcons.arrow_right_arrow_left,
-  "adjustment": Icons.unfold_less_sharp
+  "adjustment": Icons.unfold_less_sharp,
+  "lodging": Icons.hotel_rounded,
 };

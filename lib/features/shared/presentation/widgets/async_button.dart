@@ -4,13 +4,15 @@ class AsyncButton extends StatelessWidget {
   const AsyncButton({
     super.key,
     required this.callback,
-    required this.title,
+    this.title,
+    this.child,
     this.isLoading = false,
   });
 
   final bool isLoading;
   final void Function() callback;
-  final String title;
+  final String? title;
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +26,13 @@ class AsyncButton extends StatelessWidget {
                 color: Colors.white,
                 strokeWidth: 3,
               ))
-          : Text(
-              title,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
+          : title != null
+              ? Text(
+                  title!,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 16),
+                )
+              : child,
     );
   }
 }

@@ -174,5 +174,13 @@
     "cate_icon": "adjustment",
     "cate_created_at": 1703742438678,
     "cate_is_default": 0
+  },
+  {
+    "cate_id": "0aefa50a-6b10-4836-9337-470b379825ca",
+    "cate_name": "LODGING",
+    "cate_hex_color": "ffd700",
+    "cate_icon": "lodging",
+    "cate_created_at": 1703742438678,
+    "cate_is_default": 0
   }
 ]
