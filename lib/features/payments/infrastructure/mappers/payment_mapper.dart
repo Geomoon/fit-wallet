@@ -9,13 +9,16 @@ final class PaymentMapper {
       id: json['paym_id'],
       description: json['paym_description'],
       amount: double.parse(json['paym_amount'].toString()),
+      amountPaid: json['paym_amount_paid'] == null
+          ? 0
+          : double.parse(json['paym_amount_paid']),
       createdAt: Utils.fromUnix(json['paym_created_at']),
       updatedAt: json['paym_updated_at'] == null
           ? null
           : Utils.fromUnix(json['paym_updated_at']),
       date:
           json['paym_date'] == null ? null : Utils.fromUnix(json['paym_date']),
-      isCompleted: json['paym_is_complete'] == 1,
+      isCompleted: json['paym_is_completed'] == 1,
     );
 
     if (json['macc_id'] != null) {
@@ -41,6 +44,7 @@ final class PaymentMapper {
       'paym_id': payment.id,
       'paym_description': payment.description,
       'paym_amount': payment.amount,
+      'paym_amount_paid': payment.amountPaid,
       'paym_date': payment.date == null ? null : Utils.unix(payment.date!),
       'paym_is_completed': payment.isCompleted ? 1 : 0,
       'paym_created_at': Utils.unix(payment.createdAt),

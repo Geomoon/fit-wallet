@@ -67,9 +67,12 @@ class PaymentDatasourceDb implements PaymentDatasource {
   }
 
   @override
-  Future<bool> update(PaymentEntity entity) {
-    // TODO: implement update
-    throw UnimplementedError();
+  Future<bool> update(PaymentEntity entity) async {
+    final data = PaymentMapper.toJsonDb(entity);
+    data.remove('paym_id');
+
+    await _db.update(table, data, where: 'paym_id = ?', whereArgs: [entity.id]);
+    return true;
   }
 
   @override

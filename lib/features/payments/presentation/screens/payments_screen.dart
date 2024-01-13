@@ -35,7 +35,6 @@ class _PaymentsScreenView extends ConsumerWidget {
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
               Padding(
@@ -105,7 +104,7 @@ class StateFilter extends ConsumerWidget {
   IconData icon(bool? state) => switch (state) {
         true => Icons.done_rounded,
         false => Icons.circle_outlined,
-        null => Icons.circle_rounded,
+        null => Icons.horizontal_rule_rounded,
       };
 
   String title(bool? state) => switch (state) {
@@ -160,7 +159,7 @@ class StateDialog extends ConsumerWidget {
           ),
           const SizedBox(height: 10),
           ListTile(
-            leading: const Icon(Icons.circle_rounded),
+            leading: const Icon(Icons.horizontal_rule_rounded),
             title: const Text('All'),
             onTap: () {
               ref

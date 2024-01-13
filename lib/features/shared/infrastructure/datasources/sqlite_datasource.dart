@@ -88,11 +88,12 @@ class SQLiteDatasource {
         macc_id TEXT,
         macc_id_transfer TEXT,
         cate_id TEXT,
-        debt_id TEXT,
+        paym_id TEXT,
         PRIMARY KEY ( tran_id ),
         FOREIGN KEY ( macc_id ) REFERENCES money_accounts ( macc_id ),
         FOREIGN KEY ( macc_id_transfer ) REFERENCES money_accounts ( macc_id ),
-        FOREIGN KEY ( cate_id ) REFERENCES categories ( cate_id )
+        FOREIGN KEY ( cate_id ) REFERENCES categories ( cate_id ),
+        FOREIGN KEY ( paym_id ) REFERENCES payments ( paym_id )
       );
     ''');
 
@@ -100,7 +101,8 @@ class SQLiteDatasource {
       CREATE TABLE IF NOT EXISTS payments (
         paym_id TEXT,
         paym_description TEXT,
-        paym_amount TEXT,
+        paym_amount REAL,
+        paym_amount_paid REAL,
         paym_date INTEGER,
         paym_is_completed INTEGER,
         paym_created_at INTEGER,

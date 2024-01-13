@@ -105,7 +105,7 @@ class _StateNotifier extends StateNotifier<_State> {
       type: state.type,
       maccId: state.maccId,
       cateId: state.cateId,
-      debtId: state.debtId,
+      paymId: state.debtId,
       description: state.description,
       maccIdTransfer: state.maccIdTransfer,
     );

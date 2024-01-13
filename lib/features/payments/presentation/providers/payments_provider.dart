@@ -13,7 +13,7 @@ final paymentsProvider =
 
 class _StateNotifier extends StateNotifier<_State> {
   _StateNotifier(this._repository) : super(_State(params: GetPaymentParams())) {
-    load(GetPaymentParams());
+    load(GetPaymentParams(isCompleted: false));
   }
 
   final PaymentRepository _repository;

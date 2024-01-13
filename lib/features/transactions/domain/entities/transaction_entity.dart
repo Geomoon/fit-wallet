@@ -6,7 +6,7 @@ class TransactionEntity {
   double amount;
   String type;
   String userId;
-  String? debtId; // TODO:
+  String? paymId; // TODO:
   DateTime createdAt;
   DateTime? deletedAt;
   MoneyAccount moneyAccount;
@@ -19,7 +19,7 @@ class TransactionEntity {
     required this.amount,
     required this.type,
     required this.userId,
-    required this.debtId,
+    required this.paymId,
     required this.createdAt,
     required this.moneyAccount,
     this.moneyAccountTransfer,
@@ -34,7 +34,7 @@ class TransactionEntity {
         amount: json["amount"]?.toDouble(),
         type: json["type"],
         userId: json["userId"],
-        debtId: json["debtId"],
+        paymId: json["debtId"],
         createdAt: DateTime.parse(json["createdAt"]),
         moneyAccount: MoneyAccount.fromJson(json["moneyAccount"]),
         category: Category.fromJson(json["category"]),
@@ -49,7 +49,7 @@ class TransactionEntity {
         "amount": amount,
         "type": type,
         "userId": userId,
-        "debtId": debtId,
+        "paymId": paymId,
         "createdAt": createdAt.toIso8601String(),
         "moneyAccount": moneyAccount.toJson(),
         "category": category.toJson(),

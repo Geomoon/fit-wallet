@@ -106,21 +106,22 @@ class MoneyAccountForm extends ConsumerWidget {
                     .onValueChange,
               ),
               const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text('Set as favorite', style: textTheme.bodyLarge),
-                  _box20W,
-                  Switch.adaptive(
-                    value: service.order.value == 0,
-                    onChanged: (value) {
-                      ref
-                          .read(moneyAccountFormProvider(id).notifier)
-                          .onOrderChange(value ? 0 : 1);
-                    },
-                  ),
-                ],
-              ),
+              if (service.order.value != 0)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text('Set as favorite', style: textTheme.bodyLarge),
+                    _box20W,
+                    Switch.adaptive(
+                      value: service.order.value == 0,
+                      onChanged: (value) {
+                        ref
+                            .read(moneyAccountFormProvider(id).notifier)
+                            .onOrderChange(value ? 0 : 1);
+                      },
+                    ),
+                  ],
+                ),
             ],
           ),
         ),

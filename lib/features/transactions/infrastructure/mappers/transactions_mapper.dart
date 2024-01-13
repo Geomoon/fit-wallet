@@ -9,7 +9,7 @@ final class TransactionsMapper {
       'tran_type': entity.type.name.toUpperCase(),
       'macc_id': entity.maccId,
       'cate_id': entity.cateId,
-      'debt_id': entity.debtId,
+      'paym_id': entity.paymId,
       'macc_id_transfer': entity.maccIdTransfer,
     };
   }
@@ -32,8 +32,8 @@ final class TransactionsMapper {
       description: json["tran_description"],
       amount: json["tran_amount"]?.toDouble(),
       type: json["tran_type"],
-      userId: json["userId"] ?? '',
-      debtId: json["debtId"] ?? '',
+      userId: json["user_id"] ?? '',
+      paymId: json["paym_id"] ?? '',
       createdAt: Utils.fromUnix(json["tran_created_at"]),
       moneyAccount: account,
       category: category,

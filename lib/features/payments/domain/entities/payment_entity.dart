@@ -8,6 +8,7 @@ class PaymentEntity {
     required this.description,
     required this.amount,
     required this.createdAt,
+    this.amountPaid = 0,
     this.date,
     this.isCompleted = false,
     this.updatedAt,
@@ -18,6 +19,7 @@ class PaymentEntity {
   String id;
   String description;
   double amount;
+  double amountPaid;
   DateTime? date;
   bool isCompleted;
   DateTime createdAt;

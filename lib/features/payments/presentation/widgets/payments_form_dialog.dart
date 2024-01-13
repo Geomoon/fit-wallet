@@ -166,6 +166,7 @@ class _ValueInputState extends State<ValueInput> {
   @override
   void initState() {
     super.initState();
+    print('INIT');
     if (widget.isPrimary) focus.requestFocus();
   }
 
