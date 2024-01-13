@@ -32,7 +32,7 @@ class PaymentRepositoryImpl implements PaymentRepository {
 
     if (entity.account != null) {
       final transaction = CreateTransactionEntity(
-        amount: entity.amount,
+        amount: entity.amountPaid,
         type: TransactionType.expense,
         maccId: entity.account?.id,
         paymId: entity.id,

@@ -5,12 +5,8 @@ abstract class TransactionsRepository {
   Future<PaginationEntity<TransactionEntity>> getAll(
     GetTransactionsParams params,
   );
-
   Future<TransactionEntity> getById(String id);
-
   Future<void> create(CreateTransactionEntity entity);
-
   Future<bool> delete(String id);
-
   Future<BalanceEntity> getBalance();
 }

@@ -35,13 +35,17 @@ class _StateNotifier extends StateNotifier<_State> {
   }
 
   void changeValue(String value) {
-    final amount = double.parse(value);
+    double? amount = double.tryParse(value);
+
+    amount ??= 0;
 
     bool isCompleted = false;
     if (amount >= state.payment!.amount) isCompleted = true;
     state = state.copyWith(
       value: NumberInput.dirty(value: amount),
-      payment: state.payment!..isCompleted = isCompleted,
+      payment: state.payment!
+        ..isCompleted = isCompleted
+        ..amountPaid = amount,
     );
   }
 
@@ -59,7 +63,7 @@ class _StateNotifier extends StateNotifier<_State> {
 
       payment!.amountPaid = state.value.value;
       if (state.value.isPure) {
-        payment.amountPaid = state.payment!.amount;
+        payment.amountPaid = state.payment!.pendingAmount;
       }
 
       await paymentRepository.update(payment);

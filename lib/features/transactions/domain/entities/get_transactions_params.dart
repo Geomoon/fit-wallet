@@ -6,6 +6,7 @@ class GetTransactionsParams extends PaginationParams {
     this.startDate,
     this.endDate,
     this.maccId,
+    this.paymId,
     required this.type,
     required super.page,
     required super.limit,
@@ -15,6 +16,7 @@ class GetTransactionsParams extends PaginationParams {
   final DateTime? startDate;
   final DateTime? endDate;
   final String? maccId;
+  final String? paymId;
   final TransactionTypeFilter type;
 
   @override

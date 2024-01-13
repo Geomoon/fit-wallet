@@ -14,6 +14,7 @@ class DarkTheme {
 
   static const Color green = Color(0xFFb5e4ca);
   static const Color red = Color(0xFFf59062);
+  static const Color orange = Color(0xFFf59062);
 
   // static const Color transfer = Color(0xFF2a85ff);
   // static const Color expense = Color(0xFF313131);

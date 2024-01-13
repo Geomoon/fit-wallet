@@ -7,22 +7,17 @@ class TransactionsRepositoryImpl extends TransactionsRepository {
   final TransactionsDatasource _datasource;
 
   @override
-  Future<void> create(CreateTransactionEntity entity) {
-    return _datasource.create(entity);
-  }
+  Future<void> create(CreateTransactionEntity entity) =>
+      _datasource.create(entity);
 
   @override
-  Future<bool> delete(String id) {
-    return _datasource.delete(id);
-  }
+  Future<bool> delete(String id) => _datasource.delete(id);
 
   @override
   Future<PaginationEntity<TransactionEntity>> getAll(
     GetTransactionsParams params,
-  ) {
-    print(params.toJson());
-    return _datasource.getAll(params);
-  }
+  ) =>
+      _datasource.getAll(params);
 
   @override
   Future<TransactionEntity> getById(String id) {
@@ -30,7 +25,5 @@ class TransactionsRepositoryImpl extends TransactionsRepository {
   }
 
   @override
-  Future<BalanceEntity> getBalance() {
-    return _datasource.getBalance();
-  }
+  Future<BalanceEntity> getBalance() => _datasource.getBalance();
 }

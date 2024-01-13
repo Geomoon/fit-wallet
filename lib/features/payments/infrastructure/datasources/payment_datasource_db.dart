@@ -49,12 +49,19 @@ class PaymentDatasourceDb implements PaymentDatasource {
       }
 
       final list = await _db.rawQuery('''
-        select paym_id, paym_description, paym_amount, paym_date, paym_is_completed, paym_created_at,
+        select paym.paym_id, paym_description, paym_amount, paym_amount_paid, paym_date, paym_is_completed, paym_created_at,
           macc.macc_id, macc.macc_name,
-          cate.cate_id, cate.cate_name
+          cate.cate_id, cate.cate_name,
+          coalesce( tran.details, 0 ) as paym_has_details
         from payments paym
         left join money_accounts macc on macc.macc_id = paym.macc_id 
         left join categories cate on cate.cate_id = paym.cate_id
+        left join ( 
+          select paym_id, count(*) details
+          from transactions
+          where tran_deleted_at = null 
+          group by 1 
+        ) as tran on tran.paym_id = paym.paym_id
         $whereIsCompleted
         order by $orderBy
      ''');
@@ -79,9 +86,10 @@ class PaymentDatasourceDb implements PaymentDatasource {
   Future<PaymentEntity> getById(String id) async {
     final list = await _db.rawQuery(
       '''
-        select paym_id, paym_description, paym_amount, paym_date, paym_is_completed, paym_created_at,
+        select paym_id, paym_description, paym_amount, paym_amount_paid, paym_date, paym_is_completed, paym_created_at,
           macc.macc_id, macc.macc_name,
-          cate.cate_id, cate.cate_name
+          cate.cate_id, cate.cate_name,
+          0 paym_has_details
         from payments paym
         left join money_accounts macc on macc.macc_id = paym.macc_id 
         left join categories cate on cate.cate_id = paym.cate_id

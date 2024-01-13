@@ -8,6 +8,7 @@ class PaymentEntity {
     required this.description,
     required this.amount,
     required this.createdAt,
+    this.hasDetails = false,
     this.amountPaid = 0,
     this.date,
     this.isCompleted = false,
@@ -22,16 +23,27 @@ class PaymentEntity {
   double amountPaid;
   DateTime? date;
   bool isCompleted;
+  bool hasDetails;
   DateTime createdAt;
   DateTime? updatedAt;
   MoneyAccountEntity? account;
   CategoryEntity? category;
 
   String get amountTxt => Utils.currencyFormat(amount);
+  String get amountPaidTxt => Utils.currencyFormat(amountPaid);
+  String get pendingAmountTxt => Utils.currencyFormat(amount - amountPaid);
   String get dateTxt => date == null ? '' : Utils.formatYYYDDMM(date!);
 
+  double get pendingAmount => amount - amountPaid;
+
   bool get hasPriority {
-    if (date == null) return false;
+    if (date == null || isCompleted) return false;
     return date!.difference(DateTime.now()).inDays <= 2;
+  }
+
+  bool get hasDiff {
+    if (amountPaid == 0 || isCompleted) return false;
+    if (amount != amountPaid) return true;
+    return false;
   }
 }

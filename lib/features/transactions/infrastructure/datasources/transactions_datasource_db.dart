@@ -142,6 +142,11 @@ class TransactionsDatasourceDb implements TransactionsDatasource {
           " and ( tran.macc_id = '${params.maccId}' or tran.macc_id_transfer = '${params.maccId}' ) ";
     }
 
+    String andPaymIdIs = '';
+    if (params.paymId != null) {
+      andPaymIdIs = " and tran.paym_id = '${params.paymId}' ";
+    }
+
     final offset = params.page * params.limit - params.limit;
 
     final query = await _db.rawQuery(
@@ -155,7 +160,7 @@ class TransactionsDatasourceDb implements TransactionsDatasource {
       left join money_accounts macc_transfer on macc_transfer.macc_id = tran.macc_id_transfer 
       left join categories cate on cate.cate_id = tran.cate_id
       where tran.tran_deleted_at is null
-        $andTypeIs $andDateIs $andStartDateIs $andEndDateIs $andMaccIdIs
+        $andTypeIs $andDateIs $andStartDateIs $andEndDateIs $andMaccIdIs $andPaymIdIs
       order by tran_created_at desc
       limit ?
       offset ?
@@ -169,7 +174,7 @@ class TransactionsDatasourceDb implements TransactionsDatasource {
       from transactions tran
       left join money_accounts macc on macc.macc_id = tran.macc_id 
       left join categories cate on cate.cate_id = tran.cate_id
-      where tran.tran_deleted_at is null $andTypeIs $andDateIs $andStartDateIs $andEndDateIs $andMaccIdIs
+      where tran.tran_deleted_at is null $andTypeIs $andDateIs $andStartDateIs $andEndDateIs $andMaccIdIs $andPaymIdIs
       order by tran_created_at desc
     '''),
     );

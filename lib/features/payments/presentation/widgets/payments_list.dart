@@ -35,6 +35,23 @@ class PaymentsList extends StatelessWidget {
     );
   }
 
+  void _showTransactionsDialog(BuildContext context, String id) async {
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return BottomSheet(
+          onClosing: () {},
+          showDragHandle: false,
+          enableDrag: false,
+          builder: (context) {
+            return PayDialog(id: id);
+          },
+        );
+      },
+    );
+  }
+
   void _showDeleteDialog(BuildContext context, WidgetRef ref, String id) async {
     final deleted = await showDialog(
       context: context,
@@ -96,8 +113,9 @@ class PaymentsList extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         itemBuilder: (context, index) => PaymentCard(
           payment: payments[index],
-          onPay: (id) => _showPayDialog(context, payments[index].id),
+          onPay: (id) => _showPayDialog(context, id),
           onDelete: (id) => _showDeleteDialog(context, ref, id),
+          onShowDetails: (id) => _showTransactionsDialog(context, id),
         ),
       );
     });
@@ -110,10 +128,12 @@ class PaymentCard extends StatelessWidget {
     required this.payment,
     required this.onPay,
     required this.onDelete,
+    required this.onShowDetails,
   });
 
   final Function(String id) onPay;
   final Function(String id) onDelete;
+  final Function(String id) onShowDetails;
 
   final PaymentEntity payment;
 
@@ -127,19 +147,24 @@ class PaymentCard extends StatelessWidget {
       controlAffinity: ListTileControlAffinity.trailing,
       tilePadding: const EdgeInsets.only(right: 10),
       childrenPadding: EdgeInsets.zero,
-      trailing: ElevatedButton(
-        onPressed: payment.isCompleted ? null : () => onPay(payment.id),
-        child: payment.isCompleted
-            ? const Icon(Icons.done_rounded)
-            : const Icon(Icons.credit_score_rounded),
-      ),
+      trailing: payment.isCompleted
+          ? const SizedBox(
+              width: 70,
+              child: Icon(
+                Icons.check_circle_rounded,
+                color: DarkTheme.green,
+              ))
+          : ElevatedButton(
+              onPressed: () => onPay(payment.id),
+              child: const Icon(Icons.credit_score_rounded),
+            ),
       title: _PaymentCardContent(payment: payment, textTheme: textTheme),
       expandedCrossAxisAlignment: CrossAxisAlignment.start,
       expandedAlignment: Alignment.centerLeft,
       iconColor: theme.onBackground,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: Theme.of(context).colorScheme.outline),
+        side: const BorderSide(color: Colors.transparent),
       ),
       collapsedShape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
@@ -148,6 +173,7 @@ class PaymentCard extends StatelessWidget {
       backgroundColor: cardColor.surfaceTintColor,
       children: [
         Container(
+          margin: const EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
             color: DarkTheme.barColor,
             borderRadius: BorderRadius.circular(12),
@@ -162,7 +188,9 @@ class PaymentCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  EditCardBackground(onDelete: () {}),
+                  if (payment.hasDetails)
+                    MoreInfoCardBackground(onDelete: () {}),
+                  if (!payment.isCompleted) EditCardBackground(onDelete: () {}),
                   DeleteCardBackground(onDelete: () => onDelete(payment.id)),
                 ],
               )
@@ -198,10 +226,27 @@ class _PaymentCardContent extends StatelessWidget {
               Text(
                 payment.amountTxt,
                 style: textTheme.titleLarge?.copyWith(
-                    decoration: payment.isCompleted
-                        ? TextDecoration.lineThrough
-                        : null),
+                  fontWeight: FontWeight.bold,
+                  decoration:
+                      payment.isCompleted ? TextDecoration.lineThrough : null,
+                ),
               ),
+              if (payment.hasDiff) const SizedBox(height: 10),
+              if (payment.hasDiff)
+                Row(
+                  children: [
+                    Text(payment.pendingAmountTxt),
+                    const SizedBox(width: 10),
+                    Badge(
+                      backgroundColor: Colors.amber.shade100,
+                      label: Text(
+                        'Pending',
+                        style: textTheme.labelSmall
+                            ?.copyWith(color: Colors.black87),
+                      ),
+                    )
+                  ],
+                ),
               const SizedBox(height: 10),
               Row(
                 children: [
@@ -234,6 +279,33 @@ class _PaymentCardContent extends StatelessWidget {
   }
 }
 
+class MoreInfoCardBackground extends StatelessWidget {
+  const MoreInfoCardBackground({super.key, required this.onDelete});
+
+  final Function() onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context).colorScheme;
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      elevation: 0,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(24),
+        onTap: onDelete,
+        child: SizedBox(
+          height: 36,
+          width: 60,
+          child: Icon(
+            Icons.info_rounded,
+            color: theme.onSurface,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class EditCardBackground extends StatelessWidget {
   const EditCardBackground({super.key, required this.onDelete});
 
@@ -250,7 +322,7 @@ class EditCardBackground extends StatelessWidget {
         onTap: onDelete,
         child: SizedBox(
           height: 36,
-          width: 100,
+          width: 60,
           child: Icon(
             Icons.drive_file_rename_outline_rounded,
             color: theme.onSurface,
@@ -371,7 +443,7 @@ class PayDialog extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: _ValueInput(
-                    initialValue: payProvider.payment?.amount ?? 0,
+                    initialValue: payProvider.payment?.pendingAmount ?? 0,
                     onChanged: ref
                         .read(paymentsPayFormProvider(id).notifier)
                         .changeValue,
@@ -389,14 +461,6 @@ class PayDialog extends ConsumerWidget {
                     .read(paymentsPayFormProvider(id).notifier)
                     .changeAccount,
               ),
-              // if (payProvider.payment != null)
-              //   _ValueInput(
-              //     initialValue: payProvider.payment?.amount ?? 0,
-              //     onChanged: ref
-              //         .read(paymentsPayFormProvider(id).notifier)
-              //         .changeValue,
-              //     errorMessage: payProvider.value.errorMessage,
-              //   ),
             ],
           ),
         ),
