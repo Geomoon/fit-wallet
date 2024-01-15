@@ -60,7 +60,6 @@ class _StateNotifier extends StateNotifier<_State> {
         description: state.description.value,
         amount: state.amount.value,
         date: state.dueDate,
-        isCompleted: false,
         createdAt: DateTime.now(),
       );
       await _repository.create(payment);

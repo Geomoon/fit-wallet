@@ -19,7 +19,6 @@ final class PaymentMapper {
           : Utils.fromUnix(json['paym_updated_at']),
       date:
           json['paym_date'] == null ? null : Utils.fromUnix(json['paym_date']),
-      isCompleted: json['paym_is_completed'] == 1,
     );
 
     if (json['macc_id'] != null) {

@@ -27,9 +27,6 @@ class PaymentRepositoryImpl implements PaymentRepository {
 
   @override
   Future<bool> update(PaymentEntity entity) async {
-    final isCompleted = entity.amount <= entity.amountPaid;
-    entity.isCompleted = isCompleted;
-
     if (entity.account != null) {
       final transaction = CreateTransactionEntity(
         amount: entity.amountPaid,
@@ -48,5 +45,22 @@ class PaymentRepositoryImpl implements PaymentRepository {
   @override
   Future<PaymentEntity> getById(String id) async {
     return await datasource.getById(id);
+  }
+
+  @override
+  Future<bool> pay(PaymentEntity entity, double installment) async {
+    if (entity.account != null) {
+      final transaction = CreateTransactionEntity(
+        amount: installment,
+        type: TransactionType.expense,
+        maccId: entity.account?.id,
+        paymId: entity.id,
+        cateId: '37431c78-a65e-450f-8aec-1a13977db5fa', // pay category
+      );
+
+      await transactionsRepository.create(transaction);
+    }
+
+    return await datasource.update(entity);
   }
 }

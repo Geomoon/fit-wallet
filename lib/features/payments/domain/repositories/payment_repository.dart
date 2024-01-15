@@ -5,5 +5,6 @@ abstract class PaymentRepository {
   Future<PaymentEntity> getById(String id);
   Future<bool> create(PaymentEntity entity);
   Future<bool> update(PaymentEntity entity);
+  Future<bool> pay(PaymentEntity entity, double payAmount);
   Future<void> delete(String id);
 }

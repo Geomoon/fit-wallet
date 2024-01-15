@@ -59,7 +59,7 @@ class PaymentDatasourceDb implements PaymentDatasource {
         left join ( 
           select paym_id, count(*) details
           from transactions
-          where tran_deleted_at = null 
+          where coalesce( tran_deleted_at, 0 ) = 0   
           group by 1 
         ) as tran on tran.paym_id = paym.paym_id
         $whereIsCompleted

@@ -11,7 +11,6 @@ class PaymentEntity {
     this.hasDetails = false,
     this.amountPaid = 0,
     this.date,
-    this.isCompleted = false,
     this.updatedAt,
     this.account,
     this.category,
@@ -22,7 +21,6 @@ class PaymentEntity {
   double amount;
   double amountPaid;
   DateTime? date;
-  bool isCompleted;
   bool hasDetails;
   DateTime createdAt;
   DateTime? updatedAt;
@@ -35,6 +33,8 @@ class PaymentEntity {
   String get dateTxt => date == null ? '' : Utils.formatYYYDDMM(date!);
 
   double get pendingAmount => amount - amountPaid;
+
+  bool get isCompleted => amountPaid >= amount;
 
   bool get hasPriority {
     if (date == null || isCompleted) return false;

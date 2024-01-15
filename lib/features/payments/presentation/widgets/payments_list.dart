@@ -7,7 +7,8 @@ import 'package:fit_wallet/features/payments/presentation/providers/payments_pay
 import 'package:fit_wallet/features/payments/presentation/providers/payments_provider.dart';
 import 'package:fit_wallet/features/shared/infrastructure/formatters/number_formatter.dart';
 import 'package:fit_wallet/features/shared/presentation/presentation.dart';
-import 'package:fit_wallet/features/transactions/presentation/providers/get_transactions_provider.dart';
+import 'package:fit_wallet/features/transactions/presentation/providers/providers.dart';
+import 'package:fit_wallet/features/transactions/presentation/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -44,8 +45,11 @@ class PaymentsList extends StatelessWidget {
           onClosing: () {},
           showDragHandle: false,
           enableDrag: false,
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.8,
+          ),
           builder: (context) {
-            return PayDialog(id: id);
+            return PaymentsDetailDialog(id: id);
           },
         );
       },
@@ -156,7 +160,7 @@ class PaymentCard extends StatelessWidget {
               ))
           : ElevatedButton(
               onPressed: () => onPay(payment.id),
-              child: const Icon(Icons.credit_score_rounded),
+              child: const Text('Pay'),
             ),
       title: _PaymentCardContent(payment: payment, textTheme: textTheme),
       expandedCrossAxisAlignment: CrossAxisAlignment.start,
@@ -189,8 +193,10 @@ class PaymentCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   if (payment.hasDetails)
-                    MoreInfoCardBackground(onDelete: () {}),
-                  if (!payment.isCompleted) EditCardBackground(onDelete: () {}),
+                    MoreInfoCardBackground(
+                      onDelete: () => onShowDetails(payment.id),
+                    ),
+                  // if (!payment.isCompleted) EditCardBackground(onDelete: () {}),
                   DeleteCardBackground(onDelete: () => onDelete(payment.id)),
                 ],
               )
@@ -297,7 +303,7 @@ class MoreInfoCardBackground extends StatelessWidget {
           height: 36,
           width: 60,
           child: Icon(
-            Icons.info_rounded,
+            Icons.list_rounded,
             color: theme.onSurface,
           ),
         ),
@@ -442,14 +448,49 @@ class PayDialog extends ConsumerWidget {
               if (payProvider.payment != null)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: _ValueInput(
-                    initialValue: payProvider.payment?.pendingAmount ?? 0,
-                    onChanged: ref
-                        .read(paymentsPayFormProvider(id).notifier)
-                        .changeValue,
-                    errorMessage: payProvider.value.errorMessage,
-                  ),
+                  child: payProvider.paymentType == 0
+                      ? Text(
+                          payProvider.payment?.pendingAmountTxt ?? '0',
+                          style: textTheme.titleLarge,
+                        )
+                      : _ValueInput(
+                          initialValue: payProvider.payment?.pendingAmount ?? 0,
+                          onChanged: ref
+                              .read(paymentsPayFormProvider(id).notifier)
+                              .changeValue,
+                          errorMessage: payProvider.value.errorMessage,
+                        ),
                 ),
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: SegmentedButton(
+                        selectedIcon: payProvider.paymentType == 0
+                            ? const Icon(Icons.payment_rounded)
+                            : const Icon(Icons.payments_outlined),
+                        segments: const [
+                          ButtonSegment(
+                            value: 0,
+                            label: Text('All'),
+                          ),
+                          ButtonSegment(
+                            value: 1,
+                            label: Text('Installment'),
+                          ),
+                        ],
+                        selected: {payProvider.paymentType},
+                        onSelectionChanged: (s) => ref
+                            .read(paymentsPayFormProvider(id).notifier)
+                            .changePaymentType(s.first),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               const SizedBox(height: 20),
               const Padding(
                 padding: EdgeInsets.only(left: 20, bottom: 10),
@@ -505,10 +546,11 @@ class _ValueInput extends StatelessWidget {
       ),
       decoration: const InputDecoration(
         hintText: '0.00',
-        icon: Icon(Icons.attach_money_rounded),
+        prefixIcon: Icon(Icons.attach_money_rounded),
+        labelText: 'Enter value',
         errorText: null,
       ),
-      textInputAction: TextInputAction.next,
+      textInputAction: TextInputAction.done,
       onChanged: onChanged,
     );
   }
@@ -522,7 +564,7 @@ class MoneyAccountsSelector extends ConsumerWidget {
   });
 
   final String id;
-  final void Function(MoneyAccountLastTransactionEntity) onSelect;
+  final void Function(MoneyAccountLastTransactionEntity?) onSelect;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -530,6 +572,8 @@ class MoneyAccountsSelector extends ConsumerWidget {
 
     final selected =
         ref.watch(paymentsPayFormProvider(id).select((value) => value.account));
+    final noFunds =
+        ref.watch(paymentsPayFormProvider(id).select((value) => value.noFunds));
 
     return accounts.when(
       data: (data) {
@@ -543,6 +587,7 @@ class MoneyAccountsSelector extends ConsumerWidget {
               return _MoneyAccountCardSelector(
                 account: data[index],
                 isSelected: selected?.id == data[index].id,
+                noFunds: noFunds,
                 onSelect: onSelect,
               );
             },
@@ -564,16 +609,24 @@ class _MoneyAccountCardSelector extends StatelessWidget {
     required this.account,
     required this.onSelect,
     this.isSelected = false,
+    this.noFunds = false,
   });
 
   final MoneyAccountLastTransactionEntity account;
   final bool isSelected;
-  final void Function(MoneyAccountLastTransactionEntity) onSelect;
+  final bool noFunds;
+  final void Function(MoneyAccountLastTransactionEntity?) onSelect;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).primaryTextTheme;
+
+    final textStyle = isSelected
+        ? (noFunds
+            ? textTheme.titleMedium?.copyWith(color: theme.error)
+            : textTheme.titleMedium)
+        : textTheme.titleMedium;
 
     return Card(
       margin: const EdgeInsets.only(left: 12),
@@ -591,7 +644,7 @@ class _MoneyAccountCardSelector extends StatelessWidget {
       surfaceTintColor: theme.secondaryContainer,
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onTap: () => onSelect(account),
+        onTap: () => onSelect(isSelected ? null : account),
         child: SizedBox(
           height: 100,
           width: 160,
@@ -603,7 +656,7 @@ class _MoneyAccountCardSelector extends StatelessWidget {
               children: [
                 Text(
                   account.amountTxt,
-                  style: textTheme.titleMedium,
+                  style: textStyle,
                 ),
                 const SizedBox(height: 10),
                 Text(
@@ -616,6 +669,119 @@ class _MoneyAccountCardSelector extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class PaymentsDetailDialog extends ConsumerWidget {
+  const PaymentsDetailDialog({super.key, required this.id});
+
+  final String id;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final color = Theme.of(context).colorScheme.onBackground;
+    final textTheme = Theme.of(context).primaryTextTheme;
+    final payProvider = ref.watch(paymentsPayFormProvider(id));
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(
+            top: 10,
+            bottom: 20,
+            left: 10,
+            right: 20,
+          ),
+          child: Row(
+            children: [
+              CloseButton(color: color),
+              const SizedBox(width: 10),
+              Text(
+                'Pay Detail',
+                style: textTheme.headlineSmall
+                    ?.copyWith(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ),
+        Row(
+          children: [
+            const SizedBox(width: 20),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('TOTAL', style: textTheme.bodyLarge),
+                  const SizedBox(height: 10),
+                  Text(
+                    payProvider.payment?.amountTxt ?? '\$0.0',
+                    style: textTheme.headlineLarge,
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('PENDING', style: textTheme.bodyLarge),
+                  const SizedBox(height: 10),
+                  Text(
+                    payProvider.payment?.pendingAmountTxt ?? '\$0.0',
+                    style: textTheme.headlineLarge,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 20),
+          ],
+        ),
+        const SizedBox(height: 20),
+        if (payProvider.payment != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Text('Payments', style: textTheme.bodyLarge),
+          ),
+        if (payProvider.payment != null)
+          Expanded(
+            child: PaymentTransactionsList(paymId: payProvider.payment!.id),
+          ),
+      ],
+    );
+  }
+}
+
+class PaymentTransactionsList extends ConsumerWidget {
+  const PaymentTransactionsList({super.key, required this.paymId});
+
+  final String paymId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final transactions = ref.watch(transactionsByPaymentProvider(paymId));
+
+    return transactions.when(
+      data: (data) {
+        if (data.items.isEmpty) return Container();
+
+        return ListView.builder(
+          shrinkWrap: true,
+          itemCount: data.items.length,
+          itemBuilder: (context, index) {
+            return TransactionListTile(
+                transaction: data.items[index], isDissmisable: false);
+          },
+        );
+      },
+      error: (error, stackTrace) {
+        return const Center(child: Text('Something went wrong'));
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
     );
   }
 }

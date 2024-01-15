@@ -27,25 +27,32 @@ class _StateNotifier extends StateNotifier<_State> {
 
   void loadPayment(String id) async {
     final payment = await paymentRepository.getById(id);
-    state = state.copyWith(payment: payment);
+    state = state.copyWith(
+      payment: payment,
+      value: NumberInput.dirty(value: payment.pendingAmount),
+    );
   }
 
-  void changeAccount(MoneyAccountLastTransactionEntity account) {
-    state = state.copyWithAccount(account: account);
+  void changeAccount(MoneyAccountLastTransactionEntity? account) {
+    final noFunds = state.value.value > (account?.amount ?? 0);
+    state = state.copyWith(account: account, noFunds: noFunds);
+  }
+
+  void changePaymentType(int value) {
+    state = state.copyWith(
+      paymentType: value,
+      account: state.account,
+    );
   }
 
   void changeValue(String value) {
     double? amount = double.tryParse(value);
-
     amount ??= 0;
 
-    bool isCompleted = false;
-    if (amount >= state.payment!.amount) isCompleted = true;
     state = state.copyWith(
       value: NumberInput.dirty(value: amount),
-      payment: state.payment!
-        ..isCompleted = isCompleted
-        ..amountPaid = amount,
+      account: state.account,
+      payment: state.payment,
     );
   }
 
@@ -61,12 +68,9 @@ class _StateNotifier extends StateNotifier<_State> {
         );
       }
 
-      payment!.amountPaid = state.value.value;
-      if (state.value.isPure) {
-        payment.amountPaid = state.payment!.pendingAmount;
-      }
+      payment!.amountPaid = state.value.value + payment.amountPaid;
 
-      await paymentRepository.update(payment);
+      await paymentRepository.pay(payment, state.value.value);
       return true;
     } catch (e) {
       log('ERROR saving payment', error: e);
@@ -81,6 +85,10 @@ class _State {
   final MoneyAccountLastTransactionEntity? account;
   final NumberInput value;
   final PaymentEntity? payment;
+  final bool noFunds;
+
+  /// 0 => ALL, 1 => INSTALLMENTS
+  final int paymentType;
 
   _State({
     this.payment,
@@ -88,6 +96,8 @@ class _State {
     this.isValid = false,
     this.account,
     this.value = const NumberInput.pure(),
+    this.paymentType = 0,
+    this.noFunds = false,
   });
 
   _State copyWith({
@@ -95,14 +105,17 @@ class _State {
     bool? isValid,
     NumberInput? value,
     PaymentEntity? payment,
+    int? paymentType,
+    MoneyAccountLastTransactionEntity? account,
+    bool? noFunds,
   }) =>
       _State(
         payment: payment ?? this.payment,
         isSaving: isSaving ?? this.isSaving,
         isValid: isValid ?? this.isValid,
         value: value ?? this.value,
+        paymentType: paymentType ?? this.paymentType,
+        account: account,
+        noFunds: noFunds ?? this.noFunds,
       );
-
-  _State copyWithAccount({MoneyAccountLastTransactionEntity? account}) =>
-      _State(payment: payment, account: account);
 }
