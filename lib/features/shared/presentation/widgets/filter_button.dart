@@ -14,32 +14,69 @@ class FilterButton extends ConsumerWidget {
   void _showDialogFilter(BuildContext context) async {
     await showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       builder: (context) {
         return BottomSheet(
           onClosing: () {},
           showDragHandle: false,
           enableDrag: false,
           builder: (context) {
-            return DatePickerBottomDialog(onPickDate: () {
-              context.pop();
-              _showDatePickerDialog(context);
-            });
+            return DatePickerBottomDialog(
+              onPickDate: (f) {
+                context.pop();
+                _showDatePickerDialog(context, f);
+              },
+            );
           },
         );
       },
     );
   }
 
-  void _showDatePickerDialog(BuildContext context) async {
+  void _showDatePickerDialog(BuildContext context, bool isRange) async {
+    if (isRange) {
+      await showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Consumer(builder: (context, ref, _) {
+            return CalendarRangePickerBottomDialog(
+              title: 'By range',
+              firstDate: ref.watch(dateFilterValueProvider).startDate,
+              lastDate: ref.watch(dateFilterValueProvider).endDate,
+              onStartDateChanged: (d) => ref
+                  .read(dateFilterValueProvider.notifier)
+                  .setType(DateFilter.range, d),
+              onEndDateChanged: (d) => ref
+                  .read(dateFilterValueProvider.notifier)
+                  .setType(DateFilter.range,
+                      ref.read(dateFilterValueProvider).startDate, d),
+            );
+          });
+        },
+      );
+      return;
+    }
+
     await showModalBottomSheet(
       context: context,
       builder: (context) {
         return Consumer(builder: (context, ref, _) {
           return CalendarPickerBottomDialog(
             title: 'By date',
+            isRange: isRange,
+            startDate: ref.watch(dateFilterValueProvider).startDate,
+            endDate: ref.watch(dateFilterValueProvider).endDate,
+            firstDate: ref.watch(dateFilterValueProvider).startDate,
             onDateChanged: (d) => ref
                 .read(dateFilterValueProvider.notifier)
                 .setType(DateFilter.date, d),
+            onStartDateChanged: (d) => ref
+                .read(dateFilterValueProvider.notifier)
+                .setType(DateFilter.range, d),
+            onEndDateChanged: (d) => ref
+                .read(dateFilterValueProvider.notifier)
+                .setType(DateFilter.range,
+                    ref.read(dateFilterValueProvider).startDate, d),
           );
         });
       },

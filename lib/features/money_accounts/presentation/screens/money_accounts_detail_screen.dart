@@ -1,6 +1,7 @@
 import 'package:fit_wallet/features/money_accounts/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/widgets/widgets.dart';
 import 'package:fit_wallet/features/shared/domain/domain.dart';
+import 'package:fit_wallet/features/shared/infrastructure/utils/utils.dart';
 import 'package:fit_wallet/features/shared/presentation/presentation.dart';
 import 'package:fit_wallet/features/transactions/presentation/widgets/widgets.dart';
 import 'package:flutter/cupertino.dart';
@@ -79,7 +80,7 @@ class DatePickerBottomDialog extends ConsumerWidget {
     required this.onPickDate,
   });
 
-  final void Function() onPickDate;
+  final void Function(bool) onPickDate;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -138,9 +139,13 @@ class DatePickerBottomDialog extends ConsumerWidget {
           ListTile(
             leading: const Icon(Icons.calendar_view_day_rounded),
             title: const Text('Pick date'),
-            onTap: () {
-              onPickDate();
-            },
+            onTap: () => onPickDate(false),
+            trailing: const Icon(Icons.arrow_forward_rounded),
+          ),
+          ListTile(
+            leading: const Icon(Icons.date_range_rounded),
+            title: const Text('Pick range'),
+            onTap: () => onPickDate(true),
             trailing: const Icon(Icons.arrow_forward_rounded),
           ),
         ],
@@ -154,14 +159,26 @@ class CalendarPickerBottomDialog extends StatelessWidget {
     super.key,
     required this.title,
     required this.onDateChanged,
+    this.onStartDateChanged,
+    this.onEndDateChanged,
     this.initialDate,
     this.firstDate,
     this.lastDate,
+    this.isRange = false,
+    this.startDate,
+    this.endDate,
   });
 
   final String title;
 
+  final bool isRange;
+
+  final DateTime? startDate;
+  final DateTime? endDate;
+
   final void Function(DateTime) onDateChanged;
+  final void Function(DateTime)? onStartDateChanged;
+  final void Function(DateTime)? onEndDateChanged;
 
   final DateTime? initialDate;
   final DateTime? firstDate;
@@ -190,18 +207,51 @@ class CalendarPickerBottomDialog extends StatelessWidget {
               ],
             ),
           ),
+          if (isRange)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  if (startDate != null)
+                    Text(
+                      Utils.formatYYYDDMM(startDate!),
+                      style: textTheme.titleLarge,
+                    ),
+                  if (endDate != null)
+                    Text(
+                      Utils.formatYYYDDMM(endDate!),
+                      style: textTheme.titleLarge,
+                    ),
+                ],
+              ),
+            ),
           const SizedBox(height: 10),
-          CalendarDatePicker(
-            onDateChanged: (date) async {
-              await Future.delayed(const Duration(milliseconds: 200)).then(
-                (value) => context.pop(),
-              );
-              onDateChanged(date);
-            },
-            initialDate: initialDate ?? DateTime.now(),
-            firstDate: firstDate ?? DateTime(2000),
-            lastDate: lastDate ?? DateTime.now(),
-          ),
+          if (isRange)
+            CalendarDatePicker(
+              onDateChanged: (date) async {
+                if (startDate == null) {
+                  onStartDateChanged!(date);
+                } else {
+                  onEndDateChanged!(date);
+                }
+              },
+              initialDate: initialDate ?? DateTime.now(),
+              firstDate: firstDate ?? DateTime(2000),
+              lastDate: lastDate ?? DateTime.now(),
+            ),
+          if (!isRange)
+            CalendarDatePicker(
+              onDateChanged: (date) async {
+                await Future.delayed(const Duration(milliseconds: 200)).then(
+                  (value) => context.pop(),
+                );
+                onDateChanged(date);
+              },
+              initialDate: initialDate ?? DateTime.now(),
+              firstDate: firstDate ?? DateTime(2000),
+              lastDate: lastDate ?? DateTime.now(),
+            ),
         ],
       ),
     );
@@ -342,6 +392,153 @@ class TransactionTypeDialog extends ConsumerWidget {
                   .update((state) => TransactionTypeFilter.transfer);
               context.pop();
             },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class CalendarRangePickerBottomDialog extends ConsumerWidget {
+  const CalendarRangePickerBottomDialog({
+    super.key,
+    required this.title,
+    this.onStartDateChanged,
+    this.onEndDateChanged,
+    this.firstDate,
+    this.lastDate,
+  });
+
+  final String title;
+
+  final void Function(DateTime)? onStartDateChanged;
+  final void Function(DateTime)? onEndDateChanged;
+
+  final DateTime? firstDate;
+  final DateTime? lastDate;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final textTheme = Theme.of(context).primaryTextTheme;
+    final color = Theme.of(context).colorScheme.primary;
+
+    final position = ref.watch(positionProvider);
+
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 10.0,
+        bottom: 0,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  title,
+                  style: textTheme.titleLarge,
+                ),
+                AsyncButton(callback: context.pop, title: 'Ok'),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: InkWell(
+                    onTap: () => ref
+                        .read(positionProvider.notifier)
+                        .update((state) => 0),
+                    borderRadius: BorderRadius.circular(8),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0, vertical: 12),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            firstDate == null
+                                ? 'Select start date'
+                                : Utils.formatYYYDDMM(firstDate!),
+                            style: position == 0
+                                ? const TextStyle(fontWeight: FontWeight.bold)
+                                : null,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              if (position == 0)
+                                Icon(Icons.circle, size: 12, color: color),
+                              if (position == 0) const SizedBox(width: 10),
+                              Text('FROM', style: textTheme.bodyLarge),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  flex: 1,
+                  child: InkWell(
+                    onTap: () => ref
+                        .read(positionProvider.notifier)
+                        .update((state) => 1),
+                    borderRadius: BorderRadius.circular(8),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0, vertical: 12),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            lastDate == null
+                                ? 'Select end date'
+                                : Utils.formatYYYDDMM(lastDate!),
+                            style: position == 1
+                                ? const TextStyle(fontWeight: FontWeight.bold)
+                                : null,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              if (position == 1)
+                                Icon(Icons.circle, size: 12, color: color),
+                              if (position == 1) const SizedBox(width: 10),
+                              Text('TO', style: textTheme.bodyLarge),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          CalendarDatePicker(
+            onDateChanged: (date) async {
+              if (position == 0) {
+                onStartDateChanged!(date);
+              } else {
+                onEndDateChanged!(date);
+              }
+            },
+            initialDate:
+                (position == 0 ? firstDate : lastDate) ?? DateTime.now(),
+            currentDate:
+                (position == 0 ? firstDate : lastDate) ?? DateTime.now(),
+            firstDate: DateTime(2000),
+            lastDate: DateTime.now(),
           ),
         ],
       ),

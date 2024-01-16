@@ -11,7 +11,7 @@ final dateFilterValueProvider =
 class _StateNotifier extends StateNotifier<DateFilterValues> {
   _StateNotifier() : super(DateFilterValues());
 
-  void setType(DateFilter type, [DateTime? uDate]) {
+  void setType(DateFilter type, [DateTime? sDate, DateTime? eDate]) {
     DateTime? startDate, endDate, onlyDate;
 
     switch (type) {
@@ -31,13 +31,20 @@ class _StateNotifier extends StateNotifier<DateFilterValues> {
             DateTime(date.year, date.month, date.day + (7 - date.weekday));
         break;
       case DateFilter.date:
-        onlyDate = uDate;
+        onlyDate = sDate;
         break;
       case DateFilter.empty:
         break;
+      case DateFilter.range:
+        startDate = sDate;
+        endDate = eDate;
     }
     state = state.copyWith(
-        type: type, startDate: startDate, endDate: endDate, date: onlyDate);
+      type: type,
+      startDate: startDate,
+      endDate: endDate,
+      date: onlyDate,
+    );
   }
 }
 

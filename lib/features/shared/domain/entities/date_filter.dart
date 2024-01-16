@@ -1,1 +1,1 @@
-enum DateFilter { today, week, month, date, empty }
+enum DateFilter { today, week, month, date, empty, range }
