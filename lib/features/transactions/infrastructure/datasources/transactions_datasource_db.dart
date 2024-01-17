@@ -196,14 +196,33 @@ class TransactionsDatasourceDb implements TransactionsDatasource {
   }
 
   @override
-  Future<BalanceEntity> getBalance() async {
+  Future<BalanceEntity> getBalance(BalanceParams params) async {
+    String andDateBetween = '';
+
+    if (params.startDate != null && params.endDate != null) {
+      andDateBetween =
+          " and tran_created_at between ${Utils.unix(params.startDate!)} and ${Utils.unix(params.endDate!)}";
+    }
+
+    String andDateIs = '';
+
+    if (params.date != null) {
+      final start = DateTime(
+          params.date!.year, params.date!.month, params.date!.day, 0, 0, 0);
+      final end = DateTime(
+          params.date!.year, params.date!.month, params.date!.day, 23, 59, 59);
+
+      andDateIs =
+          " and tran_created_at between ${Utils.unix(start)} and ${Utils.unix(end)}";
+    }
+
     final query = await _db.rawQuery(
       '''
       with data as (
         select tran.tran_type as type, sum( tran.tran_amount ) as value
         from transactions tran
         join money_accounts macc on macc.macc_id = tran.macc_id and macc.macc_deleted_at is null
-        where tran.tran_deleted_at is null
+        where tran.tran_deleted_at is null $andDateBetween $andDateIs
         group by 1
       )
       select type, value from data

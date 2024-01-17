@@ -62,7 +62,7 @@ class TransactionsDatasourceImpl extends TransactionsDatasource {
   }
 
   @override
-  Future<BalanceEntity> getBalance() async {
+  Future<BalanceEntity> getBalance(BalanceParams params) async {
     final Response response;
 
     try {

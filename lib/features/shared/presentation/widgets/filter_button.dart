@@ -63,20 +63,9 @@ class FilterButton extends ConsumerWidget {
         return Consumer(builder: (context, ref, _) {
           return CalendarPickerBottomDialog(
             title: 'By date',
-            isRange: isRange,
-            startDate: ref.watch(dateFilterValueProvider).startDate,
-            endDate: ref.watch(dateFilterValueProvider).endDate,
-            firstDate: ref.watch(dateFilterValueProvider).startDate,
             onDateChanged: (d) => ref
                 .read(dateFilterValueProvider.notifier)
                 .setType(DateFilter.date, d),
-            onStartDateChanged: (d) => ref
-                .read(dateFilterValueProvider.notifier)
-                .setType(DateFilter.range, d),
-            onEndDateChanged: (d) => ref
-                .read(dateFilterValueProvider.notifier)
-                .setType(DateFilter.range,
-                    ref.read(dateFilterValueProvider).startDate, d),
           );
         });
       },

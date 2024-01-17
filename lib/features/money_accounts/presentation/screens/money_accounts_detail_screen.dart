@@ -159,26 +159,14 @@ class CalendarPickerBottomDialog extends StatelessWidget {
     super.key,
     required this.title,
     required this.onDateChanged,
-    this.onStartDateChanged,
-    this.onEndDateChanged,
     this.initialDate,
     this.firstDate,
     this.lastDate,
-    this.isRange = false,
-    this.startDate,
-    this.endDate,
   });
 
   final String title;
 
-  final bool isRange;
-
-  final DateTime? startDate;
-  final DateTime? endDate;
-
   final void Function(DateTime) onDateChanged;
-  final void Function(DateTime)? onStartDateChanged;
-  final void Function(DateTime)? onEndDateChanged;
 
   final DateTime? initialDate;
   final DateTime? firstDate;
@@ -207,51 +195,18 @@ class CalendarPickerBottomDialog extends StatelessWidget {
               ],
             ),
           ),
-          if (isRange)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  if (startDate != null)
-                    Text(
-                      Utils.formatYYYDDMM(startDate!),
-                      style: textTheme.titleLarge,
-                    ),
-                  if (endDate != null)
-                    Text(
-                      Utils.formatYYYDDMM(endDate!),
-                      style: textTheme.titleLarge,
-                    ),
-                ],
-              ),
-            ),
           const SizedBox(height: 10),
-          if (isRange)
-            CalendarDatePicker(
-              onDateChanged: (date) async {
-                if (startDate == null) {
-                  onStartDateChanged!(date);
-                } else {
-                  onEndDateChanged!(date);
-                }
-              },
-              initialDate: initialDate ?? DateTime.now(),
-              firstDate: firstDate ?? DateTime(2000),
-              lastDate: lastDate ?? DateTime.now(),
-            ),
-          if (!isRange)
-            CalendarDatePicker(
-              onDateChanged: (date) async {
-                await Future.delayed(const Duration(milliseconds: 200)).then(
-                  (value) => context.pop(),
-                );
-                onDateChanged(date);
-              },
-              initialDate: initialDate ?? DateTime.now(),
-              firstDate: firstDate ?? DateTime(2000),
-              lastDate: lastDate ?? DateTime.now(),
-            ),
+          CalendarDatePicker(
+            onDateChanged: (date) async {
+              await Future.delayed(const Duration(milliseconds: 200)).then(
+                (value) => context.pop(),
+              );
+              onDateChanged(date);
+            },
+            initialDate: initialDate ?? DateTime.now(),
+            firstDate: firstDate ?? DateTime(2000),
+            lastDate: lastDate ?? DateTime.now(),
+          ),
         ],
       ),
     );

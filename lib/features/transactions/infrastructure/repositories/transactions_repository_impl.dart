@@ -25,5 +25,6 @@ class TransactionsRepositoryImpl extends TransactionsRepository {
   }
 
   @override
-  Future<BalanceEntity> getBalance() => _datasource.getBalance();
+  Future<BalanceEntity> getBalance(BalanceParams params) =>
+      _datasource.getBalance(params);
 }
