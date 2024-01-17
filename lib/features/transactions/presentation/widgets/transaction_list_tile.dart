@@ -11,10 +11,12 @@ class TransactionListTile extends StatelessWidget {
     required this.transaction,
     this.isDissmisable = false,
     this.confirmDismiss,
+    this.showDetails = false,
   });
 
   final TransactionEntity transaction;
   final bool isDissmisable;
+  final bool showDetails;
   final Future<bool?> Function(DismissDirection)? confirmDismiss;
 
   Color get color {
@@ -94,12 +96,82 @@ class TransactionListTile extends StatelessWidget {
         direction: DismissDirection.endToStart,
         background: const _ListTileBg(),
         confirmDismiss: confirmDismiss,
-        child: _ListTile(
-          color: color,
-          transaction: transaction,
-          iconColorCategory: iconColorCategory,
-          icon: icon,
-          textTheme: textTheme,
+        child: ExpansionTile(
+          controlAffinity: ListTileControlAffinity.trailing,
+          collapsedShape:
+              Border.all(width: 0, color: Colors.transparent, strokeAlign: 0),
+          shape:
+              Border.all(width: 0, color: Colors.transparent, strokeAlign: 0),
+          childrenPadding: EdgeInsets.zero,
+          tilePadding: const EdgeInsets.only(right: 20),
+          leading: null,
+          trailing: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                transaction.amountTxt,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+              if (transaction.moneyAccountTransfer == null)
+                Text(
+                  transaction.moneyAccount.name,
+                  style: textTheme.bodyLarge,
+                )
+              else
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      transaction.moneyAccount.shortNameTxt,
+                      style: textTheme.bodyLarge,
+                    ),
+                    const Icon(Icons.arrow_right_alt_rounded),
+                    Text(
+                      transaction.moneyAccountTransfer?.shortNameTxt ?? '',
+                      style: textTheme.bodyLarge,
+                    ),
+                  ],
+                )
+            ],
+          ),
+          title: _ListTile(
+            color: color,
+            transaction: transaction,
+            iconColorCategory: iconColorCategory,
+            icon: icon,
+            textTheme: textTheme,
+            showValue: false,
+          ),
+          children: [
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                color: DarkTheme.barColor,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          transaction.description ?? 'No details',
+                          softWrap: true,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            )
+          ],
         ),
       );
     }
@@ -140,6 +212,7 @@ class _ListTile extends StatelessWidget {
     required this.iconColorCategory,
     required this.icon,
     required this.textTheme,
+    this.showValue = true,
   });
 
   final Color color;
@@ -147,12 +220,12 @@ class _ListTile extends StatelessWidget {
   final Color iconColorCategory;
   final Icon icon;
   final TextTheme textTheme;
+  final bool showValue;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      // visualDensity: VisualDensity.comfortable,
-      onTap: () {},
+      visualDensity: !showValue ? VisualDensity.compact : null,
       leading: Container(
         height: 44,
         width: 44,
@@ -178,39 +251,41 @@ class _ListTile extends StatelessWidget {
         transaction.dateTxt,
         style: textTheme.bodyLarge,
       ),
-      trailing: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            transaction.amountTxt,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 14,
-            ),
-          ),
-          if (transaction.moneyAccountTransfer == null)
-            Text(
-              transaction.moneyAccount.name,
-              style: textTheme.bodyLarge,
-            )
-          else
-            Row(
+      trailing: showValue
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  transaction.moneyAccount.shortNameTxt,
-                  style: textTheme.bodyLarge,
+                  transaction.amountTxt,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
                 ),
-                const Icon(Icons.arrow_right_alt_rounded),
-                Text(
-                  transaction.moneyAccountTransfer?.shortNameTxt ?? '',
-                  style: textTheme.bodyLarge,
-                ),
+                if (transaction.moneyAccountTransfer == null)
+                  Text(
+                    transaction.moneyAccount.name,
+                    style: textTheme.bodyLarge,
+                  )
+                else
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        transaction.moneyAccount.shortNameTxt,
+                        style: textTheme.bodyLarge,
+                      ),
+                      const Icon(Icons.arrow_right_alt_rounded),
+                      Text(
+                        transaction.moneyAccountTransfer?.shortNameTxt ?? '',
+                        style: textTheme.bodyLarge,
+                      ),
+                    ],
+                  )
               ],
             )
-        ],
-      ),
+          : null,
     );
   }
 }

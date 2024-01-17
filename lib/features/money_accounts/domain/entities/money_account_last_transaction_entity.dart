@@ -48,8 +48,7 @@ class MoneyAccountLastTransactionEntity {
     }
 
     final words = list.getRange(0, 2);
-
-    return words.fold('', (previousValue, element) => element[0].toUpperCase());
+    return words.map((e) => e[0].toUpperCase()).join('');
   }
 
   String get lastTransactionTxt {

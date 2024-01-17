@@ -135,11 +135,14 @@ class NameFormField extends StatefulWidget {
     super.key,
     required this.initialValue,
     required this.onChanged,
+    this.focus = true,
     this.errorMessage,
   });
 
   final String initialValue;
   final String? errorMessage;
+
+  final bool focus;
 
   final void Function(String)? onChanged;
 
@@ -153,7 +156,7 @@ class _NameFormFieldState extends State<NameFormField> {
   @override
   void initState() {
     super.initState();
-    focus.requestFocus();
+    if (widget.focus) focus.requestFocus();
   }
 
   @override

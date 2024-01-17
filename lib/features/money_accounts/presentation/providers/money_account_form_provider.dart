@@ -38,6 +38,11 @@ class _FormNotifier extends StateNotifier<_FormState> {
         value: NumberInput.dirty(value: account!.amount),
         order: IntInput.dirty(value: account!.order),
       );
+    } else {
+      state = state.copyWith(
+        name: const TextInput.dirty(value: 'New account'),
+        value: const NumberInput.dirty(value: 0),
+      );
     }
   }
 

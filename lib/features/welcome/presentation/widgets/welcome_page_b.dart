@@ -22,7 +22,7 @@ class WelcomePageB extends StatelessWidget {
         Text('Simple', style: textTheme.headlineLarge),
         const SizedBox(height: 80),
         Text(
-          'Record your expenses ana incomes \nquickly and easily',
+          'Record your expenses and incomes \nquickly and easily',
           style: textTheme.bodyLarge,
           textAlign: TextAlign.center,
         ),

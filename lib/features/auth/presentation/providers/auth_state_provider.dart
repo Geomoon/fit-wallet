@@ -43,8 +43,6 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     final hasPassedWelcome = await _storageService.getValue('passedWelcome');
     if (hasPassedWelcome == null) {
       _ref.invalidate(apiProvider);
-      print('INVALIDATED API');
-
       state = state.copyWith(status: AuthStatus.empty, route: '/welcome');
       return;
     }
@@ -69,7 +67,6 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       );
     }
     _ref.invalidate(apiProvider);
-    print('INVALIDATED API');
   }
 
   Future<void> toPassedWelcome() async {

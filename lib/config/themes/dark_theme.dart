@@ -97,6 +97,10 @@ class DarkTheme {
           borderRadius: BorderRadius.circular(60),
         ),
       ),
+      expansionTileTheme: const ExpansionTileThemeData(
+        tilePadding: EdgeInsets.all(0),
+        childrenPadding: EdgeInsets.all(0),
+      ),
     );
   }
 /*

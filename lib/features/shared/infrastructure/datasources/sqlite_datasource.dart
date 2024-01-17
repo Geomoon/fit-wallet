@@ -23,7 +23,7 @@ class SQLiteDatasource {
       },
       onCreate: (db, version) async {
         await createTables(db);
-        await createFirstAccount(db);
+        // await createFirstAccount(db);
         await insertCategories(db);
         debugPrint('TABLES HAS BEEN CREATED');
       },
