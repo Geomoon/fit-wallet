@@ -3,6 +3,8 @@ import 'package:fit_wallet/config/routes/routes.dart';
 import 'package:fit_wallet/config/themes/themes.dart';
 import 'package:fit_wallet/features/shared/infrastructure/datasources/sqlite_datasource.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() async {
@@ -27,6 +29,8 @@ class MyApp extends StatelessWidget {
           themeMode: themeMode,
           routerConfig: ref.watch(routerProvider),
           debugShowCheckedModeBanner: false,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
         );
       },
     );

@@ -1,3 +1,4 @@
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:fit_wallet/features/home/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/screens/money_accounts_screen.dart';
@@ -318,7 +319,8 @@ class _HomeScreenView extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('LAST TRANSACTIONS', style: textTheme.bodyLarge),
+                  Text(AppLocalizations.of(context)!.lastTransactions,
+                      style: textTheme.bodyLarge),
                   IconButton(
                     onPressed: () => context.push('/transactions'),
                     icon: const Icon(Icons.arrow_forward_rounded),

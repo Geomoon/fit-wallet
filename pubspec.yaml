@@ -20,9 +20,11 @@ dependencies:
   uuid: ^3.0.7
   localstorage: ^4.0.1+4
   formz: ^0.6.0
-  intl: ^0.18.1
+  intl: any
   font_awesome_flutter: ^10.5.0
   sqflite: ^2.3.0
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:
@@ -31,6 +33,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  generate: true
 
   assets:
     - assets/images/
