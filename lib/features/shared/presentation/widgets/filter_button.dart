@@ -1,3 +1,4 @@
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:fit_wallet/config/themes/dark_theme.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/screens/money_accounts_detail_screen.dart';
 import 'package:fit_wallet/features/shared/domain/domain.dart';
@@ -40,7 +41,7 @@ class FilterButton extends ConsumerWidget {
         builder: (context) {
           return Consumer(builder: (context, ref, _) {
             return CalendarRangePickerBottomDialog(
-              title: 'By range',
+              title: AppLocalizations.of(context)!.pickDate,
               firstDate: ref.watch(dateFilterValueProvider).startDate,
               lastDate: ref.watch(dateFilterValueProvider).endDate,
               onStartDateChanged: (d) => ref
@@ -62,7 +63,7 @@ class FilterButton extends ConsumerWidget {
       builder: (context) {
         return Consumer(builder: (context, ref, _) {
           return CalendarPickerBottomDialog(
-            title: 'By date',
+            title: AppLocalizations.of(context)!.byDate,
             onDateChanged: (d) => ref
                 .read(dateFilterValueProvider.notifier)
                 .setType(DateFilter.date, d),
@@ -72,20 +73,20 @@ class FilterButton extends ConsumerWidget {
     );
   }
 
-  String title(DateFilter type) {
+  String title(BuildContext context, DateFilter type) {
     switch (type) {
       case DateFilter.empty:
-        return 'By date';
+        return AppLocalizations.of(context)!.byDate;
       case DateFilter.today:
-        return 'Today';
+        return AppLocalizations.of(context)!.today;
       case DateFilter.week:
-        return 'This week';
+        return AppLocalizations.of(context)!.thisWeek;
       case DateFilter.month:
-        return 'This month';
+        return AppLocalizations.of(context)!.thisMonth;
       case DateFilter.date:
-        return 'Select a date';
+        return AppLocalizations.of(context)!.byDate;
       default:
-        return 'By date';
+        return AppLocalizations.of(context)!.byDate;
     }
   }
 
@@ -116,7 +117,7 @@ class FilterButton extends ConsumerWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(title(filter.type)),
+          Text(title(context, filter.type)),
           if (filter.type != DateFilter.date) const SizedBox(width: 10),
           if (filter.type != DateFilter.date) Icon(icon(filter.type), size: 18),
         ],

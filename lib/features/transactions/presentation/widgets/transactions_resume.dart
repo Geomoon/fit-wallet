@@ -1,3 +1,4 @@
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:fit_wallet/config/themes/themes.dart';
 import 'package:fit_wallet/features/transactions/presentation/providers/providers.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +38,7 @@ class TransactionsResume extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Incomes',
+                        AppLocalizations.of(context)!.incomes,
                         style: textTheme.labelLarge,
                       ),
                       CircleAvatar(
@@ -72,7 +73,7 @@ class TransactionsResume extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Expenses',
+                        AppLocalizations.of(context)!.expenses,
                         style: textTheme.labelLarge,
                       ),
                       CircleAvatar(
@@ -136,7 +137,7 @@ class _Placeholder extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Incomes',
+                      AppLocalizations.of(context)!.incomes,
                       style: textTheme.labelLarge,
                     ),
                     CircleAvatar(
@@ -168,7 +169,7 @@ class _Placeholder extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Expenses',
+                      AppLocalizations.of(context)!.expenses,
                       style: textTheme.labelLarge,
                     ),
                     CircleAvatar(

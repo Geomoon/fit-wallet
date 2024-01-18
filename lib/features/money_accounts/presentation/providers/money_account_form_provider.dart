@@ -11,8 +11,6 @@ final moneyAccountFormProvider = StateNotifierProvider.autoDispose
     // final repo = ref.watch(moneyAccountsRepositoryProvider);
     final repo = ref.watch(moneyAccountRepositoryDbProvider);
     if (id != null) {
-      // final account = ref.watch(moneyAccountByIdProvider(id)).asData?.value;
-
       final account = ref
           .watch(moneyAccountsProvider)
           .value
@@ -40,7 +38,7 @@ class _FormNotifier extends StateNotifier<_FormState> {
       );
     } else {
       state = state.copyWith(
-        name: const TextInput.dirty(value: 'New account'),
+        // name: const TextInput.dirty(value: ''),
         value: const NumberInput.dirty(value: 0),
       );
     }

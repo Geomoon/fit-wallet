@@ -1,3 +1,4 @@
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:fit_wallet/features/payments/presentation/widgets/widgets.dart';
 import 'package:fit_wallet/features/shared/presentation/presentation.dart';
 import 'package:flutter/material.dart';
@@ -23,8 +24,8 @@ class FABPaymentsScreen extends StatelessWidget {
 
     if (saved == true) {
       if (context.mounted) {
-        const SnackBarContent(
-          title: 'Payment added',
+        SnackBarContent(
+          title: AppLocalizations.of(context)!.paymentAdded,
           type: SnackBarType.success,
           tinted: true,
         ).show(context);
@@ -36,7 +37,7 @@ class FABPaymentsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return FloatingActionButton.extended(
       onPressed: () => showDialog(context),
-      label: const Text('Payment'),
+      label: Text(AppLocalizations.of(context)!.payment),
       icon: const Icon(Icons.add_card_rounded),
     );
   }

@@ -1,3 +1,5 @@
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import 'package:fit_wallet/config/themes/dark_theme.dart';
 import 'package:fit_wallet/features/categories/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/categories/presentation/widgets/widgets.dart';
@@ -50,8 +52,8 @@ class _TransactionFormScreen extends ConsumerWidget {
           ),
         );
 
-        const SnackBarContent(
-          title: 'Saved',
+        SnackBarContent(
+          title: AppLocalizations.of(context)!.saved,
           type: SnackBarType.success,
           tinted: true,
         ).show(context);
@@ -97,7 +99,8 @@ class _TransactionFormScreen extends ConsumerWidget {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: Text('New Transaction', style: _textStyle),
+          title: Text(AppLocalizations.of(context)!.newTransaction,
+              style: _textStyle),
         ),
         body: Padding(
           padding: const EdgeInsets.all(12.0),
@@ -166,7 +169,7 @@ class _TransactionFormScreen extends ConsumerWidget {
                           },
                           isLoading:
                               ref.watch(transactionFormProvider).isLoading,
-                          title: 'Save',
+                          title: AppLocalizations.of(context)!.save,
                         );
                       }),
                     ),
@@ -207,7 +210,9 @@ class AddCommentButton extends ConsumerWidget {
         OutlinedButton.icon(
           onPressed: () => showAddCommentDialog(context),
           label: Text(
-            form.descriptionTxt,
+            (description?.isEmpty ?? false || form.descriptionTxt.isEmpty)
+                ? AppLocalizations.of(context)!.addComment
+                : form.descriptionTxt,
             style: TextStyle(color: theme.onBackground),
           ),
           icon: Icon(
@@ -270,7 +275,7 @@ class _AddCommentDialogState extends ConsumerState<AddCommentDialog> {
                 const CloseButton(),
                 const SizedBox(width: 10),
                 Text(
-                  'Add comment',
+                  AppLocalizations.of(context)!.addComment,
                   style: textTheme.headlineSmall
                       ?.copyWith(fontWeight: FontWeight.bold),
                 ),
@@ -282,7 +287,7 @@ class _AddCommentDialogState extends ConsumerState<AddCommentDialog> {
                         .changeDescription(controller.value.text.trim());
                     context.pop();
                   },
-                  title: 'Ok',
+                  child: const Icon(Icons.done_rounded),
                 ),
               ],
             ),
@@ -424,13 +429,14 @@ class CategorySelector extends ConsumerWidget {
                       )
                     else
                       Text(
-                        'Select Category',
+                        AppLocalizations.of(context)!.select,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: theme.headlineSmall?.color,
                         ),
                       ),
-                    Text('CATEGORY', style: theme.bodyLarge),
+                    Text(AppLocalizations.of(context)!.category.toUpperCase(),
+                        style: theme.bodyLarge),
                   ],
                 ),
               )
@@ -499,8 +505,9 @@ class MoneyAccountSelector extends ConsumerWidget {
                         ),
                       )
                     else
-                      const Text('Select Account'),
-                    Text('ACCOUNT', style: theme.bodyLarge),
+                      Text(AppLocalizations.of(context)!.select),
+                    Text(AppLocalizations.of(context)!.account.toUpperCase(),
+                        style: theme.bodyLarge),
                   ],
                 ),
               )
@@ -562,8 +569,8 @@ class MoneyAccountsListSelector extends ConsumerWidget {
                 },
               );
             },
-            error: (_, __) => const Center(
-              child: Text('Something went wrong'),
+            error: (_, __) => Center(
+              child: Text(AppLocalizations.of(context)!.sWW),
             ),
             loading: () => const Center(
               child: CircularProgressIndicator(),
@@ -572,7 +579,8 @@ class MoneyAccountsListSelector extends ConsumerWidget {
         ),
         Padding(
           padding: const EdgeInsets.all(20),
-          child: Text('SELECT AN ACCOUNT', style: textTheme.bodyLarge),
+          child: Text(AppLocalizations.of(context)!.selectAccount.toUpperCase(),
+              style: textTheme.bodyLarge),
         ),
       ],
     );
@@ -651,10 +659,16 @@ class TransactionTypeSelector extends ConsumerWidget {
     return SegmentedButton(
       selectedIcon: icon(transactionTypeSelected.type),
       showSelectedIcon: width >= 400,
-      segments: const [
-        ButtonSegment(value: TransactionType.income, label: Text('INCOME')),
-        ButtonSegment(value: TransactionType.expense, label: Text('EXPENSE')),
-        ButtonSegment(value: TransactionType.transfer, label: Text('TRANSFER')),
+      segments: [
+        ButtonSegment(
+            value: TransactionType.income,
+            label: Text(AppLocalizations.of(context)!.income)),
+        ButtonSegment(
+            value: TransactionType.expense,
+            label: Text(AppLocalizations.of(context)!.expense)),
+        ButtonSegment(
+            value: TransactionType.transfer,
+            label: Text(AppLocalizations.of(context)!.transfer)),
       ],
       selected: {transactionTypeSelected.type},
       onSelectionChanged: (v) {

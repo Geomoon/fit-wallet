@@ -1,3 +1,5 @@
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import 'package:fit_wallet/features/money_accounts/domain/entities/entities.dart';
 import 'package:fit_wallet/features/shared/presentation/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -83,12 +85,13 @@ class MoneyAccountCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 20.0),
                   if (isTwoLines && account.lastTransaction != null)
-                    Text('Last transaction', style: textTheme.labelLarge),
+                    Text(AppLocalizations.of(context)!.lastTransaction,
+                        style: textTheme.labelLarge),
                   Text(
                     isTwoLines
                         ? account.lastTransactionTxt
                         : (account.lastTransaction != null)
-                            ? 'Last transaction - ${account.lastTransactionTxt}'
+                            ? '${AppLocalizations.of(context)!.lastTransaction} - ${account.lastTransactionTxt}'
                             : account.lastTransactionTxt,
                     style: (account.order == 0)
                         ? TextStyle(color: theme.onPrimary)

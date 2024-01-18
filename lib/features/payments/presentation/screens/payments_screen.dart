@@ -1,3 +1,5 @@
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import 'package:fit_wallet/config/themes/themes.dart';
 import 'package:fit_wallet/features/payments/domain/entities/get_payment_params.dart';
 import 'package:fit_wallet/features/payments/presentation/providers/providers.dart';
@@ -107,10 +109,10 @@ class StateFilter extends ConsumerWidget {
         null => Icons.horizontal_rule_rounded,
       };
 
-  String title(bool? state) => switch (state) {
-        true => 'Completed',
-        false => 'Pending',
-        null => 'All',
+  String title(BuildContext context, bool? state) => switch (state) {
+        true => AppLocalizations.of(context)!.completed,
+        false => AppLocalizations.of(context)!.pending,
+        null => AppLocalizations.of(context)!.all,
       };
 
   @override
@@ -123,7 +125,7 @@ class StateFilter extends ConsumerWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(title(state.params.isCompleted)),
+          Text(title(context, state.params.isCompleted)),
           const SizedBox(width: 10),
           Icon(icon(state.params.isCompleted), size: 18),
         ],
@@ -151,7 +153,7 @@ class StateDialog extends ConsumerWidget {
             child: Row(
               children: [
                 Text(
-                  'Filter By',
+                  AppLocalizations.of(context)!.filterBy,
                   style: textTheme.titleLarge,
                 ),
               ],
@@ -160,7 +162,7 @@ class StateDialog extends ConsumerWidget {
           const SizedBox(height: 10),
           ListTile(
             leading: const Icon(Icons.horizontal_rule_rounded),
-            title: const Text('All'),
+            title: Text(AppLocalizations.of(context)!.all),
             onTap: () {
               ref
                   .read(paymentsProvider.notifier)
@@ -170,7 +172,7 @@ class StateDialog extends ConsumerWidget {
           ),
           ListTile(
             leading: const Icon(Icons.done_rounded),
-            title: const Text('Completed'),
+            title: Text(AppLocalizations.of(context)!.completed),
             onTap: () {
               ref
                   .read(paymentsProvider.notifier)
@@ -180,7 +182,7 @@ class StateDialog extends ConsumerWidget {
           ),
           ListTile(
             leading: const Icon(Icons.circle_outlined),
-            title: const Text('Pending'),
+            title: Text(AppLocalizations.of(context)!.pending),
             onTap: () {
               ref
                   .read(paymentsProvider.notifier)

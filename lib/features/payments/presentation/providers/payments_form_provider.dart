@@ -107,7 +107,7 @@ class _State {
       );
 
   String get dueDateTxt {
-    if (dueDate == null) return 'Add due date';
+    if (dueDate == null) return '';
     return Utils.formatYYYDDMM(dueDate!);
   }
 }

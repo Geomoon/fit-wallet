@@ -1,3 +1,5 @@
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -67,7 +69,7 @@ class _ConfirmDialogState extends State<ConfirmDialog> {
                     width: 20,
                     child: CircularProgressIndicator(color: theme.onPrimary),
                   )
-                : const Text('Delete'),
+                : Text(AppLocalizations.of(context)!.delete),
           ),
         ],
       ),

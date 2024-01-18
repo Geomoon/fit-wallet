@@ -1,3 +1,4 @@
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:fit_wallet/config/themes/colorschemes/color_schemes.g.dart';
 import 'package:fit_wallet/config/themes/dark_theme.dart';
 import 'package:fit_wallet/features/shared/infrastructure/utils/utils.dart';
@@ -162,7 +163,8 @@ class TransactionListTile extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          transaction.description ?? 'No details',
+                          transaction.description ??
+                              AppLocalizations.of(context)!.noDetails,
                           softWrap: true,
                         ),
                       ),

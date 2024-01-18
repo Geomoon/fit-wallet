@@ -1,3 +1,5 @@
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import 'package:fit_wallet/features/money_accounts/domain/entities/entities.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/providers/money_accounts_repository_provider.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/providers/providers.dart';
@@ -28,8 +30,8 @@ class FABMoneyAccount extends StatelessWidget {
 
     if (saved == true) {
       if (context.mounted) {
-        const SnackBarContent(
-          title: 'Account saved',
+        SnackBarContent(
+          title: AppLocalizations.of(context)!.saved,
           type: SnackBarType.success,
           tinted: true,
         ).show(context);
@@ -41,7 +43,7 @@ class FABMoneyAccount extends StatelessWidget {
   Widget build(BuildContext context) {
     return FloatingActionButton.extended(
       onPressed: () => _showFormDialog(context),
-      label: const Text('Add'),
+      label: Text(AppLocalizations.of(context)!.addAccount),
       icon: const Icon(Icons.account_balance_rounded),
     );
   }
@@ -156,9 +158,8 @@ class MoneyAccountsList extends StatelessWidget {
         return ConfirmDialog(
           onConfirm: () =>
               ref.read(moneyAccountsRepositoryProvider).deleteById(maccId),
-          title: 'Delete Account',
-          description:
-              'All transactions related to this account will be deleted',
+          title: AppLocalizations.of(context)!.deleteAccount,
+          description: AppLocalizations.of(context)!.deleteAccountDesc,
         );
       },
     );
@@ -195,8 +196,8 @@ class MoneyAccountsList extends StatelessWidget {
 
     if (saved == true) {
       if (context.mounted) {
-        const SnackBarContent(
-          title: 'Account saved',
+        SnackBarContent(
+          title: AppLocalizations.of(context)!.saved,
           type: SnackBarType.success,
           tinted: true,
         ).show(context);
@@ -207,15 +208,15 @@ class MoneyAccountsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (accounts.isEmpty) {
-      return const SizedBox(
+      return SizedBox(
         height: 120,
         child: Center(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('No accounts'),
-              SizedBox(width: 20),
-              Icon(Icons.account_balance_rounded),
+              Text(AppLocalizations.of(context)!.noAccounts),
+              const SizedBox(width: 20),
+              const Icon(Icons.account_balance_rounded),
             ],
           ),
         ),

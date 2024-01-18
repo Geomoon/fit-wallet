@@ -1,3 +1,4 @@
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/shared/presentation/presentation.dart';
 import 'package:fit_wallet/features/transactions/presentation/providers/providers.dart';
@@ -24,16 +25,16 @@ class TransactionsList extends ConsumerWidget {
       builder: (context) {
         return ConfirmDialog(
           onConfirm: () => ref.read(transactionsRepositoryProvider).delete(id),
-          title: 'Delete transaction',
-          description: 'Are you sure to delete this transaction?',
+          title: AppLocalizations.of(context)!.deleteTransaccion,
+          description: AppLocalizations.of(context)!.deleteTransaccionTxt,
         );
       },
     );
 
     if (deleted == false) {
       if (context.mounted) {
-        const SnackBarContent(
-          title: 'Error at delete',
+        SnackBarContent(
+          title: AppLocalizations.of(context)!.error,
           tinted: true,
           type: SnackBarType.error,
         ).show(context);

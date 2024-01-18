@@ -18,10 +18,20 @@ class ScreenTitle extends ConsumerWidget {
 
   final TextStyle _textStyle = const TextStyle(fontWeight: FontWeight.bold);
 
+  String title(BuildContext context, int index) {
+    return switch (index) {
+      0 => AppLocalizations.of(context)!.fitWallet,
+      1 => AppLocalizations.of(context)!.moneyAccounts,
+      2 => AppLocalizations.of(context)!.pendingPayments,
+      _ => AppLocalizations.of(context)!.fitWallet,
+    };
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final title = ref.watch(screenTitleProvider);
-    return Text(title, style: _textStyle);
+    final index = ref.watch(homeNavigationProvider);
+    // final title = ref.watch(screenTitleProvider);
+    return Text(title(context, index), style: _textStyle);
   }
 }
 
@@ -101,30 +111,30 @@ class HomeScreen extends StatelessWidget {
         actions: const [AppBarActions()],
       ),
       body: _HomeView(screens: _screens),
-      bottomNavigationBar: const BottomAppBar(
+      bottomNavigationBar: BottomAppBar(
         height: 80,
-        padding: EdgeInsets.symmetric(vertical: 2, horizontal: 20),
+        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 20),
         child: Row(
           children: [
             NavigationButton(
               index: 0,
               icon: Icons.vertical_split_outlined,
               activeIcon: Icons.vertical_split_rounded,
-              title: 'Home',
+              title: AppLocalizations.of(context)!.home,
             ),
-            SizedBox(width: 24),
+            const SizedBox(width: 24),
             NavigationButton(
               index: 1,
               icon: Icons.account_balance_outlined,
               activeIcon: Icons.account_balance_rounded,
-              title: 'Accounts',
+              title: AppLocalizations.of(context)!.accounts,
             ),
-            SizedBox(width: 24),
+            const SizedBox(width: 24),
             NavigationButton(
               index: 2,
               icon: Icons.payment_outlined,
               activeIcon: Icons.payment_rounded,
-              title: 'Debts',
+              title: AppLocalizations.of(context)!.debts,
             ),
           ],
         ),
@@ -151,8 +161,8 @@ class FAButtons extends ConsumerWidget {
             return FloatingActionButton(
               onPressed: () {
                 if (data.isEmpty) {
-                  const SnackBarContent(
-                    title: 'Create an account first',
+                  SnackBarContent(
+                    title: AppLocalizations.of(context)!.createAccountFirst,
                     tinted: true,
                     type: SnackBarType.error,
                   ).show(context);
@@ -359,7 +369,10 @@ class LastTransactionsCard extends ConsumerWidget {
                 SvgPicture.asset(
                   'assets/images/empty_list.svg',
                 ),
-                Text('No transactions', style: textTheme.bodyMedium),
+                Text(
+                  AppLocalizations.of(context)!.noTransactions,
+                  style: textTheme.bodyMedium,
+                ),
               ],
             ),
           );
@@ -392,15 +405,15 @@ class AccountCardsViewer extends ConsumerWidget {
     return moneyAccounts.when(
       data: (accounts) {
         if (accounts.isEmpty) {
-          return const SizedBox(
+          return SizedBox(
             height: 120,
             child: Center(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('No accounts'),
-                  SizedBox(width: 20),
-                  Icon(Icons.account_balance_rounded),
+                  Text(AppLocalizations.of(context)!.noAccounts),
+                  const SizedBox(width: 20),
+                  const Icon(Icons.account_balance_rounded),
                 ],
               ),
             ),

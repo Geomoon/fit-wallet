@@ -1,3 +1,5 @@
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import 'package:fit_wallet/features/categories/domain/entities/entities.dart';
 import 'package:fit_wallet/features/categories/presentation/providers/providers.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +41,9 @@ class CategorySelectorDialog extends ConsumerWidget {
         ),
         Padding(
           padding: const EdgeInsets.all(20),
-          child: Text('SELECT A CATEGORY', style: textTheme.bodyLarge),
+          child: Text(
+              AppLocalizations.of(context)!.selectCategory.toUpperCase(),
+              style: textTheme.bodyLarge),
         ),
       ],
     );

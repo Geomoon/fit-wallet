@@ -169,7 +169,7 @@ final class _State {
       return description!;
     }
 
-    return 'Add comment';
+    return '';
   }
 
   _State copyWith({

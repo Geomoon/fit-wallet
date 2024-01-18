@@ -1,3 +1,4 @@
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/widgets/widgets.dart';
 import 'package:fit_wallet/features/shared/domain/domain.dart';
@@ -99,7 +100,7 @@ class DatePickerBottomDialog extends ConsumerWidget {
             child: Row(
               children: [
                 Text(
-                  'By date',
+                  AppLocalizations.of(context)!.byDate,
                   style: textTheme.titleLarge,
                 ),
               ],
@@ -108,7 +109,7 @@ class DatePickerBottomDialog extends ConsumerWidget {
           const SizedBox(height: 10),
           ListTile(
             leading: const Icon(Icons.calendar_today_rounded),
-            title: const Text('Today'),
+            title: Text(AppLocalizations.of(context)!.today),
             onTap: () {
               ref
                   .read(dateFilterValueProvider.notifier)
@@ -118,7 +119,7 @@ class DatePickerBottomDialog extends ConsumerWidget {
           ),
           ListTile(
             leading: const Icon(Icons.calendar_view_week_rounded),
-            title: const Text('This week'),
+            title: Text(AppLocalizations.of(context)!.thisWeek),
             onTap: () {
               ref
                   .read(dateFilterValueProvider.notifier)
@@ -128,7 +129,7 @@ class DatePickerBottomDialog extends ConsumerWidget {
           ),
           ListTile(
             leading: const Icon(Icons.calendar_month_rounded),
-            title: const Text('This month'),
+            title: Text(AppLocalizations.of(context)!.thisMonth),
             onTap: () {
               ref
                   .read(dateFilterValueProvider.notifier)
@@ -138,13 +139,13 @@ class DatePickerBottomDialog extends ConsumerWidget {
           ),
           ListTile(
             leading: const Icon(Icons.calendar_view_day_rounded),
-            title: const Text('Pick date'),
+            title: Text(AppLocalizations.of(context)!.pickADate),
             onTap: () => onPickDate(false),
             trailing: const Icon(Icons.arrow_forward_rounded),
           ),
           ListTile(
             leading: const Icon(Icons.date_range_rounded),
-            title: const Text('Pick range'),
+            title: Text(AppLocalizations.of(context)!.pickRange),
             onTap: () => onPickDate(true),
             trailing: const Icon(Icons.arrow_forward_rounded),
           ),
@@ -218,18 +219,18 @@ class TransactionTypeFilterButton extends ConsumerWidget {
     super.key,
   });
 
-  String title(TransactionTypeFilter type) {
+  String title(BuildContext context, TransactionTypeFilter type) {
     switch (type) {
       case TransactionTypeFilter.all:
-        return 'All';
+        return AppLocalizations.of(context)!.all;
       case TransactionTypeFilter.income:
-        return 'Income';
+        return AppLocalizations.of(context)!.income;
       case TransactionTypeFilter.expense:
-        return 'Expense';
+        return AppLocalizations.of(context)!.expense;
       case TransactionTypeFilter.transfer:
-        return 'Transfer';
+        return AppLocalizations.of(context)!.transfer;
       default:
-        return 'By type';
+        return AppLocalizations.of(context)!.byType;
     }
   }
 
@@ -273,7 +274,7 @@ class TransactionTypeFilterButton extends ConsumerWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(title(filter)),
+          Text(title(context, filter)),
           const SizedBox(width: 10),
           Icon(icon(filter), size: 18),
         ],
@@ -301,7 +302,7 @@ class TransactionTypeDialog extends ConsumerWidget {
             child: Row(
               children: [
                 Text(
-                  'Transaction Type',
+                  AppLocalizations.of(context)!.transactionType,
                   style: textTheme.titleLarge,
                 ),
               ],
@@ -310,7 +311,7 @@ class TransactionTypeDialog extends ConsumerWidget {
           const SizedBox(height: 10),
           ListTile(
             leading: const Icon(Icons.merge_rounded),
-            title: const Text('All'),
+            title: Text(AppLocalizations.of(context)!.all),
             onTap: () {
               ref
                   .read(transactionTypeFilterProvider.notifier)
@@ -320,7 +321,7 @@ class TransactionTypeDialog extends ConsumerWidget {
           ),
           ListTile(
             leading: const Icon(Icons.arrow_upward_rounded),
-            title: const Text('Income'),
+            title: Text(AppLocalizations.of(context)!.income),
             onTap: () {
               ref
                   .read(transactionTypeFilterProvider.notifier)
@@ -330,7 +331,7 @@ class TransactionTypeDialog extends ConsumerWidget {
           ),
           ListTile(
             leading: const Icon(Icons.arrow_downward_rounded),
-            title: const Text('Expense'),
+            title: Text(AppLocalizations.of(context)!.expense),
             onTap: () {
               ref
                   .read(transactionTypeFilterProvider.notifier)
@@ -340,7 +341,7 @@ class TransactionTypeDialog extends ConsumerWidget {
           ),
           ListTile(
             leading: const Icon(CupertinoIcons.arrow_right_arrow_left),
-            title: const Text('Transfer'),
+            title: Text(AppLocalizations.of(context)!.transfer),
             onTap: () {
               ref
                   .read(transactionTypeFilterProvider.notifier)
@@ -396,7 +397,10 @@ class CalendarRangePickerBottomDialog extends ConsumerWidget {
                   title,
                   style: textTheme.titleLarge,
                 ),
-                AsyncButton(callback: context.pop, title: 'Ok'),
+                AsyncButton(
+                  callback: context.pop,
+                  child: const Icon(Icons.done_rounded),
+                ),
               ],
             ),
           ),

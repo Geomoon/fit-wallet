@@ -1,3 +1,5 @@
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import 'package:fit_wallet/features/money_accounts/presentation/providers/money_account_form_provider.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/providers/money_accounts_get_all_provider.dart';
 import 'package:fit_wallet/features/shared/infrastructure/formatters/formatters.dart';
@@ -37,13 +39,15 @@ class MoneyAccountForm extends ConsumerWidget {
               CloseButton(color: color),
               const SizedBox(width: 10),
               Text(
-                id == null ? 'New Account' : 'Edit account',
+                id == null
+                    ? AppLocalizations.of(context)!.newAccount
+                    : AppLocalizations.of(context)!.editAccount,
                 style: textTheme.headlineSmall
                     ?.copyWith(fontWeight: FontWeight.bold),
               ),
               const Spacer(),
               AsyncButton(
-                title: 'Save',
+                // title: AppLocalizations.of(context)!.save,
                 isLoading: service.isPosting,
                 callback: () {
                   ref
@@ -57,6 +61,8 @@ class MoneyAccountForm extends ConsumerWidget {
                     }
                   });
                 },
+                // title: AppLocalizations.of(context)!.save,
+                child: const Icon(Icons.done_rounded),
               ),
             ],
           ),
@@ -110,7 +116,10 @@ class MoneyAccountForm extends ConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text('Set as favorite', style: textTheme.bodyLarge),
+                    Text(
+                      AppLocalizations.of(context)!.setAsFavorite,
+                      style: textTheme.bodyLarge,
+                    ),
                     _box20W,
                     Switch.adaptive(
                       value: service.order.value == 0,
@@ -167,7 +176,7 @@ class _NameFormFieldState extends State<NameFormField> {
       focusNode: focus,
       initialValue: widget.initialValue,
       decoration: InputDecoration(
-        labelText: 'Account Name',
+        labelText: AppLocalizations.of(context)!.accountName,
         icon: const Icon(Icons.account_balance_rounded),
         errorText: widget.errorMessage,
       ),

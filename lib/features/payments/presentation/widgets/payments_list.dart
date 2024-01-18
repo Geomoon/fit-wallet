@@ -1,3 +1,4 @@
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:fit_wallet/config/themes/dark_theme.dart';
 import 'package:fit_wallet/features/money_accounts/domain/entities/entities.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/providers/money_account_by_id_provider.dart';
@@ -62,16 +63,16 @@ class PaymentsList extends StatelessWidget {
       builder: (context) {
         return ConfirmDialog(
           onConfirm: () => ref.read(paymentsProvider.notifier).delete(id),
-          title: 'Delete payment',
-          description: 'Are you sure to delete this payment?',
+          title: AppLocalizations.of(context)!.deletePayment,
+          description: AppLocalizations.of(context)!.deletePaymentDesc,
         );
       },
     );
 
     if (deleted == false) {
       if (context.mounted) {
-        const SnackBarContent(
-          title: 'Error at delete',
+        SnackBarContent(
+          title: AppLocalizations.of(context)!.error,
           tinted: true,
           type: SnackBarType.error,
         ).show(context);
@@ -80,8 +81,8 @@ class PaymentsList extends StatelessWidget {
 
     if (deleted == true) {
       if (context.mounted) {
-        const SnackBarContent(
-          title: 'Payment deleted',
+        SnackBarContent(
+          title: AppLocalizations.of(context)!.deleted,
           tinted: true,
           type: SnackBarType.success,
         ).show(context);
@@ -97,13 +98,13 @@ class PaymentsList extends StatelessWidget {
     if (payments.isEmpty) {
       return SizedBox(
         height: height - 360,
-        child: const Center(
+        child: Center(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('No payments'),
-              SizedBox(width: 20),
-              Icon(Icons.payment_rounded),
+              Text(AppLocalizations.of(context)!.noPayments),
+              const SizedBox(width: 20),
+              const Icon(Icons.payment_rounded),
             ],
           ),
         ),
@@ -160,7 +161,7 @@ class PaymentCard extends StatelessWidget {
               ))
           : ElevatedButton(
               onPressed: () => onPay(payment.id),
-              child: const Text('Pay'),
+              child: Text(AppLocalizations.of(context)!.pay),
             ),
       title: _PaymentCardContent(payment: payment, textTheme: textTheme),
       expandedCrossAxisAlignment: CrossAxisAlignment.start,
@@ -246,7 +247,7 @@ class _PaymentCardContent extends StatelessWidget {
                     Badge(
                       backgroundColor: Colors.amber.shade100,
                       label: Text(
-                        'Pending',
+                        AppLocalizations.of(context)!.pending,
                         style: textTheme.labelSmall
                             ?.copyWith(color: Colors.black87),
                       ),
@@ -396,7 +397,7 @@ class PayDialog extends ConsumerWidget {
               CloseButton(color: color),
               const SizedBox(width: 10),
               Text(
-                'Pay',
+                AppLocalizations.of(context)!.pay,
                 style: textTheme.headlineSmall
                     ?.copyWith(fontWeight: FontWeight.bold),
               ),
@@ -416,15 +417,15 @@ class PayDialog extends ConsumerWidget {
                       ref.invalidate(
                           moneyAccountByIdProvider(payProvider.account!.id));
                     }
-                    const SnackBarContent(
-                      title: 'Saved',
+                    SnackBarContent(
+                      title: AppLocalizations.of(context)!.saved,
                       tinted: true,
                       type: SnackBarType.success,
                     ).show(context);
                     context.pop();
                   } else if (context.mounted) {
-                    const SnackBarContent(
-                      title: 'Something went wrong...',
+                    SnackBarContent(
+                      title: AppLocalizations.of(context)!.sWW,
                       tinted: true,
                       type: SnackBarType.error,
                     ).show(context);
@@ -472,14 +473,15 @@ class PayDialog extends ConsumerWidget {
                         selectedIcon: payProvider.paymentType == 0
                             ? const Icon(Icons.payment_rounded)
                             : const Icon(Icons.payments_outlined),
-                        segments: const [
+                        segments: [
                           ButtonSegment(
                             value: 0,
-                            label: Text('All'),
+                            label: Text(AppLocalizations.of(context)!.all),
                           ),
                           ButtonSegment(
                             value: 1,
-                            label: Text('Installment'),
+                            label:
+                                Text(AppLocalizations.of(context)!.installment),
                           ),
                         ],
                         selected: {payProvider.paymentType},
@@ -492,9 +494,9 @@ class PayDialog extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              const Padding(
-                padding: EdgeInsets.only(left: 20, bottom: 10),
-                child: Text('Select an account'),
+              Padding(
+                padding: const EdgeInsets.only(left: 20, bottom: 10),
+                child: Text(AppLocalizations.of(context)!.selectAccount),
               ),
               MoneyAccountsSelector(
                 id: id,
@@ -544,10 +546,10 @@ class _ValueInput extends StatelessWidget {
         fontWeight: FontWeight.bold,
         color: textTheme.bodyMedium?.color,
       ),
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
         hintText: '0.00',
-        prefixIcon: Icon(Icons.attach_money_rounded),
-        labelText: 'Enter value',
+        prefixIcon: const Icon(Icons.attach_money_rounded),
+        labelText: AppLocalizations.of(context)!.enterValue,
         errorText: null,
       ),
       textInputAction: TextInputAction.done,
@@ -594,8 +596,8 @@ class MoneyAccountsSelector extends ConsumerWidget {
           ),
         );
       },
-      error: (error, stackTrace) => const Center(
-        child: Text('Error loading accounts'),
+      error: (error, stackTrace) => Center(
+        child: Text(AppLocalizations.of(context)!.error),
       ),
       loading: () => const Center(
         child: CircularProgressIndicator(),
@@ -700,7 +702,7 @@ class PaymentsDetailDialog extends ConsumerWidget {
               CloseButton(color: color),
               const SizedBox(width: 10),
               Text(
-                'Pay Detail',
+                AppLocalizations.of(context)!.payDetail,
                 style: textTheme.headlineSmall
                     ?.copyWith(fontWeight: FontWeight.bold),
               ),
@@ -729,7 +731,10 @@ class PaymentsDetailDialog extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('PENDING', style: textTheme.bodyLarge),
+                  Text(
+                    AppLocalizations.of(context)!.pending.toUpperCase(),
+                    style: textTheme.bodyLarge,
+                  ),
                   const SizedBox(height: 10),
                   Text(
                     payProvider.payment?.pendingAmountTxt ?? '\$0.0',
@@ -745,7 +750,8 @@ class PaymentsDetailDialog extends ConsumerWidget {
         if (payProvider.payment != null)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Text('Payments', style: textTheme.bodyLarge),
+            child: Text(AppLocalizations.of(context)!.payments,
+                style: textTheme.bodyLarge),
           ),
         if (payProvider.payment != null)
           Expanded(
@@ -779,7 +785,7 @@ class PaymentTransactionsList extends ConsumerWidget {
         );
       },
       error: (error, stackTrace) {
-        return const Center(child: Text('Something went wrong'));
+        return Center(child: Text(AppLocalizations.of(context)!.sWW));
       },
       loading: () => const Center(child: CircularProgressIndicator()),
     );

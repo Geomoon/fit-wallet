@@ -1,3 +1,5 @@
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import 'package:fit_wallet/features/money_accounts/presentation/presentation.dart';
 import 'package:fit_wallet/features/payments/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/shared/infrastructure/formatters/number_formatter.dart';
@@ -25,7 +27,7 @@ class PaymentsFormDialog extends ConsumerWidget {
           showDragHandle: false,
           enableDrag: false,
           builder: (context) => CalendarPickerBottomDialog(
-            title: 'Pick a date',
+            title: AppLocalizations.of(context)!.pickADate,
             lastDate: lastDate,
             onDateChanged: onChange,
           ),
@@ -58,13 +60,14 @@ class PaymentsFormDialog extends ConsumerWidget {
               CloseButton(color: color),
               const SizedBox(width: 10),
               Text(
-                id == null ? 'New Payment' : 'Edit Payment',
+                id == null
+                    ? AppLocalizations.of(context)!.newPayment
+                    : AppLocalizations.of(context)!.editAccount,
                 style: textTheme.headlineSmall
                     ?.copyWith(fontWeight: FontWeight.bold),
               ),
               const Spacer(),
               AsyncButton(
-                title: 'Save',
                 isLoading: provider.isSaving,
                 callback: () {
                   final service = ref.read(paymentFormProvider(id).notifier);
@@ -77,6 +80,7 @@ class PaymentsFormDialog extends ConsumerWidget {
                     },
                   );
                 },
+                child: const Icon(Icons.done_rounded),
               ),
             ],
           ),
@@ -119,7 +123,9 @@ class PaymentsFormDialog extends ConsumerWidget {
                       ref.read(paymentFormProvider(id).notifier).changeDueDate,
                     ),
                     label: Text(
-                      provider.dueDateTxt,
+                      provider.dueDateTxt.isEmpty
+                          ? AppLocalizations.of(context)!.addDueDate
+                          : provider.dueDateTxt,
                       style: TextStyle(color: theme.onBackground),
                     ),
                     icon: const Icon(Icons.access_time_rounded),
@@ -166,7 +172,6 @@ class _ValueInputState extends State<ValueInput> {
   @override
   void initState() {
     super.initState();
-    print('INIT');
     if (widget.isPrimary) focus.requestFocus();
   }
 
@@ -235,7 +240,7 @@ class _NameFormFieldState extends State<NameFormField> {
     return TextFormField(
       initialValue: widget.initialValue,
       decoration: InputDecoration(
-        labelText: 'Description',
+        labelText: AppLocalizations.of(context)!.description,
         icon: const Icon(Icons.format_align_left_rounded),
         errorText: widget.errorMessage,
       ),
