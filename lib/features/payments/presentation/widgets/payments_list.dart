@@ -261,20 +261,30 @@ class _PaymentCardContent extends StatelessWidget {
                     const Icon(Icons.comment_outlined, size: 18),
                   if (payment.description.isNotEmpty) const SizedBox(width: 10),
                   if (payment.date != null)
-                    const Icon(Icons.access_time_rounded, size: 18),
+                    CircleAvatar(
+                      maxRadius: 9,
+                      backgroundColor: payment.hasPriority
+                          ? theme.error
+                          : Colors.transparent,
+                      child: Icon(
+                        Icons.access_time,
+                        size: 18,
+                        color: payment.hasPriority ? theme.onError : null,
+                      ),
+                    ),
                   if (payment.date != null) const SizedBox(width: 10),
                   if (payment.date != null)
-                    if (payment.hasPriority)
-                      Badge(
-                        backgroundColor: theme.error,
-                        label: Text(payment.dateTxt,
-                            style: textTheme.bodyLarge
-                                ?.copyWith(color: theme.onError)),
-                        textColor: theme.onError,
-                        largeSize: 20,
-                      )
-                    else
-                      Text(payment.dateTxt, style: textTheme.bodyLarge),
+                    // if (payment.hasPriority)
+                    //   Badge(
+                    //     backgroundColor: theme.error,
+                    //     label: Text(payment.dateTxt,
+                    //         style: textTheme.bodyLarge
+                    //             ?.copyWith(color: theme.onError)),
+                    //     textColor: theme.onError,
+                    //     largeSize: 20,
+                    //   )
+                    // else
+                    Text(payment.dateTxt, style: textTheme.bodyLarge),
                 ],
               ),
             ],
