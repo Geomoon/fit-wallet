@@ -70,5 +70,14 @@
   "select": "Select",
   "accountName": "Account Name",
   "editAccount": "Edit",
-  "addAccount": "Add"
+  "addAccount": "Add",
+  "welcomeToFitWallet": "Welcome to",
+  "simpleMMApp": "Simple money management app",
+  "next": "Next",
+  "welcome": "Welcome",
+  "start": "Start",
+  "record": "Record your expenses and incomes \nquickly and easily",
+  "letsCreateAccount": "Let's create your first account",
+  "amount": "Amount",
+  "firstAccount": "My account"
 }

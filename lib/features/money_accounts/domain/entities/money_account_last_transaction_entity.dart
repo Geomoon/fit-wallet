@@ -52,7 +52,7 @@ class MoneyAccountLastTransactionEntity {
   }
 
   String get lastTransactionTxt {
-    if (lastTransaction == null) return 'No transactions';
+    if (lastTransaction == null) return '';
 
     return Utils.formatYYYDDMM(lastTransaction!.createdAt);
   }

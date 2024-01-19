@@ -424,7 +424,7 @@ class CalendarRangePickerBottomDialog extends ConsumerWidget {
                         children: [
                           Text(
                             firstDate == null
-                                ? 'Select start date'
+                                ? AppLocalizations.of(context)!.selectStartDate
                                 : Utils.formatYYYDDMM(firstDate!),
                             style: position == 0
                                 ? const TextStyle(fontWeight: FontWeight.bold)
@@ -436,7 +436,12 @@ class CalendarRangePickerBottomDialog extends ConsumerWidget {
                               if (position == 0)
                                 Icon(Icons.circle, size: 12, color: color),
                               if (position == 0) const SizedBox(width: 10),
-                              Text('FROM', style: textTheme.bodyLarge),
+                              Text(
+                                AppLocalizations.of(context)!
+                                    .from
+                                    .toUpperCase(),
+                                style: textTheme.bodyLarge,
+                              ),
                             ],
                           ),
                         ],
@@ -460,7 +465,7 @@ class CalendarRangePickerBottomDialog extends ConsumerWidget {
                         children: [
                           Text(
                             lastDate == null
-                                ? 'Select end date'
+                                ? AppLocalizations.of(context)!.selectEndDate
                                 : Utils.formatYYYDDMM(lastDate!),
                             style: position == 1
                                 ? const TextStyle(fontWeight: FontWeight.bold)
@@ -472,7 +477,10 @@ class CalendarRangePickerBottomDialog extends ConsumerWidget {
                               if (position == 1)
                                 Icon(Icons.circle, size: 12, color: color),
                               if (position == 1) const SizedBox(width: 10),
-                              Text('TO', style: textTheme.bodyLarge),
+                              Text(
+                                AppLocalizations.of(context)!.to.toUpperCase(),
+                                style: textTheme.bodyLarge,
+                              ),
                             ],
                           ),
                         ],

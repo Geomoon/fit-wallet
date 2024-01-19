@@ -261,16 +261,10 @@ class _PaymentCardContent extends StatelessWidget {
                     const Icon(Icons.comment_outlined, size: 18),
                   if (payment.description.isNotEmpty) const SizedBox(width: 10),
                   if (payment.date != null)
-                    CircleAvatar(
-                      maxRadius: 9,
-                      backgroundColor: payment.hasPriority
-                          ? theme.error
-                          : Colors.transparent,
-                      child: Icon(
-                        Icons.access_time,
-                        size: 18,
-                        color: payment.hasPriority ? theme.onError : null,
-                      ),
+                    Icon(
+                      Icons.access_time,
+                      size: 18,
+                      color: payment.hasPriority ? theme.error : null,
                     ),
                   if (payment.date != null) const SizedBox(width: 10),
                   if (payment.date != null)

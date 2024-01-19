@@ -16,7 +16,7 @@
   "pickDate": "Seleccionar fecha",
   "pickRange": "Seleccionar rango de fechas",
   "selectStartDate": "Fecha de inicio",
-  "selectEndDate": "Fecha final",
+  "selectEndDate": "Fecha fin",
   "from": "Desde",
   "to": "Hasta",
   "all": "Todo",
@@ -70,5 +70,14 @@
   "select": "Seleccionar",
   "accountName": "Nombre de la cuenta",
   "editAccount": "Editar",
-  "addAccount": "Nueva"
+  "addAccount": "Nueva",
+  "welcomeToFitWallet": "Bienvenid@ a",
+  "simpleMMApp": "Una forma sencilla de gestionar tus finanzas",
+  "next": "Continuar",
+  "welcome": "Bienvenid@",
+  "start": "Empezar",
+  "record": "Registra tus ingresos y gastos \nde manera fácil y rápida",
+  "letsCreateAccount": "Empecemos por crear tu primera cuenta",
+  "amount": "Monto",
+  "firstAccount": "Mi cuenta"
 }

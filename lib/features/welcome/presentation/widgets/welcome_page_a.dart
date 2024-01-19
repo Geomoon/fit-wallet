@@ -1,3 +1,4 @@
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -19,14 +20,15 @@ class WelcomePageA extends StatelessWidget {
           child: SvgPicture.asset('assets/images/credit_card.svg'),
         ),
         const SizedBox(height: 30),
-        Text('Welcome to', style: textTheme.headlineLarge),
+        Text(AppLocalizations.of(context)!.welcomeToFitWallet,
+            style: textTheme.headlineLarge),
         const SizedBox(height: 10),
-        Text('FitWallet',
+        Text(AppLocalizations.of(context)!.fitWallet,
             style:
                 textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(height: 40),
         Text(
-          'Simple money management app',
+          AppLocalizations.of(context)!.simpleMMApp,
           style: textTheme.bodyLarge,
         ),
       ],

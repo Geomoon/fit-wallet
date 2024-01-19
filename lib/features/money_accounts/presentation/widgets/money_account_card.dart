@@ -89,10 +89,14 @@ class MoneyAccountCard extends StatelessWidget {
                         style: textTheme.labelLarge),
                   Text(
                     isTwoLines
-                        ? account.lastTransactionTxt
+                        ? account.lastTransactionTxt.isEmpty
+                            ? AppLocalizations.of(context)!.noTransactions
+                            : account.lastTransactionTxt
                         : (account.lastTransaction != null)
                             ? '${AppLocalizations.of(context)!.lastTransaction} - ${account.lastTransactionTxt}'
-                            : account.lastTransactionTxt,
+                            : account.lastTransactionTxt.isEmpty
+                                ? AppLocalizations.of(context)!.noTransactions
+                                : account.lastTransactionTxt,
                     style: (account.order == 0)
                         ? TextStyle(color: theme.onPrimary)
                         : textTheme.bodyLarge,

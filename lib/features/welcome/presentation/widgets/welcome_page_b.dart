@@ -1,3 +1,4 @@
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -22,7 +23,7 @@ class WelcomePageB extends StatelessWidget {
         Text('Simple', style: textTheme.headlineLarge),
         const SizedBox(height: 80),
         Text(
-          'Record your expenses and incomes \nquickly and easily',
+          AppLocalizations.of(context)!.record,
           style: textTheme.bodyLarge,
           textAlign: TextAlign.center,
         ),

@@ -99,7 +99,10 @@ class TransactionsList extends ConsumerWidget {
                 'assets/images/empty_list.svg',
               ),
               const SizedBox(height: 20),
-              Text('No transactions', style: textTheme.bodyMedium),
+              Text(
+                AppLocalizations.of(context)!.noTransactions,
+                style: textTheme.bodyMedium,
+              ),
             ],
           ),
         ),

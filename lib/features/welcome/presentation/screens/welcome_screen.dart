@@ -1,5 +1,7 @@
+import 'package:fit_wallet/features/money_accounts/presentation/providers/providers.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:fit_wallet/features/auth/presentation/providers/providers.dart';
-import 'package:fit_wallet/features/money_accounts/presentation/providers/money_account_form_provider.dart';
+
 import 'package:fit_wallet/features/shared/presentation/presentation.dart';
 import 'package:fit_wallet/features/welcome/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/welcome/presentation/widgets/first_account_screen.dart';
@@ -17,7 +19,9 @@ class WelcomeScreen extends ConsumerWidget {
     final textTheme = Theme.of(context).primaryTextTheme;
     final pageController = PageController();
 
-    final isLoading = ref.watch(moneyAccountFormProvider(null));
+    final isLoading = ref.watch(
+      firstMoneyAccountFormProvider(AppLocalizations.of(context)!.firstAccount),
+    );
 
     return Scaffold(
       body: Column(
@@ -56,13 +60,16 @@ class WelcomeScreen extends ConsumerWidget {
                                 curve: Curves.linear,
                               );
                             } else {
-                              await ref
-                                  .read(moneyAccountFormProvider(null).notifier)
+                              final isSaved = await ref
+                                  .read(firstMoneyAccountFormProvider(
+                                          AppLocalizations.of(context)!
+                                              .firstAccount)
+                                      .notifier)
                                   .submit();
 
-                              if (context.mounted) {
-                                const SnackBarContent(
-                                  title: 'Welcome',
+                              if (context.mounted && isSaved) {
+                                SnackBarContent(
+                                  title: AppLocalizations.of(context)!.welcome,
                                   tinted: true,
                                   type: SnackBarType.success,
                                 ).show(context);
@@ -79,7 +86,9 @@ class WelcomeScreen extends ConsumerWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          page != 2 ? 'Next' : 'Start',
+                          page != 2
+                              ? AppLocalizations.of(context)!.next
+                              : AppLocalizations.of(context)!.start,
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,

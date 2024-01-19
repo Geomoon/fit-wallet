@@ -75,19 +75,17 @@ class HomeScreenAppBarActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return const Row(
       children: [
-        SizedBox(
-          height: 36,
-          width: 36,
-          child: IconButton(
-            onPressed: () {
-              context.push('/settings');
-            },
-            icon: const Icon(Icons.settings_rounded),
-          ),
-        ),
-        const SizedBox(width: 10),
+        SizedBox(height: 36, width: 36, child: Icon(Icons.wallet_rounded)
+            // IconButton(
+            //   onPressed: () {
+            //     context.push('/settings');
+            //   },
+            //   icon: const Icon(Icons.settings_rounded),
+            // ),
+            ),
+        SizedBox(width: 10),
       ],
     );
   }
