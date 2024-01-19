@@ -1,0 +1,117 @@
+[
+  {
+    "reg_id": "f037e4a0-8a66-42d3-b69f-1edba6efdd08",
+    "term_text": "AUTO",
+    "term_id": "f037e4a0-8a66-42d3-b69f-1edba6efdd08"
+  },
+  {
+    "reg_id": "3bfb9361-a92e-42f8-af62-c058ce189535",
+    "term_text": "GASOLINA",
+    "term_id": "3bfb9361-a92e-42f8-af62-c058ce189535"
+  },
+  {
+    "reg_id": "61bffab3-8c7e-4b51-9e68-07527373cb73",
+    "term_text": "TRANSPORTE",
+    "term_id": "61bffab3-8c7e-4b51-9e68-07527373cb73"
+  },
+  {
+    "reg_id": "31278eb7-c55d-4d43-8e68-e5d89066eb41",
+    "term_text": "RESTAURANTE",
+    "term_id": "31278eb7-c55d-4d43-8e68-e5d89066eb41"
+  },
+  {
+    "reg_id": "362cb01a-a19f-477c-88b4-bc233fa62a1d",
+    "term_text": "TIENDA",
+    "term_id": "362cb01a-a19f-477c-88b4-bc233fa62a1d"
+  },
+  {
+    "reg_id": "3ce830f0-7a25-4353-b229-613e5dd6f62a",
+    "term_text": "COMPRAS",
+    "term_id": "3ce830f0-7a25-4353-b229-613e5dd6f62a"
+  },
+  {
+    "reg_id": "daaffff7-e460-4071-a765-3eda38521bcf",
+    "term_text": "SALUD",
+    "term_id": "daaffff7-e460-4071-a765-3eda38521bcf"
+  },
+  {
+    "reg_id": "c7a87222-e434-439e-9671-fc87b800a778",
+    "term_text": "EDUCACIÓN",
+    "term_id": "c7a87222-e434-439e-9671-fc87b800a778"
+  },
+  {
+    "reg_id": "acb8694e-612f-4285-b544-e03e7adeb550",
+    "term_text": "ENTRETENIMIENTO",
+    "term_id": "acb8694e-612f-4285-b544-e03e7adeb550"
+  },
+  {
+    "reg_id": "bd66fbe6-1708-4d7d-9371-6f736428230d",
+    "term_text": "GYM",
+    "term_id": "bd66fbe6-1708-4d7d-9371-6f736428230d"
+  },
+  {
+    "reg_id": "2960c57a-1290-4990-9cbf-c0b59bdc61ce",
+    "term_text": "VIAJE",
+    "term_id": "2960c57a-1290-4990-9cbf-c0b59bdc61ce"
+  },
+  {
+    "reg_id": "36ab92a1-5fd4-4c8c-aa27-32285e9e2013",
+    "term_text": "INTERNET",
+    "term_id": "36ab92a1-5fd4-4c8c-aa27-32285e9e2013"
+  },
+  {
+    "reg_id": "dc5958c0-b145-42ea-af01-74a9e1befaab",
+    "term_text": "BANCO",
+    "term_id": "dc5958c0-b145-42ea-af01-74a9e1befaab"
+  },
+  {
+    "reg_id": "37431c78-a65e-450f-8aec-1a13977db5fa",
+    "term_text": "PAGO",
+    "term_id": "37431c78-a65e-450f-8aec-1a13977db5fa"
+  },
+  {
+    "reg_id": "9a085cd3-6fd4-437f-b3fc-c424ab0c620d",
+    "term_text": "ESTACIONAMIENTO",
+    "term_id": "9a085cd3-6fd4-437f-b3fc-c424ab0c620d"
+  },
+  {
+    "reg_id": "33f014a4-2603-49cf-93cf-42cde3be001a",
+    "term_text": "OTROS",
+    "term_id": "33f014a4-2603-49cf-93cf-42cde3be001a"
+  },
+  {
+    "reg_id": "f24f86a5-a774-49e1-94e6-069e3b20c006",
+    "term_text": "COMIDA",
+    "term_id": "f24f86a5-a774-49e1-94e6-069e3b20c006"
+  },
+  {
+    "reg_id": "1a2ca90d-9a35-451c-9255-510dbe0848f3",
+    "term_text": "HOGAR",
+    "term_id": "1a2ca90d-9a35-451c-9255-510dbe0848f3"
+  },
+  {
+    "reg_id": "417d66db-fcd6-47e5-8740-545c8e1be5e3",
+    "term_text": "TELÉFONO",
+    "term_id": "417d66db-fcd6-47e5-8740-545c8e1be5e3"
+  },
+  {
+    "reg_id": "853b73b2-4a7a-4a74-9603-afbba03474bf",
+    "term_text": "TRANSACCIÓN",
+    "term_id": "853b73b2-4a7a-4a74-9603-afbba03474bf"
+  },
+  {
+    "reg_id": "4d8699cd-3c04-43fa-85b0-5dad9f5ca1a5",
+    "term_text": "TRANSFERENCIA",
+    "term_id": "4d8699cd-3c04-43fa-85b0-5dad9f5ca1a5"
+  },
+  {
+    "reg_id": "0aefa50a-6b10-4836-9337-470b379825ca",
+    "term_text": "AJUSTE",
+    "term_id": "0aefa50a-6b10-4836-9337-470b379825ca"
+  },
+  {
+    "reg_id": "eae619a8-c00b-4da8-b9c6-26a1142857f6",
+    "term_text": "HOSPEDAJE",
+    "term_id": "eae619a8-c00b-4da8-b9c6-26a1142857f6"
+  }
+]

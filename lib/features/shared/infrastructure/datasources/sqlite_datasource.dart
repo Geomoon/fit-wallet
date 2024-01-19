@@ -25,6 +25,7 @@ class SQLiteDatasource {
         await createTables(db);
         // await createFirstAccount(db);
         await insertCategories(db);
+        await insertTerms(db);
         debugPrint('TABLES HAS BEEN CREATED');
       },
       version: 1,
@@ -114,6 +115,15 @@ class SQLiteDatasource {
         FOREIGN KEY ( cate_id ) REFERENCES categories ( cate_id )
       );
     ''');
+
+    await batch.execute('''
+      CREATE TABLE IF NOT EXISTS terms (
+        term_id TEXT,
+        term_text TEXT,
+        reg_id TEXT,
+        PRIMARY KEY ( term_id )
+      );
+    ''');
   }
 
   static insertCategories(Database db) async {
@@ -129,5 +139,14 @@ class SQLiteDatasource {
         (e) => db.insert('categories', CategoriesMapper.toJsonDb(e)),
       ),
     ).whenComplete(() => debugPrint('CATEGORIES INSERTED'));
+  }
+
+  static insertTerms(Database db) async {
+    final categoriesJson = await Utils.readJsonFile('assets/data/terms.json');
+
+    final terms = (categoriesJson as List);
+    await Future.wait(
+      terms.map((e) => db.insert('terms', e)),
+    ).whenComplete(() => debugPrint('TERMS INSERTED'));
   }
 }
