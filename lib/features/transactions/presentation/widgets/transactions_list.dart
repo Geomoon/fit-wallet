@@ -1,3 +1,4 @@
+import 'package:fit_wallet/features/payments/presentation/providers/providers.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/shared/presentation/presentation.dart';
@@ -24,7 +25,15 @@ class TransactionsList extends ConsumerWidget {
       context: context,
       builder: (context) {
         return ConfirmDialog(
-          onConfirm: () => ref.read(transactionsRepositoryProvider).delete(id),
+          onConfirm: () async {
+            final isDeleted =
+                await ref.read(transactionsRepositoryProvider).delete(id);
+            if (isDeleted) {
+              ref.invalidate(paymentsProvider);
+              ref.invalidate(paymentsPendingProvider);
+            }
+            return isDeleted;
+          },
           title: AppLocalizations.of(context)!.deleteTransaccion,
           description: AppLocalizations.of(context)!.deleteTransaccionTxt,
         );

@@ -76,6 +76,7 @@ class PaymentsFormDialog extends ConsumerWidget {
                       if (value) {
                         context.pop(true);
                         ref.invalidate(paymentsProvider);
+                        ref.invalidate(paymentsPendingProvider);
                       }
                     },
                   );

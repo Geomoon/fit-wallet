@@ -42,10 +42,12 @@ class PaymentDatasourceDb implements PaymentDatasource {
 
       String whereIsCompleted = '';
       if (params.isCompleted == true) {
-        whereIsCompleted = ' where paym.paym_is_completed = 1 ';
+        whereIsCompleted =
+            ' where coalesce(paym.paym_amount_paid, 0) >= paym.paym_amount ';
       }
       if (params.isCompleted == false) {
-        whereIsCompleted = ' where paym.paym_is_completed = 0 ';
+        whereIsCompleted =
+            ' where coalesce(paym.paym_amount_paid, 0) < paym.paym_amount ';
       }
 
       final list = await _db.rawQuery('''
@@ -77,6 +79,7 @@ class PaymentDatasourceDb implements PaymentDatasource {
   Future<bool> update(PaymentEntity entity) async {
     final data = PaymentMapper.toJsonDb(entity);
     data.remove('paym_id');
+    data.remove('paym_is_completed');
 
     await _db.update(table, data, where: 'paym_id = ?', whereArgs: [entity.id]);
     return true;
@@ -99,5 +102,17 @@ class PaymentDatasourceDb implements PaymentDatasource {
     );
 
     return PaymentMapper.fromJsonDB(list[0]);
+  }
+
+  @override
+  Future<int> getPendings() async {
+    final count = Sqflite.firstIntValue(await _db.rawQuery('''
+      select count(*) as count
+      from payments 
+      where coalesce(paym_amount_paid, 0) < paym_amount
+      and ( strftime('%s', 'now') - paym_date >= -172800 -- two days
+        or strftime('%s', 'now') > paym_date )
+    '''));
+    return count ?? 0;
   }
 }

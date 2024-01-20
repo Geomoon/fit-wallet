@@ -7,4 +7,5 @@ abstract class PaymentRepository {
   Future<bool> update(PaymentEntity entity);
   Future<bool> pay(PaymentEntity entity, double payAmount);
   Future<void> delete(String id);
+  Future<int> getPendings();
 }

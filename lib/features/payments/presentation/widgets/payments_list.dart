@@ -1,11 +1,10 @@
+import 'package:fit_wallet/features/payments/presentation/providers/providers.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:fit_wallet/config/themes/dark_theme.dart';
 import 'package:fit_wallet/features/money_accounts/domain/entities/entities.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/providers/money_account_by_id_provider.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/providers/money_accounts_get_all_provider.dart';
 import 'package:fit_wallet/features/payments/domain/entities/entities.dart';
-import 'package:fit_wallet/features/payments/presentation/providers/payments_pay_form_provider.dart';
-import 'package:fit_wallet/features/payments/presentation/providers/payments_provider.dart';
 import 'package:fit_wallet/features/shared/infrastructure/formatters/number_formatter.dart';
 import 'package:fit_wallet/features/shared/presentation/presentation.dart';
 import 'package:fit_wallet/features/transactions/presentation/providers/providers.dart';
@@ -417,6 +416,8 @@ class PayDialog extends ConsumerWidget {
                     ref.invalidate(paymentsProvider);
                     ref.invalidate(moneyAccountsProvider);
                     ref.invalidate(getTransactionsProvider);
+                    ref.invalidate(paymentsPendingProvider);
+
                     if (payProvider.account != null) {
                       ref.invalidate(
                           moneyAccountByIdProvider(payProvider.account!.id));

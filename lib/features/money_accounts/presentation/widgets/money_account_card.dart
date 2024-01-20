@@ -39,7 +39,16 @@ class MoneyAccountCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(account.amountTxt, style: textTheme.headlineSmall),
+                  Expanded(
+                    flex: 1,
+                    child: Text(
+                      account.amountTxt,
+                      maxLines: 1,
+                      style: textTheme.headlineSmall,
+                      softWrap: true,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                   Container(
                     height: 36,
                     width: 36,

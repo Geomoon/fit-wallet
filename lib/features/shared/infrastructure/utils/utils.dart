@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:fit_wallet/features/categories/infrastructure/infrastructure.dart';
 import 'package:flutter/material.dart';
@@ -46,13 +47,13 @@ class Utils {
   }
 
   static String formatYYYDDMM(DateTime time) =>
-      DateFormat('EEE dd, MMM').format(time).toString();
+      DateFormat('EEE dd, MMM', locale).format(time).toString();
 
   static String formatDDMM(DateTime time) =>
-      DateFormat('MMM dd').format(time).toString();
+      DateFormat('MMM dd', locale).format(time).toString();
 
   static String formatYYYYMMDD(DateTime time) {
-    final DateFormat formatter = DateFormat('yyyy-MM-dd');
+    final DateFormat formatter = DateFormat('yyyy-MM-dd', locale);
     return formatter.format(time);
   }
 
@@ -99,4 +100,6 @@ class Utils {
     final data = await json.decode(response);
     return data;
   }
+
+  static String get locale => Platform.localeName;
 }

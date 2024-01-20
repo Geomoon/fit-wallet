@@ -1,3 +1,4 @@
+import 'package:fit_wallet/features/payments/presentation/providers/providers.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:fit_wallet/features/home/presentation/providers/providers.dart';
 import 'package:fit_wallet/features/money_accounts/presentation/providers/providers.dart';
@@ -128,12 +129,31 @@ class HomeScreen extends StatelessWidget {
               title: AppLocalizations.of(context)!.accounts,
             ),
             const SizedBox(width: 24),
-            NavigationButton(
-              index: 2,
-              icon: Icons.payment_outlined,
-              activeIcon: Icons.payment_rounded,
-              title: AppLocalizations.of(context)!.debts,
-            ),
+            Consumer(builder: (context, ref, _) {
+              final pendings = ref.watch(paymentsPendingProvider);
+
+              return pendings.when(
+                loading: () => NavigationButton(
+                  index: 2,
+                  icon: Icons.payment_outlined,
+                  activeIcon: Icons.payment_rounded,
+                  title: AppLocalizations.of(context)!.debts,
+                ),
+                error: (error, stackTrace) => NavigationButton(
+                  index: 2,
+                  icon: Icons.payment_outlined,
+                  activeIcon: Icons.payment_rounded,
+                  title: AppLocalizations.of(context)!.debts,
+                ),
+                data: (data) => NavigationButton(
+                  index: 2,
+                  icon: Icons.payment_outlined,
+                  activeIcon: Icons.payment_rounded,
+                  countBadge: data,
+                  title: AppLocalizations.of(context)!.debts,
+                ),
+              );
+            }),
           ],
         ),
       ),
@@ -233,12 +253,14 @@ class NavigationButton extends ConsumerWidget {
     required this.activeIcon,
     required this.index,
     this.title,
+    this.countBadge = 0,
   });
 
   final IconData icon;
   final IconData activeIcon;
   final int index;
   final String? title;
+  final int countBadge;
 
   final BoxConstraints _boxConstraints =
       const BoxConstraints(minWidth: 64, maxHeight: 32);
@@ -252,6 +274,7 @@ class NavigationButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colors = Theme.of(context).colorScheme;
     final actualIndex = ref.watch(homeNavigationProvider);
     final textStyle = Theme.of(context).primaryTextTheme.labelMedium;
     final textStyleBold = Theme.of(context)
@@ -263,11 +286,19 @@ class NavigationButton extends ConsumerWidget {
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          IconButton.filledTonal(
-            padding: _padding,
-            constraints: _boxConstraints,
-            onPressed: () => _onTap(ref),
-            icon: Icon(activeIcon),
+          Badge(
+            label: Text(
+              '$countBadge',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            backgroundColor: countBadge > 0 ? colors.error : null,
+            isLabelVisible: countBadge > 0,
+            child: IconButton.filledTonal(
+              padding: _padding,
+              constraints: _boxConstraints,
+              onPressed: () => _onTap(ref),
+              icon: Icon(activeIcon),
+            ),
           ),
           if (title != null) Text(title!, style: textStyleBold),
         ],
@@ -276,11 +307,16 @@ class NavigationButton extends ConsumerWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        IconButton(
-          padding: _padding,
-          constraints: _boxConstraints,
-          onPressed: () => _onTap(ref),
-          icon: Icon(icon),
+        Badge(
+          label: Text('$countBadge'),
+          backgroundColor: countBadge > 0 ? colors.error : null,
+          isLabelVisible: countBadge > 0,
+          child: IconButton(
+            padding: _padding,
+            constraints: _boxConstraints,
+            onPressed: () => _onTap(ref),
+            icon: Icon(activeIcon),
+          ),
         ),
         if (title != null) Text(title!, style: textStyle),
       ],

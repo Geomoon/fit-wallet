@@ -63,4 +63,9 @@ class PaymentRepositoryImpl implements PaymentRepository {
 
     return await datasource.update(entity);
   }
+
+  @override
+  Future<int> getPendings() async {
+    return datasource.getPendings();
+  }
 }

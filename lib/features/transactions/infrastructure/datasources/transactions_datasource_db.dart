@@ -53,7 +53,13 @@ class TransactionsDatasourceDb implements TransactionsDatasource {
     try {
       final transaction = await _db.query(
         table,
-        columns: ['tran_amount', 'tran_type', 'macc_id', 'macc_id_transfer'],
+        columns: [
+          'tran_amount',
+          'tran_type',
+          'macc_id',
+          'macc_id_transfer',
+          'paym_id'
+        ],
         where: 'tran_id = ?',
         whereArgs: [id],
         limit: 1,
@@ -95,6 +101,15 @@ class TransactionsDatasourceDb implements TransactionsDatasource {
           where macc_id = ?
         ''',
           [value * -1, maccIdTransfer],
+        );
+      }
+
+      final paymId = transaction.first['paym_id'];
+
+      if (paymId != null) {
+        await _db.rawUpdate(
+          'update payments set paym_amount_paid = paym_amount_paid - ? where paym_id = ? ',
+          [value, paymId],
         );
       }
     } catch (e) {
@@ -149,23 +164,28 @@ class TransactionsDatasourceDb implements TransactionsDatasource {
 
     final offset = params.page * params.limit - params.limit;
 
+    final locale = Utils.locale.split('_')[0];
+
     final query = await _db.rawQuery(
       '''
       select tran_id, tran_description, tran_amount, tran_type, tran_created_at, 
         macc.macc_id, macc.macc_name, 
         macc_transfer.macc_id as macc_id_transfer, macc_transfer.macc_name as macc_name_transfer, 
-        cate.cate_id, cate_name, cate_icon, cate_hex_color
+        cate.cate_id,  
+        case when ? = 'es' then term.term_text else cate.cate_name end as cate_name,
+         cate_icon, cate_hex_color
       from transactions tran
       left join money_accounts macc on macc.macc_id = tran.macc_id 
       left join money_accounts macc_transfer on macc_transfer.macc_id = tran.macc_id_transfer 
       left join categories cate on cate.cate_id = tran.cate_id
+      left join terms term on term.reg_id = cate.cate_id 
       where tran.tran_deleted_at is null
         $andTypeIs $andDateIs $andStartDateIs $andEndDateIs $andMaccIdIs $andPaymIdIs
       order by tran_created_at desc
       limit ?
       offset ?
       ''',
-      [params.limit, offset],
+      [locale, params.limit, offset],
     );
 
     final total = Sqflite.firstIntValue(

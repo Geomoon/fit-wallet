@@ -6,4 +6,5 @@ abstract class PaymentDatasource {
   Future<bool> create(PaymentEntity entity);
   Future<bool> update(PaymentEntity entity);
   Future<void> delete(String id);
+  Future<int> getPendings();
 }

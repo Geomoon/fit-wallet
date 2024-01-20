@@ -21,7 +21,6 @@ class ConfirmDialog extends StatefulWidget {
   final String? description;
   final Icon? icon;
 
-  /// should return true if action is succefull, otherwise false
   final Future<bool> Function() onConfirm;
   final Function()? onCancel;
 
@@ -45,10 +44,7 @@ class _ConfirmDialogState extends State<ConfirmDialog> {
         content: widget.description == null ? null : Text(widget.description!),
         actions: [
           TextButton(
-            onPressed: widget.onCancel ??
-                () {
-                  context.pop();
-                },
+            onPressed: widget.onCancel ?? context.pop,
             child: const Text('Cancel'),
           ),
           FilledButton(
