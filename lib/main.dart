@@ -3,6 +3,7 @@ import 'package:fit_wallet/config/routes/routes.dart';
 import 'package:fit_wallet/config/themes/themes.dart';
 import 'package:fit_wallet/features/shared/infrastructure/datasources/sqlite_datasource.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return Consumer(
       builder: (context, ref, _) {
         final themeMode = ref.watch(themeModeProvider);
