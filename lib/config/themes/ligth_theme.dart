@@ -1,6 +1,5 @@
 import 'package:fit_wallet/config/themes/colorschemes/color_schemes.g.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class LightTheme {
   static const Color primary = Color(0xFF2a85ff);
@@ -8,7 +7,7 @@ class LightTheme {
   static const Color primaryBg = Color(0xFF111315);
   static const Color secondaryBg = Color(0xFF1f2022);
 
-  static const Color green = Color(0xFF518242);
+  static const Color green = Color(0xFF6A9C59);
   static const Color red = Color(0xFF9C4146);
 
   static Color get transfer => lightColorScheme.primaryContainer;

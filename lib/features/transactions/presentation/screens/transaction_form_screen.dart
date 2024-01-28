@@ -845,12 +845,13 @@ class BalanceChecker extends ConsumerWidget {
 
   Color _bg(BuildContext context, bool? error) {
     final colors = Theme.of(context).colorScheme;
+    final isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
 
     if (error == null) return colors.background;
 
     if (error) return colors.error;
 
-    return DarkTheme.green;
+    return isDark ? DarkTheme.green : LightTheme.green;
   }
 
   Color _fg(BuildContext context, bool? error) {
