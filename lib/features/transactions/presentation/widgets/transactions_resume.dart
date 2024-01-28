@@ -39,12 +39,12 @@ class TransactionsResume extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        AppLocalizations.of(context)!.incomes,
+                        AppLocalizations.of(context)!.incomes.toUpperCase(),
                         style: textTheme.labelLarge,
                       ),
                       CircleAvatar(
                         backgroundColor:
-                            isDark ? DarkTheme.green : LightTheme.primary,
+                            isDark ? DarkTheme.green : LightTheme.green,
                         foregroundColor: colors.background,
                         child: const Icon(Icons.arrow_upward_rounded),
                       ),
@@ -75,7 +75,7 @@ class TransactionsResume extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        AppLocalizations.of(context)!.expenses,
+                        AppLocalizations.of(context)!.expenses.toUpperCase(),
                         style: textTheme.labelLarge,
                       ),
                       CircleAvatar(
