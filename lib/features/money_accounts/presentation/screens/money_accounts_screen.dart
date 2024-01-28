@@ -240,8 +240,10 @@ class DeletedCardBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
+    final isLight =
+        MediaQuery.of(context).platformBrightness == Brightness.light;
     return Card(
-      color: theme.error,
+      color: isLight ? theme.errorContainer : theme.error,
       margin: const EdgeInsets.only(top: 8, bottom: 8, right: 8),
       child: InkWell(
         borderRadius: BorderRadius.circular(10.0),
@@ -251,7 +253,7 @@ class DeletedCardBackground extends StatelessWidget {
           width: 40,
           child: Icon(
             Icons.backspace_rounded,
-            color: theme.onError,
+            color: isLight ? theme.error : theme.onError,
           ),
         ),
       ),

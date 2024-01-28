@@ -23,6 +23,8 @@ class MoneyAccountCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).primaryTextTheme;
     final theme = Theme.of(context).colorScheme;
+    final isLight =
+        MediaQuery.of(context).platformBrightness == Brightness.light;
 
     return Card(
       margin: margin,
@@ -44,7 +46,10 @@ class MoneyAccountCard extends StatelessWidget {
                     child: Text(
                       account.amountTxt,
                       maxLines: 1,
-                      style: textTheme.headlineSmall,
+                      style: textTheme.headlineSmall?.copyWith(
+                          color: isLight && (account.order == 0)
+                              ? Colors.white
+                              : null),
                       softWrap: true,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -63,7 +68,7 @@ class MoneyAccountCard extends StatelessWidget {
                       account.shortNameTxt,
                       style: TextStyle(
                         color: (account.order == 0)
-                            ? theme.background
+                            ? (isLight ? Colors.black87 : theme.background)
                             : theme.onPrimary,
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
@@ -89,13 +94,21 @@ class MoneyAccountCard extends StatelessWidget {
                 children: [
                   Text(
                     account.name,
-                    style: textTheme.labelLarge
-                        ?.copyWith(fontWeight: FontWeight.bold),
+                    style: textTheme.labelLarge?.copyWith(
+                        color: isLight && (account.order == 0)
+                            ? Colors.white
+                            : null,
+                        fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 20.0),
                   if (isTwoLines && account.lastTransaction != null)
-                    Text(AppLocalizations.of(context)!.lastTransaction,
-                        style: textTheme.labelLarge),
+                    Text(
+                      AppLocalizations.of(context)!.lastTransaction,
+                      style: textTheme.labelLarge?.copyWith(
+                          color: isLight && (account.order == 0)
+                              ? Colors.white
+                              : null),
+                    ),
                   Text(
                     isTwoLines
                         ? account.lastTransactionTxt.isEmpty
@@ -108,7 +121,10 @@ class MoneyAccountCard extends StatelessWidget {
                                 : account.lastTransactionTxt,
                     style: (account.order == 0)
                         ? TextStyle(color: theme.onPrimary)
-                        : textTheme.bodyLarge,
+                        : textTheme.bodyLarge?.copyWith(
+                            color: isLight && (account.order == 0)
+                                ? Colors.white
+                                : null),
                   ),
                 ],
               ),

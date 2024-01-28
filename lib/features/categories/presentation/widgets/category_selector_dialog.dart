@@ -63,6 +63,7 @@ class CategoryListTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context).colorScheme;
+    final isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
 
     final isSelected = ref.watch(categoriesSelectorProvider)?.id == category.id;
 
@@ -83,7 +84,12 @@ class CategoryListTile extends ConsumerWidget {
           borderRadius: BorderRadius.circular(isSelected ? 50 : 6.0),
         ),
         child: isSelected
-            ? const Center(child: Icon(Icons.check_rounded))
+            ? Center(
+                child: Icon(
+                  Icons.check_rounded,
+                  color: isDark ? null : theme.onPrimary,
+                ),
+              )
             : Center(child: Icon(category.iconData)),
       ),
       // trailing: CircleAvatar(

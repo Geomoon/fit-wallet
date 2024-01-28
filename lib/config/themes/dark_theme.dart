@@ -27,11 +27,11 @@ class DarkTheme {
   static Color get barColor => const Color(0xff1e1e21);
 
   static ThemeData get theme {
-    SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle.dark.copyWith(
-        systemNavigationBarColor: const Color(0xff1e1e21),
-      ),
-    );
+    // SystemChrome.setSystemUIOverlayStyle(
+    //   SystemUiOverlayStyle.dark.copyWith(
+    //     systemNavigationBarColor: const Color(0xff1e1e21),
+    //   ),
+    // );
     return ThemeData.dark(useMaterial3: true).copyWith(
       colorScheme: darkColorScheme,
       scaffoldBackgroundColor: const Color(0xff161616),

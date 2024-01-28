@@ -1,3 +1,4 @@
+import 'package:fit_wallet/config/themes/ligth_theme.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:fit_wallet/config/themes/colorschemes/color_schemes.g.dart';
 import 'package:fit_wallet/config/themes/dark_theme.dart';
@@ -34,14 +35,14 @@ class TransactionListTile extends StatelessWidget {
     }
   }
 
-  Color get iconColor {
+  Color iconColor(bool isDark) {
     switch (transaction.type) {
       case 'TRANSFER':
-        return DarkTheme.primaryFg;
+        return isDark ? DarkTheme.primaryFg : LightTheme.primaryFg;
       case 'EXPENSE':
-        return DarkTheme.red;
+        return isDark ? DarkTheme.red : LightTheme.red;
       case 'INCOME':
-        return DarkTheme.green;
+        return isDark ? DarkTheme.green : LightTheme.green;
 
       default:
         return DarkTheme.primaryFg;
@@ -58,31 +59,31 @@ class TransactionListTile extends StatelessWidget {
     }
   }
 
-  Icon get icon {
+  Icon icon(bool isDark) {
     switch (transaction.type) {
       case 'TRANSFER':
         return Icon(
           CupertinoIcons.arrow_right_arrow_left,
           size: 18,
-          color: iconColor,
+          color: iconColor(isDark),
         );
       case 'EXPENSE':
         return Icon(
           Icons.arrow_downward_rounded,
           size: 18,
-          color: iconColor,
+          color: iconColor(isDark),
         );
       case 'INCOME':
         return Icon(
           Icons.arrow_upward_rounded,
           size: 18,
-          color: iconColor,
+          color: iconColor(isDark),
         );
       default:
         return Icon(
           Icons.arrow_upward_rounded,
           size: 18,
-          color: iconColor,
+          color: iconColor(isDark),
         );
     }
   }
@@ -90,6 +91,7 @@ class TransactionListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).primaryTextTheme;
+    final isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
 
     if (isDissmisable) {
       return Dismissible(
@@ -143,7 +145,7 @@ class TransactionListTile extends StatelessWidget {
             color: color,
             transaction: transaction,
             iconColorCategory: iconColorCategory,
-            icon: icon,
+            icon: icon(isDark),
             textTheme: textTheme,
             showValue: false,
           ),
@@ -151,7 +153,7 @@ class TransactionListTile extends StatelessWidget {
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
-                color: DarkTheme.barColor,
+                color: isDark ? DarkTheme.barColor : LightTheme.barColor,
                 borderRadius: BorderRadius.circular(12),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -182,7 +184,7 @@ class TransactionListTile extends StatelessWidget {
       color: color,
       transaction: transaction,
       iconColorCategory: iconColorCategory,
-      icon: icon,
+      icon: icon(isDark),
       textTheme: textTheme,
     );
   }

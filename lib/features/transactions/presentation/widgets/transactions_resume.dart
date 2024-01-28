@@ -19,6 +19,7 @@ class TransactionsResume extends ConsumerWidget {
     final balance = ref.watch(balanceProvider);
     final colors = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).primaryTextTheme;
+    final isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
 
     return balance.when(
       data: (data) => GridView(
@@ -42,7 +43,8 @@ class TransactionsResume extends ConsumerWidget {
                         style: textTheme.labelLarge,
                       ),
                       CircleAvatar(
-                        backgroundColor: DarkTheme.green,
+                        backgroundColor:
+                            isDark ? DarkTheme.green : LightTheme.primary,
                         foregroundColor: colors.background,
                         child: const Icon(Icons.arrow_upward_rounded),
                       ),

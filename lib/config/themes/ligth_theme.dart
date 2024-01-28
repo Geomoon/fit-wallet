@@ -1,9 +1,6 @@
 import 'package:fit_wallet/config/themes/colorschemes/color_schemes.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-final lightTheme = Provider((ref) => LightTheme.theme);
 
 class LightTheme {
   static const Color primary = Color(0xFF2a85ff);
@@ -11,22 +8,22 @@ class LightTheme {
   static const Color primaryBg = Color(0xFF111315);
   static const Color secondaryBg = Color(0xFF1f2022);
 
-  static const Color green = Color(0xFFb5e4ca);
-  static const Color red = Color(0xFFf59062);
+  static const Color green = Color(0xFF518242);
+  static const Color red = Color(0xFF9C4146);
 
   static Color get transfer => lightColorScheme.primaryContainer;
   static Color get expense => const Color(0xff1e1e21);
   static Color get income => lightColorScheme.secondaryContainer;
 
-  static Color get barColor => const Color(0xff1e1e21);
+  static Color get barColor => const Color(0xFFEBEDFB);
 
   static ThemeData get theme {
-    SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle.dark.copyWith(
-        systemNavigationBarColor: lightColorScheme.onPrimary,
-      ),
-    );
-    return ThemeData.dark(useMaterial3: true).copyWith(
+    // SystemChrome.setSystemUIOverlayStyle(
+    //   SystemUiOverlayStyle.light.copyWith(
+    //     systemNavigationBarColor: barColor,
+    //   ),
+    // );
+    return ThemeData.light(useMaterial3: true).copyWith(
       colorScheme: lightColorScheme,
       scaffoldBackgroundColor: lightColorScheme.background,
       primaryTextTheme: TextTheme(

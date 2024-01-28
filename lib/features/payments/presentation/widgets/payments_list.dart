@@ -1,3 +1,4 @@
+import 'package:fit_wallet/config/themes/ligth_theme.dart';
 import 'package:fit_wallet/features/payments/presentation/providers/providers.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:fit_wallet/config/themes/dark_theme.dart';
@@ -146,6 +147,7 @@ class PaymentCard extends StatelessWidget {
     final textTheme = Theme.of(context).primaryTextTheme;
     final theme = Theme.of(context).colorScheme;
     final cardColor = Theme.of(context).cardTheme;
+    final isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
 
     return ExpansionTile(
       controlAffinity: ListTileControlAffinity.trailing,
@@ -179,7 +181,7 @@ class PaymentCard extends StatelessWidget {
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
-            color: DarkTheme.barColor,
+            color: isDark ? DarkTheme.barColor : LightTheme.barColor,
             borderRadius: BorderRadius.circular(12),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),

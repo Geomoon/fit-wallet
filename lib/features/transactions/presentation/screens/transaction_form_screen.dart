@@ -1,3 +1,5 @@
+import 'package:fit_wallet/config/themes/colorschemes/color_schemes.g.dart';
+import 'package:fit_wallet/config/themes/ligth_theme.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:fit_wallet/config/themes/dark_theme.dart';
@@ -46,11 +48,22 @@ class _TransactionFormScreen extends ConsumerWidget {
         ref.invalidate(getTransactionsProvider);
         ref.invalidate(moneyAccountByIdProvider(account!.id));
         ref.invalidate(getTransactionsFilterProvider);
-        SystemChrome.setSystemUIOverlayStyle(
-          SystemUiOverlayStyle.dark.copyWith(
-            systemNavigationBarColor: const Color(0xff1e1e21),
-          ),
-        );
+        final isDark =
+            MediaQuery.of(context).platformBrightness == Brightness.dark;
+
+        if (isDark) {
+          SystemChrome.setSystemUIOverlayStyle(
+            SystemUiOverlayStyle.dark.copyWith(
+              systemNavigationBarColor: const Color(0xff1e1e21),
+            ),
+          );
+        } else {
+          SystemChrome.setSystemUIOverlayStyle(
+            SystemUiOverlayStyle.light.copyWith(
+              systemNavigationBarColor: LightTheme.barColor,
+            ),
+          );
+        }
 
         SnackBarContent(
           title: AppLocalizations.of(context)!.saved,
@@ -64,17 +77,24 @@ class _TransactionFormScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context).colorScheme;
-
     final transactionType =
         ref.watch(transactionFormProvider.select((value) => value.type));
 
-    SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle.dark.copyWith(
-        systemNavigationBarColor: theme.background,
-      ),
-    );
+    final isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
 
+    if (isDark) {
+      SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle.dark.copyWith(
+          systemNavigationBarColor: darkColorScheme.background,
+        ),
+      );
+    } else {
+      SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle.light.copyWith(
+          systemNavigationBarColor: lightColorScheme.background,
+        ),
+      );
+    }
     ref.listen<String>(transactionFormProvider.select((value) => value.error),
         (previous, next) {
       if (next != '') {
@@ -89,11 +109,19 @@ class _TransactionFormScreen extends ConsumerWidget {
 
     return WillPopScope(
       onWillPop: () async {
-        SystemChrome.setSystemUIOverlayStyle(
-          SystemUiOverlayStyle.dark.copyWith(
-            systemNavigationBarColor: const Color(0xff1e1e21),
-          ),
-        );
+        if (isDark) {
+          SystemChrome.setSystemUIOverlayStyle(
+            SystemUiOverlayStyle.dark.copyWith(
+              systemNavigationBarColor: const Color(0xff1e1e21),
+            ),
+          );
+        } else {
+          SystemChrome.setSystemUIOverlayStyle(
+            SystemUiOverlayStyle.light.copyWith(
+              systemNavigationBarColor: LightTheme.barColor,
+            ),
+          );
+        }
         return true;
       },
       child: Scaffold(
@@ -605,6 +633,7 @@ class MoneyAccountListTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context).colorScheme;
+    final isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
 
     return ListTile(
       visualDensity: VisualDensity.standard,
@@ -618,12 +647,17 @@ class MoneyAccountListTile extends ConsumerWidget {
           borderRadius: BorderRadius.circular(isSelected ? 50 : 6.0),
         ),
         child: isSelected
-            ? const Center(child: Icon(Icons.check_rounded))
+            ? Center(
+                child: Icon(
+                  Icons.check_rounded,
+                  color: isDark ? null : theme.onPrimary,
+                ),
+              )
             : Center(
                 child: Text(
                   account.shortNameTxt,
                   style: TextStyle(
-                    color: theme.onPrimary,
+                    color: isDark ? theme.onPrimary : theme.onBackground,
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),

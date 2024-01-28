@@ -12,6 +12,11 @@ void main() async {
   await Env.init();
   WidgetsFlutterBinding.ensureInitialized();
   await SQLiteDatasource.initDB();
+  SystemChrome.setSystemUIOverlayStyle(
+    SystemUiOverlayStyle.light.copyWith(
+      systemNavigationBarColor: LightTheme.barColor,
+    ),
+  );
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -20,15 +25,30 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
+
+    if (isDark) {
+      SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle.dark.copyWith(
+          systemNavigationBarColor: const Color(0xff1e1e21),
+        ),
+      );
+    } else {
+      SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle.light.copyWith(
+          systemNavigationBarColor: LightTheme.barColor,
+        ),
+      );
+    }
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
     return Consumer(
       builder: (context, ref, _) {
-        final themeMode = ref.watch(themeModeProvider);
         return MaterialApp.router(
           title: 'FitWallet',
-          theme: LightTheme.theme,
           darkTheme: DarkTheme.theme,
-          themeMode: themeMode,
+          theme: LightTheme.theme,
+          themeMode: ThemeMode.system,
           routerConfig: ref.watch(routerProvider),
           debugShowCheckedModeBanner: false,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
